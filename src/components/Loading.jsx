@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import { keyframes } from "@mui/system";
-import logo from "../img/logo.svg";
+import logo from "../assets/logo.svg";
 
 const blink = keyframes`
   0% {

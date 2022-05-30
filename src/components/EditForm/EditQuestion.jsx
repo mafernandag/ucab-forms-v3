@@ -39,7 +39,7 @@ import { useForm } from "../../hooks/useForm";
 import { useAlert } from "../../hooks/useAlert";
 import EditOptions from "./EditOptions";
 import { calculateNewIndex } from "../../utils/questions";
-import selectAnimation from "../../img/select.json";
+import selectAnimation from "../../assets/select.json";
 
 const EditQuestion = ({ setOpenDrawer }) => {
   const { form, questions, setQuestions, current, setCurrent, responses } =

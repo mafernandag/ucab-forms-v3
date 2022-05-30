@@ -1,7 +1,7 @@
 import { Box, Card, Container, Typography } from "@mui/material";
 import Lottie from "lottie-react";
 import Header from "./Header";
-import notFoundAnimation from "../img/not-found.json";
+import notFoundAnimation from "../assets/not-found.json";
 
 const AnswerPageText = ({ children }) => {
   return (

@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import { Outlet } from "react-router-dom";
-import background from "../img/background.jpg";
-import logo from "../img/logo.svg";
+import background from "../assets/background.jpg";
+import logo from "../assets/logo.svg";
 
 const AuthLayout = () => {
   return (

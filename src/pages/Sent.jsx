@@ -12,7 +12,7 @@ import Lottie from "lottie-react";
 import { getFormOnce } from "../api/forms";
 import Header from "../components/Header";
 import AnswerPageText from "../components/AnswerPageText";
-import doneAnimation from "../img/done.json";
+import doneAnimation from "../assets/done.json";
 
 const Sent = () => {
   const { id: formId } = useParams();
