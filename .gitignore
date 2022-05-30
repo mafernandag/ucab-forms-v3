@@ -21,6 +21,3 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# since we're using yarn, we don't want any package-lock.json files
-package-lock.json
