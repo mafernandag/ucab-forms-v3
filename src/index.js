@@ -5,7 +5,6 @@ import "@fontsource/poppins/700.css";
 
 import React from "react";
 import ReactDOM from "react-dom";
-import { ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 import { LocalizationProvider } from "@mui/lab";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
@@ -13,14 +12,14 @@ import esLocale from "date-fns/locale/es";
 import { BrowserRouter } from "react-router-dom";
 import { SnackbarProvider } from "notistack";
 import ScrollToTop from "./components/ScrollToTop";
-import theme from "./theme";
+import { ColorModeProvider } from "./hooks/useColorMode";
 import App from "./App";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import reportWebVitals from "./reportWebVitals";
 
 ReactDOM.render(
   <React.StrictMode>
-    <ThemeProvider theme={theme}>
+    <ColorModeProvider>
       <CssBaseline enableColorScheme />
       <LocalizationProvider dateAdapter={AdapterDateFns} locale={esLocale}>
         <SnackbarProvider>
@@ -30,7 +29,7 @@ ReactDOM.render(
           </BrowserRouter>
         </SnackbarProvider>
       </LocalizationProvider>
-    </ThemeProvider>
+    </ColorModeProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );

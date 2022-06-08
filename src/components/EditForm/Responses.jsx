@@ -57,7 +57,7 @@ const Responses = () => {
           </Typography>
         </Box>
         {responses.length === 0 ? (
-          <Typography>No hay respuestas</Typography>
+          <Typography ml={1}>No hay respuestas</Typography>
         ) : (
           <>
             {view === "summary" && <ResponsesSummary />}

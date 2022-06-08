@@ -10,7 +10,12 @@ import {
   Toolbar,
   Tooltip,
 } from "@mui/material";
-import { AccountCircle, Logout as LogoutIcon } from "@mui/icons-material";
+import {
+  AccountCircle,
+  Brightness4 as LightIcon,
+  Brightness7 as DarkIcon,
+  Logout as LogoutIcon,
+} from "@mui/icons-material";
 import {
   usePopupState,
   bindTrigger,
@@ -19,6 +24,7 @@ import {
 import { useTheme } from "@mui/material/styles";
 import { Link } from "react-router-dom";
 import { useUser } from "../hooks/useUser";
+import { useColorMode } from "../hooks/useColorMode";
 import { signOut } from "../api/auth";
 import HeaderLogo from "./HeaderLogo";
 import Notifications from "./Notifications";
@@ -26,6 +32,7 @@ import Notifications from "./Notifications";
 const Header = ({ leftIcons, rightIcons, moreMenu }) => {
   const user = useUser();
   const theme = useTheme();
+  const { colorMode, toggleColorMode } = useColorMode();
 
   const popupStateUser = usePopupState({
     variant: "popover",
@@ -69,10 +76,23 @@ const Header = ({ leftIcons, rightIcons, moreMenu }) => {
                     </ListItemIcon>
                     {user.name}
                   </MenuItem>
-                  <Divider />
-                  <MenuItem onClick={signOut}>
+                  <MenuItem onClick={toggleColorMode}>
                     <ListItemIcon>
-                      <LogoutIcon fontSize="small" />
+                      {colorMode === "light" ? (
+                        <LightIcon fontSize="small" />
+                      ) : (
+                        <DarkIcon fontSize="small" />
+                      )}
+                    </ListItemIcon>
+                    {colorMode === "light" ? "Modo oscuro" : "Modo claro"}
+                  </MenuItem>
+                  <Divider />
+                  <MenuItem
+                    onClick={signOut}
+                    sx={{ color: (theme) => theme.palette.error.main }}
+                  >
+                    <ListItemIcon>
+                      <LogoutIcon fontSize="small" color="error" />
                     </ListItemIcon>
                     Cerrar sesión
                   </MenuItem>
@@ -86,9 +106,23 @@ const Header = ({ leftIcons, rightIcons, moreMenu }) => {
                   variant="contained"
                   component={Link}
                   to="/login"
+                  sx={{ mr: 1 }}
                 >
                   Ingresar
                 </Button>
+                <Tooltip
+                  arrow
+                  title={colorMode === "light" ? "Modo oscuro" : "Modo claro"}
+                >
+                  <IconButton
+                    size="large"
+                    color="inherit"
+                    edge="end"
+                    onClick={toggleColorMode}
+                  >
+                    {colorMode === "light" ? <LightIcon /> : <DarkIcon />}
+                  </IconButton>
+                </Tooltip>
               </>
             )}
           </Box>
