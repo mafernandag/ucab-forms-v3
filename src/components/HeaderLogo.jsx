@@ -1,6 +1,6 @@
 import { Box, SvgIcon, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
-import { ReactComponent as Logo } from "../assets/logo-header.svg";
+import { ReactComponent as Logo } from "../assets/logo-ucab.svg";
 import { useUser } from "../hooks/useUser";
 
 const HeaderLogo = ({ sx, ...props }) => {

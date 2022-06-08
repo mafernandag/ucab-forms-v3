@@ -1,6 +1,8 @@
 import { Box } from "@mui/material";
 import { keyframes } from "@mui/system";
-import logo from "../assets/logo.svg";
+import { useColorMode } from "../hooks/useColorMode";
+import logoWhite from "../assets/logo-ucab-forms-white.svg";
+import logoBlack from "../assets/logo-ucab-forms-black.svg";
 
 const blink = keyframes`
   0% {
@@ -15,6 +17,10 @@ const blink = keyframes`
 `;
 
 const Loading = () => {
+  const { colorMode } = useColorMode();
+
+  const logo = colorMode === "light" ? logoBlack : logoWhite;
+
   return (
     <Box
       sx={{
