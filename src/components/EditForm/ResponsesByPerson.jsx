@@ -158,8 +158,8 @@ const Response = () => {
             </Card>
           )}
           {questions.map((question) => (
-            <Box>
-              <Card key={question.id} sx={{ mb: 1 }}>
+            <Box key={question.id}>
+              <Card sx={{ mb: 1 }}>
                 <Typography gutterBottom>{question.title}</Typography>
                 {response.answers[question.id] === "" ||
                 response.answers[question.id] === null ||

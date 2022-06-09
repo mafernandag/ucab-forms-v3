@@ -20,9 +20,9 @@ const ResponsesTable = () => {
         ...(question.type === FILE && {
           render: (rowData) => (
             <>
-              {rowData[question.id].split(", ").map((url, i) => (
+              {rowData[question.id].split(", ").map((url) => (
                 <Link
-                  key={i}
+                  key={url}
                   href={url}
                   noWrap
                   target="_blank"
