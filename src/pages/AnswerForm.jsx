@@ -223,8 +223,8 @@ const AnswerForm = () => {
                 * Obligatorio
               </Typography>
             </Card>
-            {form.questions.map((question, i) => (
-              <Card key={i}>
+            {form.questions.map((question) => (
+              <Card key={question.id}>
                 <Question
                   question={question}
                   answers={answers}

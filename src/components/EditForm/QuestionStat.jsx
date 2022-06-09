@@ -483,7 +483,7 @@ const QuestionStat = ({ question, responses }) => {
                 <tr key={i}>
                   <td style={{ fontWeight: "bold" }}>{option}</td>
                   {question.options.map((o, j) => (
-                    <td key={i}>
+                    <td key={j}>
                       {
                         responses.filter((r) => r[question.id][j] === option)
                           .length

@@ -129,8 +129,12 @@ const CollaboratorsDialogBody = ({ closeDialog }) => {
               <Tooltip title={form.author.email} arrow>
                 <Chip icon={<AccountCircle />} label={form.author.name} />
               </Tooltip>
-              {form.collaborators.map((collaborator, i) => (
-                <Tooltip key={i} title={collaborator.email} arrow>
+              {form.collaborators.map((collaborator) => (
+                <Tooltip
+                  key={collaborator.email}
+                  title={collaborator.email}
+                  arrow
+                >
                   <Chip
                     label={collaborator.name}
                     onDelete={() => handleDeleteCollaborator(collaborator)}

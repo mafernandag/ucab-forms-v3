@@ -25,9 +25,9 @@ const Questions = ({ setOpenDrawer }) => {
     return (
       <Box>
         <Stack spacing={2}>
-          {questions.map((question, i) => (
+          {questions.map((question) => (
             <QuestionPreview
-              key={i}
+              key={question.id}
               question={question}
               setOpenDrawer={setOpenDrawer}
             />
