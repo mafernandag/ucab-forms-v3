@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import {
   Box,
-  Card,
+  Card as MuiCard,
   Checkbox,
   FormControlLabel,
   FormGroup,
@@ -24,6 +24,7 @@ import {
   TIME,
 } from "../../constants/questions";
 import { getResponseCountText } from "../../utils/stats";
+import Card from "../Card";
 import Slider from "../Slider";
 import Rating from "../Rating";
 import FilesResponse from "./FilesResponse";
@@ -123,9 +124,9 @@ const ResponsesByQuestion = () => {
         return (
           <Stack spacing={1}>
             {value.map((option, i) => (
-              <Card key={i} sx={{ p: 2 }}>
+              <MuiCard key={i} sx={{ p: 2 }}>
                 <Typography>{option}</Typography>
-              </Card>
+              </MuiCard>
             ))}
           </Stack>
         );
@@ -157,11 +158,11 @@ const ResponsesByQuestion = () => {
             shape="rounded"
             renderItem={renderItem}
           />
-          <Card sx={{ p: 3 }} variant="outlined">
+          <Card>
             <Typography fontSize="h6.fontSize">{question.title}</Typography>
           </Card>
           {answersWithStats.map((response, i) => (
-            <Card key={i} sx={{ p: 3 }} variant="outlined">
+            <Card key={i}>
               <Box sx={{ mb: 1 }}>
                 {response.value === "" ||
                 response.value === undefined ||

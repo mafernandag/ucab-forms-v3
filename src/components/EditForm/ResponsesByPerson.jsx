@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import {
   Box,
-  Card,
+  Card as MuiCard,
   Checkbox,
   FormControlLabel,
   FormGroup,
@@ -24,6 +24,7 @@ import {
 } from "../../constants/questions";
 import { useForm } from "../../hooks/useForm";
 import Comments from "./Comments";
+import Card from "../Card";
 import Slider from "../Slider";
 import Rating from "../Rating";
 import FilesResponse from "./FilesResponse";
@@ -77,9 +78,9 @@ const Response = () => {
         return (
           <Stack spacing={1}>
             {value.map((option, i) => (
-              <Card key={i} sx={{ p: 2 }}>
+              <MuiCard key={i} sx={{ p: 2 }}>
                 <Typography>{option}</Typography>
-              </Card>
+              </MuiCard>
             ))}
           </Stack>
         );
@@ -127,7 +128,7 @@ const Response = () => {
             Respondido el {format(response.submittedAt, "dd/MM/yyyy, hh:mm a")}
           </Typography>
           {response.location && (
-            <Card sx={{ p: 3 }} variant="outlined">
+            <Card>
               <Typography mb={2}>Ubicación</Typography>
               <Box
                 sx={{
@@ -158,7 +159,7 @@ const Response = () => {
           )}
           {questions.map((question) => (
             <Box>
-              <Card key={question.id} sx={{ p: 3, mb: 1 }} variant="outlined">
+              <Card key={question.id} sx={{ mb: 1 }}>
                 <Typography gutterBottom>{question.title}</Typography>
                 {response.answers[question.id] === "" ||
                 response.answers[question.id] === null ||
