@@ -3,7 +3,6 @@ import {
   Alert,
   Box,
   Button,
-  Card,
   Container,
   LinearProgress,
   Stack,
@@ -23,6 +22,7 @@ import {
 } from "../constants/questions";
 import { useUser } from "../hooks/useUser";
 import Header from "../components/Header";
+import Card from "../components/Card";
 import Question from "../components/Question";
 import AnswerPageText from "../components/AnswerPageText";
 
@@ -214,7 +214,7 @@ const AnswerForm = () => {
       <Container sx={{ p: 3 }} maxWidth="md">
         <form onSubmit={submit}>
           <Stack spacing={2}>
-            <Card sx={{ p: 3 }} variant="outlined">
+            <Card>
               <Typography variant="h5" mb={2}>
                 {form.title}
               </Typography>
@@ -224,7 +224,7 @@ const AnswerForm = () => {
               </Typography>
             </Card>
             {form.questions.map((question, i) => (
-              <Card key={i} sx={{ p: 3 }} variant="outlined">
+              <Card key={i}>
                 <Question
                   question={question}
                   answers={answers}

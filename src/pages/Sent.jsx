@@ -4,13 +4,13 @@ import {
   Box,
   Button,
   Container,
-  Card,
   LinearProgress,
   Typography,
 } from "@mui/material";
 import Lottie from "lottie-react";
 import { getFormOnce } from "../api/forms";
 import Header from "../components/Header";
+import Card from "../components/Card";
 import AnswerPageText from "../components/AnswerPageText";
 import doneAnimation from "../assets/done.json";
 
@@ -55,12 +55,10 @@ const Sent = () => {
       <Container sx={{ p: 3 }} maxWidth="md">
         <Card
           sx={{
-            p: 3,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
           }}
-          variant="outlined"
         >
           <Typography align="center" variant="h5">
             {sentText}

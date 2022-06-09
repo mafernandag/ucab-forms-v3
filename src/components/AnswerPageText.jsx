@@ -1,6 +1,7 @@
-import { Box, Card, Container, Typography } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 import Lottie from "lottie-react";
 import Header from "./Header";
+import Card from "./Card";
 import notFoundAnimation from "../assets/not-found.json";
 
 const AnswerPageText = ({ children }) => {
@@ -10,12 +11,10 @@ const AnswerPageText = ({ children }) => {
       <Container maxWidth="md" sx={{ p: 3 }}>
         <Card
           sx={{
-            p: 3,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
           }}
-          variant="outlined"
         >
           <Box sx={{ width: "40vmin" }}>
             <Lottie animationData={notFoundAnimation} loop />

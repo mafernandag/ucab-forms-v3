@@ -1,10 +1,11 @@
 import { useMemo, useState } from "react";
-import { Box, Card, LinearProgress, Stack, TextField } from "@mui/material";
+import { Box, LinearProgress, Stack, TextField } from "@mui/material";
 import debounce from "lodash.debounce";
 import { saveForm } from "../api/forms";
 import { useUser } from "../hooks/useUser";
 import { useForm } from "../hooks/useForm";
 import Header from "../components/Header";
+import Card from "../components/Card";
 import EditFormHeader from "../components/EditForm/Header";
 import DrawerLayout from "../components/EditForm/DrawerLayout";
 import Tabs from "../components/EditForm/Tabs";
@@ -58,7 +59,7 @@ const EditForm = () => {
       <EditFormHeader setOpenDrawer={setOpenDrawer} />
       <DrawerLayout open={openDrawer} setOpen={setOpenDrawer}>
         <Stack spacing={2}>
-          <Card variant="outlined" sx={{ p: 3 }}>
+          <Card>
             <Stack spacing={2}>
               <TextField
                 variant="standard"
