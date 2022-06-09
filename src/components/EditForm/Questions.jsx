@@ -5,20 +5,20 @@ import { defaultQuestion } from "../../constants/questions";
 import { useForm } from "../../hooks/useForm";
 import { insertQuestion } from "../../api/questions";
 import QuestionPreview from "./QuestionPreview";
-import { calculateNewIndex } from "../../utils/questions";
+import { calculateNewIndex } from "../../utils/forms";
 
 const Questions = ({ setOpenDrawer }) => {
-  const { form, questions, current, setCurrent } = useForm();
+  const { form, questions, currentQuestion, setCurrentQuestion } = useForm();
 
   return useMemo(() => {
     const addQuestion = () => {
-      const newIndex = calculateNewIndex(questions, current);
+      const newIndex = calculateNewIndex(questions, currentQuestion);
 
       const newQuestion = { index: newIndex, ...defaultQuestion };
 
       const questionId = insertQuestion(form.id, newQuestion);
 
-      setCurrent(questionId);
+      setCurrentQuestion(questionId);
       setOpenDrawer(true);
     };
 
@@ -44,7 +44,7 @@ const Questions = ({ setOpenDrawer }) => {
         </Tooltip>
       </Box>
     );
-  }, [current, form.id, questions, setCurrent, setOpenDrawer]);
+  }, [currentQuestion, form.id, questions, setCurrentQuestion, setOpenDrawer]);
 };
 
 export default Questions;

@@ -15,7 +15,7 @@ const FormProvider = ({ children }) => {
   const [form, setForm] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [responses, setResponses] = useState([]);
-  const [current, setCurrent] = useState(null);
+  const [currentQuestion, setCurrentQuestion] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -61,8 +61,8 @@ const FormProvider = ({ children }) => {
     setQuestions,
     responses,
     loading,
-    current,
-    setCurrent,
+    currentQuestion,
+    setCurrentQuestion,
   };
 
   return <FormContext.Provider value={value}>{children}</FormContext.Provider>;

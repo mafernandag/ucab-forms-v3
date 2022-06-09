@@ -5,11 +5,11 @@ import AllQuestionsPreview from "../AllQuestionsPreview";
 import RequiredMark from "../RequiredMark";
 
 const EditQuestion = ({ question, setOpenDrawer }) => {
-  const { current, setCurrent } = useForm();
+  const { currentQuestion, setCurrentQuestion } = useForm();
 
   return useMemo(() => {
     const handleClick = () => {
-      setCurrent(question.id);
+      setCurrentQuestion(question.id);
       setOpenDrawer(true);
     };
 
@@ -17,8 +17,8 @@ const EditQuestion = ({ question, setOpenDrawer }) => {
       <Card
         sx={{ p: 3, cursor: "pointer" }}
         onClick={handleClick}
-        elevation={question.id === current ? 5 : 0}
-        variant={question.id === current ? "elevation" : "outlined"}
+        elevation={question.id === currentQuestion ? 5 : 0}
+        variant={question.id === currentQuestion ? "elevation" : "outlined"}
       >
         <Typography mb={2}>
           {question.title}
@@ -27,7 +27,7 @@ const EditQuestion = ({ question, setOpenDrawer }) => {
         <AllQuestionsPreview question={question} />
       </Card>
     );
-  }, [current, question, setOpenDrawer, setCurrent]);
+  }, [currentQuestion, question, setOpenDrawer, setCurrentQuestion]);
 };
 
 export default EditQuestion;

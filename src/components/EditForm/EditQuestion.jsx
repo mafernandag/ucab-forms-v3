@@ -38,17 +38,23 @@ import {
 import { useForm } from "../../hooks/useForm";
 import { useAlert } from "../../hooks/useAlert";
 import EditOptions from "./EditOptions";
-import { calculateNewIndex } from "../../utils/questions";
+import { calculateNewIndex } from "../../utils/forms";
 import selectAnimation from "../../assets/select.json";
 
 const EditQuestion = ({ setOpenDrawer }) => {
-  const { form, questions, setQuestions, current, setCurrent, responses } =
-    useForm();
+  const {
+    form,
+    questions,
+    setQuestions,
+    currentQuestion,
+    setCurrentQuestion,
+    responses,
+  } = useForm();
   const openAlert = useAlert();
 
   const question = useMemo(() => {
-    return questions.find((q) => q.id === current);
-  }, [questions, current]);
+    return questions.find((q) => q.id === currentQuestion);
+  }, [questions, currentQuestion]);
 
   const debouncedSave = useMemo(
     () =>
@@ -200,7 +206,7 @@ const EditQuestion = ({ setOpenDrawer }) => {
 
       const newQuestionId = insertQuestion(form.id, questionData);
 
-      setCurrent(newQuestionId);
+      setCurrentQuestion(newQuestionId);
       setOpenDrawer(true);
     };
 
@@ -331,7 +337,7 @@ const EditQuestion = ({ setOpenDrawer }) => {
     question,
     questions,
     responses,
-    setCurrent,
+    setCurrentQuestion,
     setOpenDrawer,
     setQuestions,
   ]);
