@@ -31,56 +31,26 @@ const PersonalizationDialogBody = ({
 }) => {
   const { form } = useForm();
   const [settings, setSettings] = useState(form.settings);
-  const [limitResponses, setLimitResponses] = useState(
-    !!form.settings.maxResponses
-  );
-  const [startDate, setStartDate] = useState(!!form.settings.startDate);
-  const [endDate, setEndDate] = useState(!!form.settings.endDate);
+
   const [font, setFont] = useState("");
 
   return useMemo(() => {
-    const handleChangeValue = (field) => (e) => {
-      setChanges(true);
-      const value = e.target.value;
-      const newSettings = { ...settings, [field]: value };
-
-      setSettings(newSettings);
-    };
-
-    const handleChangeChecked = (field) => (e) => {
-      setChanges(true);
-      const checked = e.target.checked;
-      const newSettings = { ...settings, [field]: checked };
-
-      setSettings(newSettings);
-    };
-
     const handleChange = (field) => (value) => {
       setChanges(true);
       const newSettings = { ...settings, [field]: value };
-
+      setFont(field.target.value);
       setSettings(newSettings);
     };
-
+    // const handleChange = (event) => {
+    //   setFont(event.target.value);
+    // };
     const handleSaveForm = () => {
       const formData = { ...form, settings };
-
-      if (!limitResponses) {
-        formData.settings.maxResponses = null;
-      }
-
-      if (!startDate) {
-        formData.settings.startDate = null;
-      }
-
-      if (!endDate) {
-        formData.settings.endDate = null;
-      }
-
       saveForm(formData);
 
       closeDialog();
     };
+
     const greens = ["#4A903C", "#59AD48", "#63B752", "#70BD61"];
     const blues = ["#5DBFE9", "#6FC6EB", "#81CDEE", "#93D4F0"];
     const yellows = ["#F5B400", "#FFCE47", "#FFD35C", "#FFD970"];
@@ -131,7 +101,10 @@ const PersonalizationDialogBody = ({
           >
             <Typography sx={{ fontSize: "22" }}>Color del tema</Typography>
 
-            <CirclePicker colors={["#ffc526", "#40b4e5", "#047732"]} />
+            <CirclePicker
+              colors={["#ffc526", "#40b4e5", "#047732"]}
+              //   onChange={setColor}
+            />
           </Box>
 
           <Divider variant="fullWidth" />
@@ -172,10 +145,13 @@ const PersonalizationDialogBody = ({
               onChange={handleChange}
               fullWidth
             >
-              <MenuItem> Básico </MenuItem>
-              <MenuItem> Aguafina Script </MenuItem>
-              <MenuItem> Alegreya </MenuItem>
-              <MenuItem> Annie Use Your Telescope </MenuItem>
+              <MenuItem value={"Roboto"}> Básico </MenuItem>
+              <MenuItem value={"Aguafina Script"}> Aguafina Script </MenuItem>
+              <MenuItem value={"Alegreya"}> Alegreya </MenuItem>
+              <MenuItem value={"Annie Use Your Telescope"}>
+                {" "}
+                Annie Use Your Telescope{" "}
+              </MenuItem>
             </Select>
           </Box>
 
@@ -187,16 +163,7 @@ const PersonalizationDialogBody = ({
         </DialogActions>
       </>
     );
-  }, [
-    closeDialog,
-    discardDialog,
-    endDate,
-    form,
-    limitResponses,
-    setChanges,
-    settings,
-    startDate,
-  ]);
+  }, [closeDialog, discardDialog, setChanges, settings]);
 };
 
 const PersonalizationDialog = ({ open, setOpen }) => {
