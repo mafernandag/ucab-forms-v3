@@ -20,6 +20,7 @@ import {
   Delete as DeleteIcon,
   Menu as MenuIcon,
   MoreVert,
+  PaletteRounded as PaletteIcon,
   People as PeopleIcon,
   Send as SendIcon,
   Settings as SettingsIcon,
@@ -31,6 +32,7 @@ import { deleteForm, duplicateForm } from "../../api/forms";
 import { useForm } from "../../hooks/useForm";
 import { useUser } from "../../hooks/useUser";
 import { useAlert } from "../../hooks/useAlert";
+import PersonalizationDialog from "./PersonalizationDialog";
 import SettingsDialog from "./SettingsDialog";
 import SendDialog from "./SendDialog";
 import CollaboratorsDialog from "./CollaboratorsDialog";
@@ -45,6 +47,7 @@ const EditFormHeader = ({ setOpenDrawer }) => {
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
   const [openSettings, setOpenSettings] = useState(false);
+  const [openPersonalization, setOpenPersonalization] = useState(false);
   const [openSend, setOpenSend] = useState(false);
   const [openCollaborators, setOpenCollaborators] = useState(false);
   const [duplicating, setDuplicating] = useState(false);
@@ -105,6 +108,12 @@ const EditFormHeader = ({ setOpenDrawer }) => {
         message: "¿Estás seguro de que quieres eliminar esta encuesta?",
         action: handleDeleteForm,
       });
+    };
+
+    const openPersonalizationDialog = () => {
+      popupStateMore.close();
+      setOpenPersonalization(true);
+      console.log("Hola");
     };
 
     return (
@@ -188,11 +197,21 @@ const EditFormHeader = ({ setOpenDrawer }) => {
                   </ListItemIcon>
                   Eliminar encuesta
                 </MenuItem>
+                <MenuItem onClick={openPersonalizationDialog}>
+                  <ListItemIcon>
+                    <PaletteIcon fontSize="small" />
+                  </ListItemIcon>
+                  Personalizar encuesta
+                </MenuItem>
               </Menu>
             </>
           }
         />
         <SettingsDialog open={openSettings} setOpen={setOpenSettings} />
+        <PersonalizationDialog
+          open={openPersonalization}
+          setOpen={setOpenPersonalization}
+        />
         <SendDialog open={openSend} setOpen={setOpenSend} />
         <CollaboratorsDialog
           open={openCollaborators}
@@ -213,6 +232,7 @@ const EditFormHeader = ({ setOpenDrawer }) => {
     navigate,
     openAlert,
     openCollaborators,
+    openPersonalization,
     openSend,
     openSettings,
     popupStateMore,
