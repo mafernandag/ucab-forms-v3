@@ -8,20 +8,18 @@ const ResponsesSummary = () => {
   const { questions, responses } = useForm();
   const answers = useMemo(() => responses.map((r) => r.answers), [responses]);
 
-  return useMemo(() => {
-    return (
-      <Box>
-        <Stack spacing={2}>
-          {questions.map((question) => (
-            <Card key={question.id}>
-              <Typography>{question.title}</Typography>
-              <QuestionStat question={question} responses={answers} />
-            </Card>
-          ))}
-        </Stack>
-      </Box>
-    );
-  }, [answers, questions]);
+  return (
+    <Box>
+      <Stack spacing={2}>
+        {questions.map((question) => (
+          <Card key={question.id}>
+            <Typography>{question.title}</Typography>
+            <QuestionStat question={question} responses={answers} />
+          </Card>
+        ))}
+      </Stack>
+    </Box>
+  );
 };
 
 export default ResponsesSummary;

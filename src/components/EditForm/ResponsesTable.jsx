@@ -47,27 +47,25 @@ const ResponsesTable = () => {
     }));
   }, [questions, responses]);
 
-  return useMemo(() => {
-    return (
-      <Table
-        title="Respuestas"
-        columns={columns}
-        data={data}
-        options={{
-          exportMenu: [
-            {
-              label: "Exportar PDF",
-              exportFunc: (cols, datas) => ExportPdf(cols, datas, "Respuestas"),
-            },
-            {
-              label: "Exportar CSV",
-              exportFunc: (cols, datas) => ExportCsv(cols, datas, "Respuestas"),
-            },
-          ],
-        }}
-      />
-    );
-  }, [columns, data]);
+  return (
+    <Table
+      title="Respuestas"
+      columns={columns}
+      data={data}
+      options={{
+        exportMenu: [
+          {
+            label: "Exportar PDF",
+            exportFunc: (cols, datas) => ExportPdf(cols, datas, "Respuestas"),
+          },
+          {
+            label: "Exportar CSV",
+            exportFunc: (cols, datas) => ExportCsv(cols, datas, "Respuestas"),
+          },
+        ],
+      }}
+    />
+  );
 };
 
 export default ResponsesTable;

@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import {
   Box,
   SpeedDial,
@@ -32,195 +31,174 @@ const Questions = ({ setOpenDrawer }) => {
     setCurrentSectionId,
   } = useForm();
 
-  return useMemo(() => {
-    const getPosition = () => {
-      if (!currentQuestionId) {
-        const sectionPosition = sections.findIndex(
-          (s) => s.id === currentSectionId
-        );
-
-        const previousSectionId = sections[sectionPosition - 1]?.id;
-
-        if (!previousSectionId) {
-          return -1;
-        }
-
-        return questions.findIndex(
-          (q, i) =>
-            q.sectionId === previousSectionId &&
-            questions[i + 1]?.sectionId !== previousSectionId
-        );
-      }
-
-      return questions.findIndex((q) => q.id === currentQuestionId);
-    };
-
-    const addQuestion = () => {
-      const position = getPosition();
-      const newIndex = calculateNewIndex(questions, position);
-
-      const newQuestion = {
-        index: newIndex,
-        sectionId: currentSectionId,
-        ...defaultQuestion,
-      };
-
-      const questionId = insertQuestion(form.id, newQuestion);
-
-      const question = {
-        ...newQuestion,
-        id: questionId,
-      };
-
-      setQuestions((questions) => {
-        const newQuestions = [...questions];
-        newQuestions.splice(position + 1, 0, question);
-        return newQuestions;
-      });
-
-      setCurrentQuestionId(questionId);
-      setOpenDrawer(true);
-    };
-
-    const addSection = () => {
+  const getPosition = () => {
+    if (!currentQuestionId) {
       const sectionPosition = sections.findIndex(
         (s) => s.id === currentSectionId
       );
-      const newSectionIndex = calculateNewIndex(sections, sectionPosition);
 
-      const newSection = {
-        ...defaultSection,
-        index: newSectionIndex,
-      };
+      const previousSectionId = sections[sectionPosition - 1]?.id;
 
-      const sectionId = createSection(form.id, newSection);
+      if (!previousSectionId) {
+        return -1;
+      }
 
-      const questionPosition = questions.findIndex(
+      return questions.findIndex(
         (q, i) =>
-          q.sectionId === currentSectionId &&
-          questions[i + 1]?.sectionId !== currentSectionId
+          q.sectionId === previousSectionId &&
+          questions[i + 1]?.sectionId !== previousSectionId
       );
+    }
 
-      const index = calculateNewIndex(questions, questionPosition);
+    return questions.findIndex((q) => q.id === currentQuestionId);
+  };
 
-      const newQuestion = {
-        index,
-        sectionId: sectionId,
-        ...defaultQuestion,
-      };
+  const addQuestion = () => {
+    const position = getPosition();
+    const newIndex = calculateNewIndex(questions, position);
 
-      const questionId = insertQuestion(form.id, newQuestion);
-
-      const question = {
-        ...newQuestion,
-        id: questionId,
-      };
-
-      setQuestions((questions) => {
-        const newQuestions = [...questions];
-        newQuestions.splice(questionPosition + 1, 0, question);
-        return newQuestions;
-      });
-
-      const section = {
-        ...newSection,
-        id: sectionId,
-      };
-
-      setSections((sections) => {
-        const newSections = [...sections];
-        newSections.splice(sectionPosition + 1, 0, section);
-        return newSections;
-      });
-
-      setCurrentSectionId(sectionId);
-      setOpenDrawer(true);
+    const newQuestion = {
+      index: newIndex,
+      sectionId: currentSectionId,
+      ...defaultQuestion,
     };
 
-    const handleChangeSection = (e, value) => {
-      setCurrentSectionId(value);
+    const questionId = insertQuestion(form.id, newQuestion);
+
+    const question = {
+      ...newQuestion,
+      id: questionId,
     };
 
-    return (
-      <Box>
-        {currentSectionId && (
-          <TabContext value={currentSectionId}>
-            <TabList
-              onChange={handleChangeSection}
-              indicatorColor="primary"
-              variant="scrollable"
-              aria-label="sections tabs"
-              sx={{
-                "& .MuiTabs-scrollButtons.Mui-disabled": {
-                  opacity: 0.3,
-                },
-              }}
-            >
-              {sections.map((section) => (
-                <Tab
-                  key={section.id}
-                  label={section.title}
-                  value={section.id}
-                  wrapped
-                />
-              ))}
-            </TabList>
+    setQuestions((questions) => {
+      const newQuestions = [...questions];
+      newQuestions.splice(position + 1, 0, question);
+      return newQuestions;
+    });
+
+    setCurrentQuestionId(questionId);
+    setOpenDrawer(true);
+  };
+
+  const addSection = () => {
+    const sectionPosition = sections.findIndex(
+      (s) => s.id === currentSectionId
+    );
+    const newSectionIndex = calculateNewIndex(sections, sectionPosition);
+
+    const newSection = {
+      ...defaultSection,
+      index: newSectionIndex,
+    };
+
+    const sectionId = createSection(form.id, newSection);
+
+    const questionPosition = questions.findIndex(
+      (q, i) =>
+        q.sectionId === currentSectionId &&
+        questions[i + 1]?.sectionId !== currentSectionId
+    );
+
+    const index = calculateNewIndex(questions, questionPosition);
+
+    const newQuestion = {
+      index,
+      sectionId: sectionId,
+      ...defaultQuestion,
+    };
+
+    const questionId = insertQuestion(form.id, newQuestion);
+
+    const question = {
+      ...newQuestion,
+      id: questionId,
+    };
+
+    setQuestions((questions) => {
+      const newQuestions = [...questions];
+      newQuestions.splice(questionPosition + 1, 0, question);
+      return newQuestions;
+    });
+
+    const section = {
+      ...newSection,
+      id: sectionId,
+    };
+
+    setSections((sections) => {
+      const newSections = [...sections];
+      newSections.splice(sectionPosition + 1, 0, section);
+      return newSections;
+    });
+
+    setCurrentSectionId(sectionId);
+    setOpenDrawer(true);
+  };
+
+  const handleChangeSection = (e, value) => {
+    setCurrentSectionId(value);
+  };
+
+  return (
+    <Box>
+      {currentSectionId && (
+        <TabContext value={currentSectionId}>
+          <TabList
+            onChange={handleChangeSection}
+            indicatorColor="primary"
+            variant="scrollable"
+            aria-label="sections tabs"
+            sx={{
+              "& .MuiTabs-scrollButtons.Mui-disabled": {
+                opacity: 0.3,
+              },
+            }}
+          >
             {sections.map((section) => (
-              <TabPanel
+              <Tab
                 key={section.id}
-                sx={{ p: 0, pt: 2 }}
+                label={section.title}
                 value={section.id}
-              >
-                <Stack spacing={2}>
-                  <SectionCard
-                    section={section}
+                wrapped
+              />
+            ))}
+          </TabList>
+          {sections.map((section) => (
+            <TabPanel key={section.id} sx={{ p: 0, pt: 2 }} value={section.id}>
+              <Stack spacing={2}>
+                <SectionCard section={section} setOpenDrawer={setOpenDrawer} />
+                {sectionQuestions.map((question) => (
+                  <QuestionPreview
+                    key={question.id}
+                    question={question}
                     setOpenDrawer={setOpenDrawer}
                   />
-                  {sectionQuestions.map((question) => (
-                    <QuestionPreview
-                      key={question.id}
-                      question={question}
-                      setOpenDrawer={setOpenDrawer}
-                    />
-                  ))}
-                </Stack>
-              </TabPanel>
-            ))}
-          </TabContext>
-        )}
-        <SpeedDial
-          ariaLabel="acciones"
-          sx={{ position: "fixed", bottom: "8%", right: "5%" }}
-          icon={<SpeedDialIcon />}
-        >
-          {sections.length && (
-            <SpeedDialAction
-              icon={<PlaylistAdd />}
-              tooltipTitle="Agregar pregunta"
-              onClick={addQuestion}
-            />
-          )}
+                ))}
+              </Stack>
+            </TabPanel>
+          ))}
+        </TabContext>
+      )}
+      <SpeedDial
+        ariaLabel="acciones"
+        sx={{ position: "fixed", bottom: "8%", right: "5%" }}
+        icon={<SpeedDialIcon />}
+      >
+        {sections.length && (
           <SpeedDialAction
-            icon={<Queue />}
-            tooltipTitle="Agregar sección"
-            onClick={addSection}
+            icon={<PlaylistAdd />}
+            tooltipTitle="Agregar pregunta"
+            onClick={addQuestion}
           />
-        </SpeedDial>
-      </Box>
-    );
-  }, [
-    currentQuestionId,
-    currentSectionId,
-    form.id,
-    questions,
-    sectionQuestions,
-    sections,
-    setCurrentQuestionId,
-    setCurrentSectionId,
-    setOpenDrawer,
-    setQuestions,
-    setSections,
-  ]);
+        )}
+        <SpeedDialAction
+          icon={<Queue />}
+          tooltipTitle="Agregar sección"
+          onClick={addSection}
+        />
+      </SpeedDial>
+    </Box>
+  );
 };
 
 export default Questions;

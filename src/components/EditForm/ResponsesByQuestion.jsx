@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import {
   Box,
   Card as MuiCard,
@@ -36,7 +36,7 @@ const ResponsesByQuestion = () => {
   const question = questions[page - 1];
   const answers = responses.map((r) => r.answers);
 
-  const answersWithStats = useMemo(() => {
+  const answersWithStats = () => {
     const responseCount = {};
 
     answers.forEach((response) => {
@@ -80,108 +80,106 @@ const ResponsesByQuestion = () => {
       value: JSON.parse(value),
       count,
     }));
-  }, [answers, question.id, question.type]);
+  };
 
-  return useMemo(() => {
-    const renderItem = (item) => {
-      let title = "";
+  const renderItem = (item) => {
+    let title = "";
 
-      if (item.type === "page") {
-        title = questions[item.page - 1].title;
-      } else if (item.type === "previous") {
-        title = "Anterior";
-      } else if (item.type === "next") {
-        title = "Siguiente";
-      }
-
-      return (
-        <Tooltip title={title} arrow>
-          <span>
-            <PaginationItem {...item} />
-          </span>
-        </Tooltip>
-      );
-    };
-
-    const renderValue = (value) => {
-      if (question.type === CHECKBOX) {
-        return (
-          <FormGroup>
-            {value.map((option, i) => (
-              <FormControlLabel
-                key={i}
-                disabled
-                checked={true}
-                control={<Checkbox />}
-                label={<Typography>{option}</Typography>}
-              />
-            ))}
-          </FormGroup>
-        );
-      }
-
-      if (question.type === SORTABLE) {
-        return (
-          <Stack spacing={1}>
-            {value.map((option, i) => (
-              <MuiCard key={i} sx={{ p: 2 }}>
-                <Typography>{option}</Typography>
-              </MuiCard>
-            ))}
-          </Stack>
-        );
-      }
-
-      if (question.type === SLIDER) {
-        return <Slider disabled question={question} value={value} />;
-      }
-
-      if (question.type === RATING) {
-        return <Rating readOnly value={value} />;
-      }
-
-      if (question.type === FILE) {
-        return <FilesResponse files={value} />;
-      }
-
-      return <Typography>{value}</Typography>;
-    };
+    if (item.type === "page") {
+      title = questions[item.page - 1].title;
+    } else if (item.type === "previous") {
+      title = "Anterior";
+    } else if (item.type === "next") {
+      title = "Siguiente";
+    }
 
     return (
-      <Box>
-        <Stack spacing={2}>
-          <Pagination
-            count={questions.length}
-            page={page}
-            onChange={(e, p) => setPage(p)}
-            color="primary"
-            shape="rounded"
-            renderItem={renderItem}
-          />
-          <Card>
-            <Typography fontSize="h6.fontSize">{question.title}</Typography>
-          </Card>
-          {answersWithStats.map((response, i) => (
-            <Card key={i}>
-              <Box sx={{ mb: 1 }}>
-                {response.value === "" ||
-                response.value === undefined ||
-                response.value === null ||
-                response.value.length === 0 ? (
-                  <Typography fontStyle="italic">Respuesta vacía</Typography>
-                ) : (
-                  renderValue(response.value)
-                )}
-              </Box>
-              <Typography color="text.secondary" variant="caption">
-                {getResponseCountText(response.count)}
-              </Typography>
-            </Card>
+      <Tooltip title={title} arrow>
+        <span>
+          <PaginationItem {...item} />
+        </span>
+      </Tooltip>
+    );
+  };
+
+  const renderValue = (value) => {
+    if (question.type === CHECKBOX) {
+      return (
+        <FormGroup>
+          {value.map((option, i) => (
+            <FormControlLabel
+              key={i}
+              disabled
+              checked={true}
+              control={<Checkbox />}
+              label={<Typography>{option}</Typography>}
+            />
+          ))}
+        </FormGroup>
+      );
+    }
+
+    if (question.type === SORTABLE) {
+      return (
+        <Stack spacing={1}>
+          {value.map((option, i) => (
+            <MuiCard key={i} sx={{ p: 2 }}>
+              <Typography>{option}</Typography>
+            </MuiCard>
           ))}
         </Stack>
-      </Box>
-    );
-  }, [questions, page, question, answersWithStats]);
+      );
+    }
+
+    if (question.type === SLIDER) {
+      return <Slider disabled question={question} value={value} />;
+    }
+
+    if (question.type === RATING) {
+      return <Rating readOnly value={value} />;
+    }
+
+    if (question.type === FILE) {
+      return <FilesResponse files={value} />;
+    }
+
+    return <Typography>{value}</Typography>;
+  };
+
+  return (
+    <Box>
+      <Stack spacing={2}>
+        <Pagination
+          count={questions.length}
+          page={page}
+          onChange={(e, p) => setPage(p)}
+          color="primary"
+          shape="rounded"
+          renderItem={renderItem}
+        />
+        <Card>
+          <Typography fontSize="h6.fontSize">{question.title}</Typography>
+        </Card>
+        {answersWithStats.map((response, i) => (
+          <Card key={i}>
+            <Box sx={{ mb: 1 }}>
+              {response.value === "" ||
+              response.value === undefined ||
+              response.value === null ||
+              response.value.length === 0 ? (
+                <Typography fontStyle="italic">Respuesta vacía</Typography>
+              ) : (
+                renderValue(response.value)
+              )}
+            </Box>
+            <Typography color="text.secondary" variant="caption">
+              {getResponseCountText(response.count)}
+            </Typography>
+          </Card>
+        ))}
+      </Stack>
+    </Box>
+  );
 };
 
 export default ResponsesByQuestion;
