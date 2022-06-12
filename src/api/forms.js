@@ -16,6 +16,7 @@ import { db } from "./firebaseConfig";
 import { defaultQuestion } from "../constants/questions";
 import { getQuestionsOnce, insertQuestion } from "./questions";
 import { sendNotification } from "./notifications";
+import { createSection } from "./sections";
 
 const formsRef = collection(db, "forms");
 
@@ -43,7 +44,17 @@ export const createForm = (user) => {
     },
   });
 
-  insertQuestion(formRef.id, { ...defaultQuestion, index: 0 });
+  const sectionId = createSection(formRef.id, {
+    title: "Sección sin título",
+    description: "Sin Descripción",
+    index: 0,
+  });
+
+  insertQuestion(formRef.id, {
+    ...defaultQuestion,
+    index: 0,
+    sectionId,
+  });
 
   return formRef.id;
 };
@@ -185,6 +196,7 @@ export const saveForm = (form) => {
 export const deleteForm = (formId) => {
   const formRef = doc(db, "forms", formId);
   deleteDoc(formRef);
+  // TODO: Delete questions, sections, responses, etc.
 };
 
 export const addCollaborator = async (form, collaboratorEmail) => {
