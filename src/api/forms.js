@@ -14,6 +14,7 @@ import {
 } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 import { defaultQuestion } from "../constants/questions";
+import { defaultSection } from "../constants/sections";
 import { getQuestionsOnce, insertQuestion } from "./questions";
 import { sendNotification } from "./notifications";
 import { createSection } from "./sections";
@@ -45,8 +46,7 @@ export const createForm = (user) => {
   });
 
   const sectionId = createSection(formRef.id, {
-    title: "Sección sin título",
-    description: "Sin Descripción",
+    ...defaultSection,
     index: 0,
   });
 

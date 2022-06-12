@@ -16,7 +16,6 @@ import {
   ContentCopy,
   Delete as DeleteIcon,
 } from "@mui/icons-material";
-import Lottie from "lottie-react";
 import debounce from "lodash.debounce";
 import {
   compatibility,
@@ -39,22 +38,19 @@ import { useForm } from "../../hooks/useForm";
 import { useAlert } from "../../hooks/useAlert";
 import EditOptions from "./EditOptions";
 import { calculateNewIndex } from "../../utils/forms";
-import selectAnimation from "../../assets/select.json";
 
 const EditQuestion = ({ setOpenDrawer }) => {
   const {
     form,
+    question,
     questions,
     setQuestions,
-    currentQuestion,
-    setCurrentQuestion,
+    sectionQuestions,
+    currentQuestionId,
+    setCurrentQuestionId,
     responses,
   } = useForm();
   const openAlert = useAlert();
-
-  const question = useMemo(() => {
-    return questions.find((q) => q.id === currentQuestion);
-  }, [questions, currentQuestion]);
 
   const debouncedSave = useMemo(
     () =>
@@ -151,30 +147,24 @@ const EditQuestion = ({ setOpenDrawer }) => {
       );
     };
 
-    const removeQuestion = (questionId) => {
+    const removeQuestion = () => {
       openAlert({
         title: "Eliminar pregunta",
         message: "¿Estás seguro de eliminar esta pregunta?",
         action: () => {
-          deleteQuestion(form.id, questionId);
+          const deletedQuestionPosition = sectionQuestions.findIndex(
+            (question) => question.id === currentQuestionId
+          );
+          deleteQuestion(form.id, currentQuestionId);
+          if (deletedQuestionPosition > 0) {
+            setCurrentQuestionId(
+              sectionQuestions[deletedQuestionPosition - 1].id
+            );
+          }
           setOpenDrawer(false);
         },
       });
     };
-
-    if (!question) {
-      return (
-        <Box>
-          <Box sx={{ width: "65%", mx: "auto" }}>
-            <Lottie animationData={selectAnimation} loop />
-          </Box>
-          <Typography align="center">
-            No hay pregunta seleccionada. ¡Haz click en una para comenzar a
-            editar!
-          </Typography>
-        </Box>
-      );
-    }
 
     const swapQuestion = (direction) => {
       const i = questions.indexOf(question);
@@ -198,15 +188,27 @@ const EditQuestion = ({ setOpenDrawer }) => {
       );
     };
 
-    const duplicateQuestion = (question) => {
-      const newIndex = calculateNewIndex(questions, question.id);
+    const duplicateQuestion = () => {
+      const position = questions.indexOf(question);
+      const newIndex = calculateNewIndex(questions, position);
       const { id, ...questionData } = question;
 
       questionData.index = newIndex;
 
       const newQuestionId = insertQuestion(form.id, questionData);
 
-      setCurrentQuestion(newQuestionId);
+      const newQuestion = {
+        ...questionData,
+        id: newQuestionId,
+      };
+
+      setQuestions((questions) => {
+        const newQuestions = [...questions];
+        newQuestions.splice(position + 1, 0, newQuestion);
+        return newQuestions;
+      });
+
+      setCurrentQuestionId(newQuestionId);
       setOpenDrawer(true);
     };
 
@@ -227,6 +229,10 @@ const EditQuestion = ({ setOpenDrawer }) => {
       return !compatibility[question.type].includes(type);
     };
 
+    if (!question) {
+      return null;
+    }
+
     return (
       <Stack spacing={3}>
         <Box
@@ -241,7 +247,7 @@ const EditQuestion = ({ setOpenDrawer }) => {
             <Tooltip title="Mover arriba" arrow>
               <span>
                 <IconButton
-                  disabled={question === questions[0]}
+                  disabled={question === sectionQuestions[0]}
                   onClick={() => swapQuestion("up")}
                 >
                   <ArrowUpward />
@@ -251,7 +257,9 @@ const EditQuestion = ({ setOpenDrawer }) => {
             <Tooltip title="Mover abajo" arrow>
               <span>
                 <IconButton
-                  disabled={question === questions[questions.length - 1]}
+                  disabled={
+                    question === sectionQuestions[sectionQuestions.length - 1]
+                  }
                   onClick={() => swapQuestion("down")}
                 >
                   <ArrowDownward />
@@ -317,12 +325,12 @@ const EditQuestion = ({ setOpenDrawer }) => {
           </Box>
           <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
             <Tooltip title="Duplicar pregunta" arrow>
-              <IconButton onClick={() => duplicateQuestion(question)}>
+              <IconButton onClick={() => duplicateQuestion()}>
                 <ContentCopy />
               </IconButton>
             </Tooltip>
             <Tooltip title="Eliminar pregunta" arrow>
-              <IconButton onClick={() => removeQuestion(question.id)}>
+              <IconButton onClick={() => removeQuestion()}>
                 <DeleteIcon />
               </IconButton>
             </Tooltip>
@@ -331,13 +339,15 @@ const EditQuestion = ({ setOpenDrawer }) => {
       </Stack>
     );
   }, [
+    currentQuestionId,
     debouncedSave,
     form.id,
     openAlert,
     question,
     questions,
     responses,
-    setCurrentQuestion,
+    sectionQuestions,
+    setCurrentQuestionId,
     setOpenDrawer,
     setQuestions,
   ]);

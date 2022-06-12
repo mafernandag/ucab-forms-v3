@@ -55,7 +55,6 @@ export const submitResponse = async (form, response) => {
 
     return { responseId: responseRef.id };
   } catch (error) {
-    console.log(error);
     return { error: { message: "Error al guardar las respuestas" } };
   }
 };
