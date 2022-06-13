@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { PlaylistAdd, Queue } from "@mui/icons-material";
+import { sortBy } from "lodash";
 import { defaultQuestion } from "../../constants/questions";
 import { defaultSection } from "../../constants/sections";
 import { useForm } from "../../hooks/useForm";
@@ -22,7 +23,6 @@ const Questions = ({ setOpenDrawer }) => {
     form,
     sections,
     setSections,
-    questions,
     setQuestions,
     sectionQuestions,
     currentQuestionId,
@@ -31,31 +31,12 @@ const Questions = ({ setOpenDrawer }) => {
     setCurrentSectionId,
   } = useForm();
 
-  const getPosition = () => {
-    if (!currentQuestionId) {
-      const sectionPosition = sections.findIndex(
-        (s) => s.id === currentSectionId
-      );
-
-      const previousSectionId = sections[sectionPosition - 1]?.id;
-
-      if (!previousSectionId) {
-        return -1;
-      }
-
-      return questions.findIndex(
-        (q, i) =>
-          q.sectionId === previousSectionId &&
-          questions[i + 1]?.sectionId !== previousSectionId
-      );
-    }
-
-    return questions.findIndex((q) => q.id === currentQuestionId);
-  };
-
   const addQuestion = () => {
-    const position = getPosition();
-    const newIndex = calculateNewIndex(questions, position);
+    const position = sectionQuestions.findIndex(
+      (q) => q.id === currentQuestionId
+    );
+
+    const newIndex = calculateNewIndex(sectionQuestions, position);
 
     const newQuestion = {
       index: newIndex,
@@ -71,9 +52,8 @@ const Questions = ({ setOpenDrawer }) => {
     };
 
     setQuestions((questions) => {
-      const newQuestions = [...questions];
-      newQuestions.splice(position + 1, 0, question);
-      return newQuestions;
+      const newQuestions = [...questions, question];
+      return sortBy(newQuestions, ["sectionId", "index"]);
     });
 
     setCurrentQuestionId(questionId);
@@ -93,18 +73,21 @@ const Questions = ({ setOpenDrawer }) => {
 
     const sectionId = createSection(form.id, newSection);
 
-    const questionPosition = questions.findIndex(
-      (q, i) =>
-        q.sectionId === currentSectionId &&
-        questions[i + 1]?.sectionId !== currentSectionId
-    );
+    const section = {
+      ...newSection,
+      id: sectionId,
+    };
 
-    const index = calculateNewIndex(questions, questionPosition);
+    setSections((sections) => {
+      const newSections = [...sections];
+      newSections.splice(sectionPosition + 1, 0, section);
+      return newSections;
+    });
 
     const newQuestion = {
-      index,
-      sectionId: sectionId,
       ...defaultQuestion,
+      index: 0,
+      sectionId: sectionId,
     };
 
     const questionId = insertQuestion(form.id, newQuestion);
@@ -115,20 +98,8 @@ const Questions = ({ setOpenDrawer }) => {
     };
 
     setQuestions((questions) => {
-      const newQuestions = [...questions];
-      newQuestions.splice(questionPosition + 1, 0, question);
-      return newQuestions;
-    });
-
-    const section = {
-      ...newSection,
-      id: sectionId,
-    };
-
-    setSections((sections) => {
-      const newSections = [...sections];
-      newSections.splice(sectionPosition + 1, 0, section);
-      return newSections;
+      const newQuestions = [...questions, question];
+      return sortBy(newQuestions, ["sectionId", "index"]);
     });
 
     setCurrentSectionId(sectionId);

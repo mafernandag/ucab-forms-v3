@@ -26,6 +26,14 @@ const plugins = [
     },
     "lab",
   ],
+  [
+    "babel-plugin-import",
+    {
+      libraryName: "lodash",
+      libraryDirectory: "",
+      camel2DashComponentName: false,
+    },
+  ],
 ];
 
 module.exports = { plugins };

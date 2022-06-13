@@ -12,8 +12,9 @@ import {
   ContentCopy,
   Delete as DeleteIcon,
 } from "@mui/icons-material";
-import debounce from "lodash.debounce";
+import { debounce } from "lodash";
 import { deleteSection, createSection, saveSection } from "../../api/sections";
+import { deleteQuestion, insertQuestion } from "../../api/questions";
 import { useForm } from "../../hooks/useForm";
 import { useAlert } from "../../hooks/useAlert";
 import { calculateNewIndex } from "../../utils/forms";
@@ -27,6 +28,7 @@ const EditSection = ({ setOpenDrawer }) => {
     setSections,
     currentSectionId,
     setCurrentSectionId,
+    sectionQuestions,
   } = useForm();
   const openAlert = useAlert();
 
@@ -59,6 +61,11 @@ const EditSection = ({ setOpenDrawer }) => {
           (section) => section.id === currentSectionId
         );
         deleteSection(form.id, currentSectionId);
+
+        sectionQuestions.forEach((question) => {
+          deleteQuestion(form.id, question.id);
+        });
+
         if (deletedSectionPosition > 0) {
           setCurrentSectionId(sections[deletedSectionPosition - 1].id);
         }
@@ -67,7 +74,6 @@ const EditSection = ({ setOpenDrawer }) => {
     });
   };
 
-  // TODO: Swap questions
   const swapSection = (direction) => {
     const i = sections.indexOf(section);
     const j = direction === "left" ? i - 1 : i + 1;
@@ -90,7 +96,6 @@ const EditSection = ({ setOpenDrawer }) => {
     );
   };
 
-  // TODO: Duplicate questions
   const duplicateSection = () => {
     const position = sections.indexOf(section);
     const newIndex = calculateNewIndex(sections, position);
@@ -109,6 +114,12 @@ const EditSection = ({ setOpenDrawer }) => {
       const newSections = [...sections];
       newSections.splice(position + 1, 0, newSection);
       return newSections;
+    });
+
+    sectionQuestions.forEach((question) => {
+      const { id, ...questionData } = question;
+      questionData.sectionId = newSectionId;
+      insertQuestion(form.id, questionData);
     });
 
     setCurrentSectionId(newSectionId);

@@ -16,7 +16,7 @@ import {
   ContentCopy,
   Delete as DeleteIcon,
 } from "@mui/icons-material";
-import debounce from "lodash.debounce";
+import { debounce } from "lodash";
 import {
   compatibility,
   questionTypes,

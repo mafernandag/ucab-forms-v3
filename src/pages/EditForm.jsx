@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Box, LinearProgress, Stack, TextField } from "@mui/material";
-import debounce from "lodash.debounce";
+import { debounce } from "lodash";
 import { saveForm } from "../api/forms";
 import { useUser } from "../hooks/useUser";
 import { useForm } from "../hooks/useForm";
