@@ -43,7 +43,6 @@ const EditQuestion = ({ setOpenDrawer }) => {
   const {
     form,
     question,
-    questions,
     setQuestions,
     sectionQuestions,
     currentQuestionId,
@@ -166,16 +165,16 @@ const EditQuestion = ({ setOpenDrawer }) => {
   };
 
   const swapQuestion = (direction) => {
-    const i = questions.indexOf(question);
+    const i = sectionQuestions.indexOf(question);
     const j = direction === "up" ? i - 1 : i + 1;
     const k = direction === "up" ? i - 2 : i + 2;
 
     let newIndex;
 
-    if (!questions[k]) {
-      newIndex = questions[j].index + (direction === "up" ? -1 : 1);
+    if (!sectionQuestions[k]) {
+      newIndex = sectionQuestions[j].index + (direction === "up" ? -1 : 1);
     } else {
-      newIndex = (questions[j].index + questions[k].index) / 2;
+      newIndex = (sectionQuestions[j].index + sectionQuestions[k].index) / 2;
     }
 
     const newQuestion = { ...question, index: newIndex };
@@ -188,8 +187,8 @@ const EditQuestion = ({ setOpenDrawer }) => {
   };
 
   const duplicateQuestion = () => {
-    const position = questions.indexOf(question);
-    const newIndex = calculateNewIndex(questions, position);
+    const position = sectionQuestions.indexOf(question);
+    const newIndex = calculateNewIndex(sectionQuestions, position);
     const { id, ...questionData } = question;
 
     questionData.index = newIndex;
@@ -203,6 +202,7 @@ const EditQuestion = ({ setOpenDrawer }) => {
 
     setQuestions((questions) => {
       const newQuestions = [...questions];
+      const position = questions.indexOf(question);
       newQuestions.splice(position + 1, 0, newQuestion);
       return newQuestions;
     });
