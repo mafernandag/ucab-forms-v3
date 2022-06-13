@@ -83,7 +83,7 @@ const EditSection = ({ setOpenDrawer }) => {
 
     const newSection = { ...section, index: newIndex };
 
-    debouncedSave(newSection);
+    saveSection(form.id, newSection);
 
     setSections((sections) =>
       sections.map((q) => (q.id === section.id ? newSection : q))

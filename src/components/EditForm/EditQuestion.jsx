@@ -180,7 +180,7 @@ const EditQuestion = ({ setOpenDrawer }) => {
 
     const newQuestion = { ...question, index: newIndex };
 
-    debouncedSave(newQuestion);
+    saveQuestion(form.id, newQuestion);
 
     setQuestions((questions) =>
       questions.map((q) => (q.id === question.id ? newQuestion : q))
