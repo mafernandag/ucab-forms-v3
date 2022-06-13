@@ -34,7 +34,22 @@ export const getSections = (formId, callback) => {
   });
 };
 
-// TODO: Implement getSectionsChanges if possible
+export const getSectionsChanges = (formId, callback) => {
+  const sectionsRef = collection(db, "forms", formId, "sections");
+
+  const q = query(sectionsRef, orderBy("index"));
+
+  return onSnapshot(q, (snapshot) => {
+    const changes = snapshot.docChanges().map((change) => ({
+      type: change.type,
+      oldIndex: change.oldIndex,
+      newIndex: change.newIndex,
+      section: { ...change.doc.data(), id: change.doc.id },
+    }));
+
+    callback(changes);
+  });
+};
 
 export const saveSection = (formId, section) => {
   const { id: sectionId, ...sectionData } = section;
@@ -45,5 +60,4 @@ export const saveSection = (formId, section) => {
 export const deleteSection = (formId, sectionId) => {
   const sectionRef = doc(db, "forms", formId, "sections", sectionId);
   deleteDoc(sectionRef);
-  // TODO: Delete questions
 };

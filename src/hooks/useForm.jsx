@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { getForm } from "../api/forms";
 import { getQuestionsChanges } from "../api/questions";
 import { getResponses } from "../api/responses";
-import { getSections } from "../api/sections";
+import { getSectionsChanges } from "../api/sections";
 
 const FormContext = createContext();
 
@@ -28,8 +28,26 @@ const FormProvider = ({ children }) => {
       setLoading(false);
     });
 
-    const unsubscribeSections = getSections(formId, (sections) => {
-      setSections(sections);
+    const unsubscribeSections = getSectionsChanges(formId, (changes) => {
+      setSections((oldSections) => {
+        const sections = [...oldSections];
+
+        changes.forEach((change) => {
+          if (
+            change.type === "added" &&
+            !oldSections.find((section) => section.id === change.section.id)
+          ) {
+            sections.splice(change.newIndex, 0, change.section);
+          } else if (change.type === "modified") {
+            sections.splice(change.oldIndex, 1);
+            sections.splice(change.newIndex, 0, change.section);
+          } else if (change.type === "removed") {
+            sections.splice(change.oldIndex, 1);
+          }
+        });
+
+        return sections;
+      });
     });
 
     const unsubscribeQuestions = getQuestionsChanges(formId, (changes) => {
