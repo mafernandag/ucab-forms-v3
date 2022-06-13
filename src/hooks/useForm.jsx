@@ -20,12 +20,14 @@ const FormProvider = ({ children }) => {
   const [currentSectionId, setCurrentSectionId] = useState(null);
   const [currentQuestionId, setCurrentQuestionId] = useState(null);
   const [isSectionSelected, setSectionSelected] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loadingForm, setLoadingForm] = useState(true);
+  const [loadingSections, setLoadingSections] = useState(true);
+  const [loadingQuestions, setLoadingQuestions] = useState(true);
 
   useEffect(() => {
     const unsubscribeForm = getForm(formId, (form) => {
       setForm(form);
-      setLoading(false);
+      setLoadingForm(false);
     });
 
     const unsubscribeSections = getSectionsChanges(formId, (changes) => {
@@ -48,6 +50,8 @@ const FormProvider = ({ children }) => {
 
         return sections;
       });
+
+      setLoadingSections(false);
     });
 
     const unsubscribeQuestions = getQuestionsChanges(formId, (changes) => {
@@ -70,6 +74,8 @@ const FormProvider = ({ children }) => {
 
         return questions;
       });
+
+      setLoadingQuestions(false);
     });
 
     const unsubscribeResponses = getResponses(formId, (responses) => {
@@ -139,6 +145,10 @@ const FormProvider = ({ children }) => {
       setSectionSelected(true);
     }
   }, [currentQuestionId]);
+
+  const loading = useMemo(() => {
+    return loadingForm || loadingSections || loadingQuestions;
+  }, [loadingForm, loadingSections, loadingQuestions]);
 
   const value = {
     form,
