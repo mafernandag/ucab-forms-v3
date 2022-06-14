@@ -107,6 +107,7 @@ const EditSection = ({ setOpenDrawer }) => {
 
     const newSection = {
       ...sectionData,
+      title: `${sectionData.title} - Copia`,
       id: newSectionId,
     };
 

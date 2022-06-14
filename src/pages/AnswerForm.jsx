@@ -62,6 +62,10 @@ const AnswerForm = () => {
     );
   }, [currentSectionId, form?.sections]);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [currentSectionId]);
+
   const initializeAnswers = useCallback((questions) => {
     const answers = {};
 
