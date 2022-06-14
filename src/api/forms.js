@@ -165,8 +165,10 @@ export const getFormOnce = async (formId) => {
       formData.settings.endDate = formData.settings.endDate.toDate();
     }
 
-    const questions = await getQuestionsOnce(formId);
+    const sections = await getSectionsOnce(formId);
+    formData.sections = sections;
 
+    const questions = await getQuestionsOnce(formId);
     formData.questions = questions;
 
     return formData;
