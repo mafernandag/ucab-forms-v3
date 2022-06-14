@@ -2,6 +2,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDocs,
   onSnapshot,
   orderBy,
   query,
@@ -16,6 +17,23 @@ export const createSection = (formId, section) => {
   setDoc(sectionRef, section);
 
   return sectionRef.id;
+};
+
+export const getSectionsOnce = async (formId) => {
+  const sectionsRef = collection(db, "forms", formId, "sections");
+
+  const q = query(sectionsRef, orderBy("index"));
+
+  const snapshot = await getDocs(q);
+
+  const sections = snapshot.docs.map((doc) => {
+    const section = doc.data();
+    section.id = doc.id;
+
+    return section;
+  });
+
+  return sections;
 };
 
 export const getSections = (formId, callback) => {

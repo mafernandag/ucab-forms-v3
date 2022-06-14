@@ -17,7 +17,7 @@ import { defaultQuestion } from "../constants/questions";
 import { defaultSection } from "../constants/sections";
 import { getQuestionsOnce, insertQuestion } from "./questions";
 import { sendNotification } from "./notifications";
-import { createSection } from "./sections";
+import { createSection, getSectionsOnce } from "./sections";
 
 const formsRef = collection(db, "forms");
 
@@ -77,11 +77,20 @@ export const duplicateForm = async (form, user) => {
     const newFormRef = doc(formsRef);
     setDoc(newFormRef, newForm);
 
+    const sections = await getSectionsOnce(form.id);
     const questions = await getQuestionsOnce(form.id);
 
-    questions.forEach((question) => {
-      const { id, ...questionData } = question;
-      insertQuestion(newFormRef.id, questionData);
+    sections.forEach((section) => {
+      const { id: oldSectionId, ...sectionData } = section;
+      const newSectionId = createSection(newFormRef.id, sectionData);
+
+      questions
+        .filter((question) => question.sectionId === oldSectionId)
+        .forEach((question) => {
+          const { id, ...questionData } = question;
+          questionData.sectionId = newSectionId;
+          insertQuestion(newFormRef.id, questionData);
+        });
     });
 
     return { newFormId: newFormRef.id };
