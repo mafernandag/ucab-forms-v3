@@ -313,33 +313,43 @@ const Options = ({ question, debouncedSave }) => {
           <FormLabel component="legend">Opciones</FormLabel>
           <FormGroup sx={{ mb: 1 }}>
             {question.options.map((option, i) => (
-              <Box
-                key={i}
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                }}
-              >
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <Typography
-                    mr={2}
-                    minWidth={15}
-                    align="right"
-                    color="text.secondary"
-                  >
-                    {i + 1}.
-                  </Typography>
-                  <TextField
-                    variant="standard"
-                    value={option}
-                    onChange={handleChangeOption(i)}
-                  />
+              <Box>
+                <Box
+                  key={i}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Typography
+                      mr={2}
+                      minWidth={15}
+                      align="right"
+                      color="text.secondary"
+                    >
+                      {i + 1}.
+                    </Typography>
+                    <TextField
+                      variant="standard"
+                      value={option}
+                      onChange={handleChangeOption(i)}
+                    />
+                  </Box>
+                  <Tooltip title="Eliminar opción" arrow>
+                    <IconButton onClick={deleteOption(i)}>
+                      <ClearIcon />
+                    </IconButton>
+                  </Tooltip>
                 </Box>
-                <Tooltip title="Eliminar opción" arrow>
-                  <IconButton onClick={deleteOption(i)}>
-                    <ClearIcon />
-                  </IconButton>
-                </Tooltip>
+                <Button
+                  variant="text"
+                  startIcon={<GoToIcon />}
+                  onClick={goToSectionOption(i)}
+                  size="small"
+                >
+                  Llevar a sección
+                </Button>
               </Box>
             ))}
           </FormGroup>
