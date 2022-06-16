@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Box,
   Card as MuiCard,
@@ -36,7 +36,7 @@ const ResponsesByQuestion = () => {
   const question = questions[page - 1];
   const answers = responses.map((r) => r.answers);
 
-  const answersWithStats = () => {
+  const answersWithStats = useMemo(() => {
     const responseCount = {};
 
     answers.forEach((response) => {
@@ -80,7 +80,7 @@ const ResponsesByQuestion = () => {
       value: JSON.parse(value),
       count,
     }));
-  };
+  }, [answers, question]);
 
   const renderItem = (item) => {
     let title = "";
