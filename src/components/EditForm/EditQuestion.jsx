@@ -322,6 +322,14 @@ const EditQuestion = ({ setOpenDrawer }) => {
             label="Obligatoria"
           />
         </Box>
+        <Box>
+          <FormControlLabel
+            control={<Checkbox />}
+            checked={question.conditioned}
+            onChange={handleChangeChecked("conditioning")}
+            label="Pregunta condicionada"
+          />
+        </Box>
         <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
           <Tooltip title="Duplicar pregunta" arrow>
             <IconButton onClick={() => duplicateQuestion()}>

@@ -14,7 +14,10 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { Clear as ClearIcon } from "@mui/icons-material";
+import {
+  Clear as ClearIcon,
+  ExitToAppRounded as GoToIcon,
+} from "@mui/icons-material";
 import {
   CHECKBOX,
   RADIO,
@@ -129,6 +132,8 @@ const Options = ({ question, debouncedSave }) => {
     );
   };
 
+  const goToSectionOption = (i) => () => {};
+
   const addOther = () => {
     const newQuestion = { ...question, other: true };
 
@@ -174,27 +179,39 @@ const Options = ({ question, debouncedSave }) => {
           <FormLabel component="legend">Opciones</FormLabel>
           <RadioGroup sx={{ mb: 1 }}>
             {question.options.map((option, i) => (
-              <Box
-                key={i}
-                sx={{ display: "flex", justifyContent: "space-between" }}
-              >
-                <FormControlLabel
-                  disabled
-                  control={<Radio />}
-                  value={option}
-                  label={
-                    <TextField
-                      variant="standard"
-                      value={option}
-                      onChange={handleChangeOption(i)}
-                    />
-                  }
-                />
-                <Tooltip title="Eliminar">
-                  <IconButton onClick={deleteOption(i)}>
-                    <ClearIcon />
-                  </IconButton>
-                </Tooltip>
+              <Box>
+                <Box
+                  key={i}
+                  sx={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <FormControlLabel
+                    disabled
+                    control={<Radio />}
+                    value={option}
+                    label={
+                      <TextField
+                        variant="standard"
+                        value={option}
+                        onChange={handleChangeOption(i)}
+                      />
+                    }
+                  />
+
+                  <Tooltip title="Eliminar">
+                    <IconButton onClick={deleteOption(i)}>
+                      <ClearIcon />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
+
+                <Button
+                  variant="text"
+                  startIcon={<GoToIcon />}
+                  onClick={goToSectionOption(i)}
+                  size="small"
+                >
+                  Llevar a sección
+                </Button>
               </Box>
             ))}
             {question.other && (
@@ -213,6 +230,7 @@ const Options = ({ question, debouncedSave }) => {
               </Box>
             )}
           </RadioGroup>
+
           <Button size="small" onClick={addOption}>
             Agregar opción
           </Button>
@@ -229,27 +247,37 @@ const Options = ({ question, debouncedSave }) => {
           <FormLabel component="legend">Opciones</FormLabel>
           <FormGroup sx={{ mb: 1 }}>
             {question.options.map((option, i) => (
-              <Box
-                key={i}
-                sx={{ display: "flex", justifyContent: "space-between" }}
-              >
-                <FormControlLabel
-                  disabled
-                  control={<Checkbox />}
-                  value={option}
-                  label={
-                    <TextField
-                      variant="standard"
-                      value={option}
-                      onChange={handleChangeOption(i)}
-                    />
-                  }
-                />
-                <Tooltip title="Eliminar opción" arrow>
-                  <IconButton onClick={deleteOption(i)}>
-                    <ClearIcon />
-                  </IconButton>
-                </Tooltip>
+              <Box>
+                <Box
+                  key={i}
+                  sx={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <FormControlLabel
+                    disabled
+                    control={<Checkbox />}
+                    value={option}
+                    label={
+                      <TextField
+                        variant="standard"
+                        value={option}
+                        onChange={handleChangeOption(i)}
+                      />
+                    }
+                  />
+                  <Tooltip title="Eliminar opción" arrow>
+                    <IconButton onClick={deleteOption(i)}>
+                      <ClearIcon />
+                    </IconButton>
+                  </Tooltip>
+                </Box>{" "}
+                <Button
+                  variant="text"
+                  startIcon={<GoToIcon />}
+                  onClick={goToSectionOption(i)}
+                  size="small"
+                >
+                  Llevar a sección
+                </Button>
               </Box>
             ))}
             {question.other && (
