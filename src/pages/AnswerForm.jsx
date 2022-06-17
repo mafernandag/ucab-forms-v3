@@ -14,21 +14,27 @@ import { getFormOnce } from "../api/forms";
 import { submitResponse, checkUserHasResponses } from "../api/responses";
 import {
   CHECKBOX,
+  DATE,
+  DATETIME,
   FILE,
   RADIO,
   RATING,
   SLIDER,
   SORTABLE,
+  TIME,
 } from "../constants/questions";
 import { useUser } from "../hooks/useUser";
+import { useAlert } from "../hooks/useAlert";
 import Header from "../components/Header";
 import Card from "../components/Card";
 import Question from "../components/Question";
 import AnswerPageText from "../components/AnswerPageText";
+import { useMemo } from "react";
 
 const AnswerForm = () => {
   const { id: formId } = useParams();
   const [form, setForm] = useState(null);
+  const [currentSectionId, setCurrentSectionId] = useState(null);
   const [response, setResponse] = useState({});
   const [errors, setErrors] = useState({});
   const [answers, setAnswers] = useState();
@@ -38,6 +44,27 @@ const AnswerForm = () => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const user = useUser();
+  const openAlert = useAlert();
+
+  const sectionQuestions = useMemo(() => {
+    return form?.questions.filter(
+      (question) => question.sectionId === currentSectionId
+    );
+  }, [currentSectionId, form?.questions]);
+
+  const currentSection = useMemo(() => {
+    return form?.sections.find((section) => section.id === currentSectionId);
+  }, [currentSectionId, form?.sections]);
+
+  const currentSectionPosition = useMemo(() => {
+    return form?.sections.findIndex(
+      (section) => section.id === currentSectionId
+    );
+  }, [currentSectionId, form?.sections]);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [currentSectionId]);
 
   const initializeAnswers = useCallback((questions) => {
     const answers = {};
@@ -60,6 +87,19 @@ const AnswerForm = () => {
 
     setAnswers(answers);
   }, []);
+
+  const resetForm = () => {
+    openAlert({
+      title: "Borrar respuestas",
+      message: "¿Estás seguro de borrar todas tus respuestas de esta encuesta?",
+      fullWidth: false,
+      action: () => {
+        setErrors({});
+        initializeAnswers(form.questions);
+        setCurrentSectionId(form.sections[0].id);
+      },
+    });
+  };
 
   useEffect(() => {
     const randomizeOptionsOrder = (questions) => {
@@ -91,6 +131,7 @@ const AnswerForm = () => {
         }
 
         setForm(form);
+        setCurrentSectionId(form.sections[0]?.id);
         initializeAnswers(form.questions);
 
         navigator.geolocation.getCurrentPosition((position) => {
@@ -113,27 +154,38 @@ const AnswerForm = () => {
     let shouldReturn = false;
     const newErrors = { ...errors };
 
-    form.questions.forEach((question) => {
-      if (question.required) {
-        if (
-          ((question.type === CHECKBOX || question.type === FILE) &&
-            !answers[question.id].length) ||
-          (question.type === RATING && !answers[question.id])
-        ) {
-          newErrors[question.id] = true;
-          shouldReturn = true;
-        } else {
-          newErrors[question.id] = false;
-        }
+    sectionQuestions.forEach((question) => {
+      newErrors[question.id] = "";
+
+      if (
+        question.required &&
+        (((question.type === CHECKBOX || question.type === FILE) &&
+          !answers[question.id].length) ||
+          (question.type === RATING && !answers[question.id]))
+      ) {
+        newErrors[question.id] = "Esta pregunta es obligatoria";
+        shouldReturn = true;
+      }
+
+      if (
+        [DATE, TIME, DATETIME].includes(question.type) &&
+        answers[question.id].toString() === "Invalid Date"
+      ) {
+        newErrors[question.id] = "El formato es inválido";
+        shouldReturn = true;
       }
     });
 
     setErrors(newErrors);
 
     if (shouldReturn) {
-      return enqueueSnackbar("Aún tienes preguntas por responder", {
+      return enqueueSnackbar("Aún tienes preguntas pendientes", {
         variant: "error",
       });
+    }
+
+    if (currentSectionPosition !== form.sections.length - 1) {
+      return setCurrentSectionId(form.sections[currentSectionPosition + 1].id);
     }
 
     setSubmitting(true);
@@ -208,6 +260,10 @@ const AnswerForm = () => {
     }
   }
 
+  if (form.sections.length === 0 || form.questions.length === 0) {
+    return <AnswerPageText>Esta encuesta no tiene preguntas</AnswerPageText>;
+  }
+
   return (
     <Box>
       <Header />
@@ -223,8 +279,23 @@ const AnswerForm = () => {
                 * Obligatorio
               </Typography>
             </Card>
-            {form.questions.map((question) => (
-              <Card key={question.id}>
+            {currentSection && (
+              <Card>
+                <Typography variant="h6" mb={1}>
+                  {currentSection.title}
+                </Typography>
+                <Typography>{currentSection.description}</Typography>
+              </Card>
+            )}
+            {sectionQuestions.map((question) => (
+              <Card
+                key={question.id}
+                sx={{
+                  ...(errors[question.id] && {
+                    borderColor: (theme) => theme.palette.error.light,
+                  }),
+                }}
+              >
                 <Question
                   question={question}
                   answers={answers}
@@ -236,7 +307,7 @@ const AnswerForm = () => {
                     severity="error"
                     sx={{ mt: 3, border: "none", p: 0 }}
                   >
-                    Esta pregunta es requerida
+                    {errors[question.id]}
                   </Alert>
                 )}
               </Card>
@@ -264,22 +335,44 @@ const AnswerForm = () => {
                 flexShrink: 0,
                 alignItems: "center",
                 mb: { xs: 2, sm: 0 },
+                gap: { xs: 1, sm: 2 },
               }}
             >
               <Button
-                sx={{ px: 1, mr: 2 }}
-                onClick={() => initializeAnswers(form.questions)}
+                sx={{ px: 1, mr: { xs: 1, sm: 2 } }}
+                disabled={submitting}
+                onClick={resetForm}
               >
                 Borrar respuestas
               </Button>
-              <Button
-                type="submit"
-                disabled={submitting}
-                variant="contained"
-                sx={{ px: 5 }}
-              >
-                Enviar
-              </Button>
+              {currentSectionPosition !== 0 && (
+                <Button
+                  variant="outlined"
+                  sx={{ px: 3 }}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setCurrentSectionId(
+                      form.sections[currentSectionPosition - 1].id
+                    );
+                  }}
+                >
+                  Atrás
+                </Button>
+              )}
+              {currentSectionPosition === form.sections.length - 1 ? (
+                <Button
+                  type="submit"
+                  disabled={submitting}
+                  variant="contained"
+                  sx={{ px: 4 }}
+                >
+                  Enviar
+                </Button>
+              ) : (
+                <Button type="submit" variant="contained" sx={{ px: 3 }}>
+                  Siguiente
+                </Button>
+              )}
             </Box>
           </Box>
         </form>

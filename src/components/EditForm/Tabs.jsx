@@ -25,7 +25,7 @@ const Tabs = ({ setOpenDrawer }) => {
           <Tab label="Respuestas" value={"1"} />
         </TabList>
       </AppBar>
-      <TabPanel sx={{ p: 0, pt: 1 }} value={"0"}>
+      <TabPanel sx={{ p: 0 }} value={"0"}>
         <Questions setOpenDrawer={setOpenDrawer} />
       </TabPanel>
       <TabPanel sx={{ p: 0, pt: 1 }} value={"1"}>

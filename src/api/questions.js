@@ -47,7 +47,7 @@ export const getQuestions = (formId, callback) => {
 export const getQuestionsChanges = (formId, callback) => {
   const questionsRef = collection(db, "forms", formId, "questions");
 
-  const q = query(questionsRef, orderBy("index"));
+  const q = query(questionsRef, orderBy("sectionId"), orderBy("index"));
 
   return onSnapshot(q, (snapshot) => {
     const changes = snapshot.docChanges().map((change) => ({

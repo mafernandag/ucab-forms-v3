@@ -1,12 +1,15 @@
 import { Box, Container, Drawer, Toolbar, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import { useForm } from "../../hooks/useForm";
 import EditQuestion from "./EditQuestion";
+import EditSection from "./EditSection";
 
 const drawerWidth = 350;
 
 const DrawerLayout = ({ open, setOpen, children }) => {
   const theme = useTheme();
   const upMd = useMediaQuery(theme.breakpoints.up("md"));
+  const { currentQuestionId, isSectionSelected } = useForm();
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -28,10 +31,11 @@ const DrawerLayout = ({ open, setOpen, children }) => {
       >
         <Toolbar />
         <Box sx={{ overflow: "auto", p: 2 }}>
-          <EditQuestion setOpenDrawer={setOpen} />
+          {currentQuestionId && <EditQuestion setOpenDrawer={setOpen} />}
+          {isSectionSelected && <EditSection setOpenDrawer={setOpen} />}
         </Box>
       </Drawer>
-      <Container sx={{ p: 3 }} maxWidth="md">
+      <Container sx={{ p: 3, overflowX: "hidden" }} maxWidth="md">
         {children}
       </Container>
     </Box>

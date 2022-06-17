@@ -14,8 +14,10 @@ import {
 } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 import { defaultQuestion } from "../constants/questions";
+import { defaultSection } from "../constants/sections";
 import { getQuestionsOnce, insertQuestion } from "./questions";
 import { sendNotification } from "./notifications";
+import { createSection, getSectionsOnce } from "./sections";
 
 const formsRef = collection(db, "forms");
 
@@ -43,7 +45,16 @@ export const createForm = (user) => {
     },
   });
 
-  insertQuestion(formRef.id, { ...defaultQuestion, index: 0 });
+  const sectionId = createSection(formRef.id, {
+    ...defaultSection,
+    index: 0,
+  });
+
+  insertQuestion(formRef.id, {
+    ...defaultQuestion,
+    index: 0,
+    sectionId,
+  });
 
   return formRef.id;
 };
@@ -66,11 +77,20 @@ export const duplicateForm = async (form, user) => {
     const newFormRef = doc(formsRef);
     setDoc(newFormRef, newForm);
 
+    const sections = await getSectionsOnce(form.id);
     const questions = await getQuestionsOnce(form.id);
 
-    questions.forEach((question) => {
-      const { id, ...questionData } = question;
-      insertQuestion(newFormRef.id, questionData);
+    sections.forEach((section) => {
+      const { id: oldSectionId, ...sectionData } = section;
+      const newSectionId = createSection(newFormRef.id, sectionData);
+
+      questions
+        .filter((question) => question.sectionId === oldSectionId)
+        .forEach((question) => {
+          const { id, ...questionData } = question;
+          questionData.sectionId = newSectionId;
+          insertQuestion(newFormRef.id, questionData);
+        });
     });
 
     return { newFormId: newFormRef.id };
@@ -145,8 +165,10 @@ export const getFormOnce = async (formId) => {
       formData.settings.endDate = formData.settings.endDate.toDate();
     }
 
-    const questions = await getQuestionsOnce(formId);
+    const sections = await getSectionsOnce(formId);
+    formData.sections = sections;
 
+    const questions = await getQuestionsOnce(formId);
     formData.questions = questions;
 
     return formData;
@@ -185,6 +207,7 @@ export const saveForm = (form) => {
 export const deleteForm = (formId) => {
   const formRef = doc(db, "forms", formId);
   deleteDoc(formRef);
+  // TODO: Delete questions, sections, responses, etc.
 };
 
 export const addCollaborator = async (form, collaboratorEmail) => {

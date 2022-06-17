@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import {
   Accordion,
   AccordionDetails,
@@ -23,104 +23,91 @@ const Comments = ({ response, question }) => {
   const [commenting, setCommenting] = useState(false);
   const user = useUser();
 
-  return useMemo(() => {
-    const comments = response.comments[question.id] || [];
+  const comments = response.comments[question.id] || [];
 
-    const handleAddComment = (e) => {
-      e.preventDefault();
+  const handleAddComment = (e) => {
+    e.preventDefault();
 
-      setCommenting(true);
+    setCommenting(true);
 
-      const comment = {
-        text: myComment,
-        author: user.name,
-        commentedAt: new Date(),
-      };
-
-      const newComments = {
-        ...response.comments,
-        [question.id]: [...comments, comment],
-      };
-
-      addComment(form.id, response.id, newComments);
-
-      setMyComment("");
-      setCommenting(false);
+    const comment = {
+      text: myComment,
+      author: user.name,
+      commentedAt: new Date(),
     };
 
-    return (
-      <Card variant="outlined">
-        <Accordion sx={{ background: "transparent", boxShadow: "none" }}>
-          <AccordionSummary sx={{ px: 3 }} expandIcon={<ExpandMoreIcon />}>
-            <Typography>Comentarios</Typography>
-          </AccordionSummary>
-          <AccordionDetails sx={{ px: 3 }}>
-            <Stack spacing={2}>
-              {!comments.length && (
-                <Typography>No hay comentarios para esta respuesta</Typography>
-              )}
-              {comments.map((comment, i) => (
-                <Box key={i}>
-                  <Typography>{comment.text}</Typography>
-                  <Typography
-                    align="left"
-                    variant="caption"
-                    color="text.secondary"
-                  >
-                    {comment.author} -{" "}
-                    {format(
-                      comment.commentedAt.toDate(),
-                      "dd/MM/yyyy, hh:mm a"
-                    )}
-                  </Typography>
-                </Box>
-              ))}
-              <Stack direction="row" spacing={2}>
-                <Avatar
-                  sx={{
-                    backgroundColor: (theme) => theme.palette.primary.main,
-                  }}
+    const newComments = {
+      ...response.comments,
+      [question.id]: [...comments, comment],
+    };
+
+    addComment(form.id, response.id, newComments);
+
+    setMyComment("");
+    setCommenting(false);
+  };
+
+  return (
+    <Card variant="outlined">
+      <Accordion sx={{ background: "transparent", boxShadow: "none" }}>
+        <AccordionSummary sx={{ px: 3 }} expandIcon={<ExpandMoreIcon />}>
+          <Typography>Comentarios</Typography>
+        </AccordionSummary>
+        <AccordionDetails sx={{ px: 3 }}>
+          <Stack spacing={2}>
+            {!comments.length && (
+              <Typography>No hay comentarios para esta respuesta</Typography>
+            )}
+            {comments.map((comment, i) => (
+              <Box key={i}>
+                <Typography>{comment.text}</Typography>
+                <Typography
+                  align="left"
+                  variant="caption"
+                  color="text.secondary"
                 >
-                  {user.name[0]}
-                </Avatar>
-                <Stack
-                  component="form"
-                  onSubmit={handleAddComment}
-                  spacing={1.5}
-                  flexGrow={1}
+                  {comment.author} -{" "}
+                  {format(comment.commentedAt.toDate(), "dd/MM/yyyy, hh:mm a")}
+                </Typography>
+              </Box>
+            ))}
+            <Stack direction="row" spacing={2}>
+              <Avatar
+                sx={{
+                  backgroundColor: (theme) => theme.palette.primary.main,
+                }}
+              >
+                {user.name[0]}
+              </Avatar>
+              <Stack
+                component="form"
+                onSubmit={handleAddComment}
+                spacing={1.5}
+                flexGrow={1}
+              >
+                <TextField
+                  placeholder="Tu comentario..."
+                  variant="standard"
+                  fullWidth
+                  multiline
+                  value={myComment}
+                  onChange={(e) => setMyComment(e.target.value)}
+                />
+                <Button
+                  type="submit"
+                  disabled={!myComment || commenting}
+                  sx={{ alignSelf: "flex-end" }}
+                  variant="contained"
                 >
-                  <TextField
-                    placeholder="Tu comentario..."
-                    variant="standard"
-                    fullWidth
-                    multiline
-                    value={myComment}
-                    onChange={(e) => setMyComment(e.target.value)}
-                  />
-                  <Button
-                    type="submit"
-                    disabled={!myComment || commenting}
-                    sx={{ alignSelf: "flex-end" }}
-                    variant="contained"
-                  >
-                    Comentar
-                  </Button>
-                </Stack>
+                  Comentar
+                </Button>
               </Stack>
             </Stack>
-          </AccordionDetails>
-        </Accordion>
-      </Card>
-    );
-  }, [
-    commenting,
-    form.id,
-    myComment,
-    question.id,
-    response.comments,
-    response.id,
-    user.name,
-  ]);
+          </Stack>
+        </AccordionDetails>
+      </Accordion>
+    </Card>
+  );
 };
 
 export default Comments;
