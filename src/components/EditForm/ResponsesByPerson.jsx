@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Box,
   Card as MuiCard,
@@ -10,7 +10,9 @@ import {
   Tooltip,
   Typography,
   Stack,
+  Tab,
 } from "@mui/material";
+import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { format } from "date-fns";
 import {
   CHECKBOX,
@@ -30,8 +32,33 @@ import Rating from "../Rating";
 import FilesResponse from "./FilesResponse";
 
 const Response = () => {
-  const { responses, questions } = useForm();
+  const { responses, sections, questions } = useForm();
+  const [currentSectionId, setCurrentSectionId] = useState(null);
   const [page, setPage] = useState(1);
+
+  const currentSection = useMemo(() => {
+    return sections.find((section) => section.id === currentSectionId);
+  }, [currentSectionId, sections]);
+
+  const sectionQuestions = useMemo(() => {
+    return questions.filter(
+      (question) => question.sectionId === currentSectionId
+    );
+  }, [questions, currentSectionId]);
+
+  useEffect(() => {
+    if (!currentSection && sections.length) {
+      setCurrentSectionId(sections[0].id);
+    }
+  }, [currentSection, sections, setCurrentSectionId]);
+
+  useEffect(() => {
+    setCurrentSectionId(sections?.[0].id);
+  }, [page, sections]);
+
+  const handleChangeSection = (e, value) => {
+    setCurrentSectionId(value);
+  };
 
   const renderItem = (item) => {
     let title = "";
@@ -156,27 +183,65 @@ const Response = () => {
             </Box>
           </Card>
         )}
-        {questions.map((question) => (
-          <Box key={question.id}>
-            <Card sx={{ mb: 1 }}>
-              <Typography gutterBottom>{question.title}</Typography>
-              {response.answers[question.id] === "" ||
-              response.answers[question.id] === null ||
-              response.answers[question.id] === undefined ||
-              response.answers[question.id]?.length === 0 ? (
-                <Typography fontStyle="italic">Respuesta vacía</Typography>
-              ) : (
-                <Stack spacing={1}>
-                  <Typography variant="caption" color="text.secondary">
-                    Respuesta
-                  </Typography>
-                  {renderValue(response.answers[question.id], question)}
+        {currentSectionId && (
+          <TabContext value={currentSectionId}>
+            <TabList
+              onChange={handleChangeSection}
+              indicatorColor="primary"
+              variant="scrollable"
+              aria-label="sections tabs"
+              sx={{
+                "& .MuiTabs-scrollButtons.Mui-disabled": {
+                  opacity: 0.3,
+                },
+              }}
+            >
+              {sections.map((section) => (
+                <Tab
+                  key={section.id}
+                  label={section.title}
+                  value={section.id}
+                  wrapped
+                />
+              ))}
+            </TabList>
+            {sections.map((section) => (
+              <TabPanel key={section.id} sx={{ p: 0 }} value={section.id}>
+                <Stack spacing={2}>
+                  {sectionQuestions.map((question) => (
+                    <Box key={question.id}>
+                      <Card sx={{ mb: 1 }}>
+                        <Typography gutterBottom>{question.title}</Typography>
+                        {response.answers[question.id] === "" ||
+                        response.answers[question.id] === null ||
+                        response.answers[question.id] === undefined ||
+                        response.answers[question.id]?.length === 0 ? (
+                          <Typography fontStyle="italic">
+                            Respuesta vacía
+                          </Typography>
+                        ) : (
+                          <Stack spacing={1}>
+                            <Typography
+                              variant="caption"
+                              color="text.secondary"
+                            >
+                              Respuesta
+                            </Typography>
+                            {renderValue(
+                              response.answers[question.id],
+                              question
+                            )}
+                          </Stack>
+                        )}
+                      </Card>
+                      <Comments response={response} question={question} />
+                    </Box>
+                  ))}
                 </Stack>
-              )}
-            </Card>
-            <Comments response={response} question={question} />
-          </Box>
-        ))}
+              </TabPanel>
+            ))}
+          </TabContext>
+        )}
       </Stack>
     </Box>
   );
