@@ -1,5 +1,6 @@
 import { useState } from "react";
 import {
+  Autocomplete,
   Box,
   Button,
   Checkbox,
@@ -8,9 +9,11 @@ import {
   FormGroup,
   FormLabel,
   IconButton,
+  InputLabel,
   MenuItem,
   Radio,
   RadioGroup,
+  Select,
   TextField,
   Tooltip,
   Typography,
@@ -80,6 +83,11 @@ const specialTypes = [
 const Options = ({ question, debouncedSave }) => {
   const { setQuestions } = useForm();
   const [openSelectSection, setOpenSelectSection] = useState(false);
+  const [section, setSection] = useState("");
+
+  const handleChangeSelect = (event) => {
+    setSection(event.target.value);
+  };
   const handleChangeOption = (i) => (e) => {
     const option = e.target.value;
 
@@ -274,14 +282,27 @@ const Options = ({ question, debouncedSave }) => {
                     </IconButton>
                   </Tooltip>
                 </Box>{" "}
-                <Button
+                {/* <Button
                   variant="text"
                   startIcon={<GoToIcon />}
                   onClick={goToSectionOption(i)}
                   size="small"
                 >
                   Llevar a sección
-                </Button>
+                </Button> */}
+                <TextField
+                  value={section}
+                  onChange={handleChangeSelect}
+                  select
+                  label="Llevar a sección"
+                  fullWidth
+                  margin="dense"
+                >
+                  <MenuItem value={1}>Ninguna</MenuItem>
+                  <MenuItem value={10}>Sección A</MenuItem>
+                  <MenuItem value={20}>Sección B</MenuItem>
+                  <MenuItem value={30}>Sección C</MenuItem>
+                </TextField>
               </Box>
             ))}
             {question.other && (
