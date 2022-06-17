@@ -2,7 +2,7 @@ import { Button } from "@mui/material";
 import { Upload as UploadIcon } from "@mui/icons-material";
 
 const UploadButton = ({ inputId, onChange, multiple, disabled }) => {
-  const id = "upload-button" + inputId;
+  const id = "upload-button-" + inputId;
 
   return (
     <label htmlFor={id}>
@@ -13,9 +13,8 @@ const UploadButton = ({ inputId, onChange, multiple, disabled }) => {
         type="file"
         disabled={disabled}
         onChange={(e) => {
-          if (e.target.files.length) {
-            onChange(e.target.files);
-          }
+          onChange(e.target.files);
+          e.target.value = "";
         }}
       />
       <Button
