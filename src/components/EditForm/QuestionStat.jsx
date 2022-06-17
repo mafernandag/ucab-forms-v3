@@ -51,16 +51,13 @@ const QuestionStat = ({ question, responses }) => {
     plugins: {
       datalabels: {
         formatter: (value, ctx) => {
-          let sum = 0;
-          let dataArr = ctx.chart.data.datasets[0].data;
-          dataArr.forEach((data) => {
-            sum += data;
-          });
-          let percentage = " ";
           if (value > 0) {
-            percentage = ((value * 100) / sum).toFixed(2) + "%";
+            const total = ctx.chart.getDatasetMeta(0).total;
+            const percentage = ((value * 100) / total).toFixed(2) + "%";
+            return percentage;
           }
-          return percentage;
+
+          return "";
         },
         color: "#fff",
       },
