@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-  Autocomplete,
   Box,
   Button,
   Checkbox,
@@ -9,11 +8,9 @@ import {
   FormGroup,
   FormLabel,
   IconButton,
-  InputLabel,
   MenuItem,
   Radio,
   RadioGroup,
-  Select,
   TextField,
   Tooltip,
   Typography,
@@ -32,7 +29,6 @@ import {
   TEXTAREA,
 } from "../../constants/questions";
 import { useForm } from "../../hooks/useForm";
-import { SelectSectionDialog } from "./SelectSectionDialog";
 
 const sliderMinValues = [0, 1];
 const sliderMaxValues = [2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -85,9 +81,16 @@ const Options = ({ question, debouncedSave }) => {
   const [openSelectSection, setOpenSelectSection] = useState(false);
   const [section, setSection] = useState("");
 
-  const handleChangeSelect = (event) => {
+  const sections = ["Ninguna", "Sección A", "Sección B", "Sección C"];
+
+  const handleChangeSelect = (i) => (event) => {
+    const option = event.target.value;
+    const options = sections;
+    options[i] = option;
+
     setSection(event.target.value);
   };
+
   const handleChangeOption = (i) => (e) => {
     const option = e.target.value;
 
@@ -281,7 +284,7 @@ const Options = ({ question, debouncedSave }) => {
                       <ClearIcon />
                     </IconButton>
                   </Tooltip>
-                </Box>{" "}
+                </Box>
                 {/* <Button
                   variant="text"
                   startIcon={<GoToIcon />}
@@ -292,16 +295,16 @@ const Options = ({ question, debouncedSave }) => {
                 </Button> */}
                 <TextField
                   value={section}
-                  onChange={handleChangeSelect}
+                  onChange={handleChangeSelect(i)}
                   select
                   label="Llevar a sección"
                   fullWidth
                   margin="dense"
                 >
                   <MenuItem value={1}>Ninguna</MenuItem>
-                  <MenuItem value={10}>Sección A</MenuItem>
-                  <MenuItem value={20}>Sección B</MenuItem>
-                  <MenuItem value={30}>Sección C</MenuItem>
+                  <MenuItem value={2}>Sección A</MenuItem>
+                  <MenuItem value={3}>Sección B</MenuItem>
+                  <MenuItem value={4}>Sección C</MenuItem>
                 </TextField>
               </Box>
             ))}
@@ -352,9 +355,7 @@ const Options = ({ question, debouncedSave }) => {
                       minWidth={15}
                       align="right"
                       color="text.secondary"
-                    >
-                      {i + 1}.
-                    </Typography>
+                    ></Typography>
                     <TextField
                       variant="standard"
                       value={option}
@@ -375,6 +376,7 @@ const Options = ({ question, debouncedSave }) => {
                 >
                   Llevar a sección
                 </Button>
+                {i + 1}.
               </Box>
             ))}
           </FormGroup>
