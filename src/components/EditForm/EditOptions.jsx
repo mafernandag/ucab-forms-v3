@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -28,6 +29,7 @@ import {
   TEXTAREA,
 } from "../../constants/questions";
 import { useForm } from "../../hooks/useForm";
+import { SelectSectionDialog } from "./SelectSectionDialog";
 
 const sliderMinValues = [0, 1];
 const sliderMaxValues = [2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -77,7 +79,7 @@ const specialTypes = [
 
 const Options = ({ question, debouncedSave }) => {
   const { setQuestions } = useForm();
-
+  const [openSelectSection, setOpenSelectSection] = useState(false);
   const handleChangeOption = (i) => (e) => {
     const option = e.target.value;
 
@@ -132,7 +134,9 @@ const Options = ({ question, debouncedSave }) => {
     );
   };
 
-  const goToSectionOption = (i) => () => {};
+  const goToSectionOption = (i) => () => {
+    setOpenSelectSection(true);
+  };
 
   const addOther = () => {
     const newQuestion = { ...question, other: true };
