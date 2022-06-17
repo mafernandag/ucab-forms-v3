@@ -468,27 +468,29 @@ const QuestionStat = ({ question, responses }) => {
                 padding: "8px",
               }}
             >
-              <tr>
-                <td />
-                {question.options.map((o, i) => (
-                  <td style={{ fontWeight: "bold" }} key={i}>
-                    {i + 1}
-                  </td>
-                ))}
-              </tr>
-              {question.options.map((option, i) => (
-                <tr key={i}>
-                  <td style={{ fontWeight: "bold" }}>{option}</td>
-                  {question.options.map((o, j) => (
-                    <td key={j}>
-                      {
-                        responses.filter((r) => r[question.id][j] === option)
-                          .length
-                      }
+              <tbody>
+                <tr>
+                  <td />
+                  {question.options.map((o, i) => (
+                    <td style={{ fontWeight: "bold" }} key={i}>
+                      {i + 1}
                     </td>
                   ))}
                 </tr>
-              ))}
+                {question.options.map((option, i) => (
+                  <tr key={i}>
+                    <td style={{ fontWeight: "bold" }}>{option}</td>
+                    {question.options.map((o, j) => (
+                      <td key={j}>
+                        {
+                          responses.filter((r) => r[question.id][j] === option)
+                            .length
+                        }
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
             </table>
           </Container>
         </>
