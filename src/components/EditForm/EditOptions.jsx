@@ -273,7 +273,7 @@ const Options = ({ question, debouncedSave }) => {
                       <ClearIcon />
                     </IconButton>
                   </Tooltip>
-                </Box>{" "}
+                </Box>
                 <Button
                   variant="text"
                   startIcon={<GoToIcon />}
