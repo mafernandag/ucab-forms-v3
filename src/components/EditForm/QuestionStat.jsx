@@ -51,16 +51,13 @@ const QuestionStat = ({ question, responses }) => {
     plugins: {
       datalabels: {
         formatter: (value, ctx) => {
-          let sum = 0;
-          let dataArr = ctx.chart.data.datasets[0].data;
-          dataArr.forEach((data) => {
-            sum += data;
-          });
-          let percentage = " ";
           if (value > 0) {
-            percentage = ((value * 100) / sum).toFixed(2) + "%";
+            const total = ctx.chart.getDatasetMeta(0).total;
+            const percentage = ((value * 100) / total).toFixed(2) + "%";
+            return percentage;
           }
-          return percentage;
+
+          return "";
         },
         color: "#fff",
       },
@@ -471,27 +468,29 @@ const QuestionStat = ({ question, responses }) => {
                 padding: "8px",
               }}
             >
-              <tr>
-                <td />
-                {question.options.map((o, i) => (
-                  <td style={{ fontWeight: "bold" }} key={i}>
-                    {i + 1}
-                  </td>
-                ))}
-              </tr>
-              {question.options.map((option, i) => (
-                <tr key={i}>
-                  <td style={{ fontWeight: "bold" }}>{option}</td>
-                  {question.options.map((o, j) => (
-                    <td key={j}>
-                      {
-                        responses.filter((r) => r[question.id][j] === option)
-                          .length
-                      }
+              <tbody>
+                <tr>
+                  <td />
+                  {question.options.map((o, i) => (
+                    <td style={{ fontWeight: "bold" }} key={i}>
+                      {i + 1}
                     </td>
                   ))}
                 </tr>
-              ))}
+                {question.options.map((option, i) => (
+                  <tr key={i}>
+                    <td style={{ fontWeight: "bold" }}>{option}</td>
+                    {question.options.map((o, j) => (
+                      <td key={j}>
+                        {
+                          responses.filter((r) => r[question.id][j] === option)
+                            .length
+                        }
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
             </table>
           </Container>
         </>
