@@ -5,11 +5,12 @@ import { format } from "date-fns";
 import Table from "../Table";
 import { useForm } from "../../hooks/useForm";
 import { stringifyAnswers } from "../../utils/stats";
-import { FILE } from "../../constants/questions";
+import { FILE } from "../../questions/constants";
 
 const ResponsesTable = () => {
   const { responses, questions } = useForm();
 
+  // TODO: Sort questions by section index
   const columns = useMemo(() => {
     return [
       { title: "Fecha de respuesta", field: "submittedAt" },

@@ -9,7 +9,7 @@ import {
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { PlaylistAdd, Queue } from "@mui/icons-material";
 import { sortBy } from "lodash";
-import { defaultQuestion } from "../../constants/questions";
+import { defaultQuestion } from "../../questions/constants";
 import { defaultSection } from "../../constants/sections";
 import { useForm } from "../../hooks/useForm";
 import { insertQuestion } from "../../api/questions";

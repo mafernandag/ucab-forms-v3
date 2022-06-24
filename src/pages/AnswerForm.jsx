@@ -12,17 +12,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import { getFormOnce } from "../api/forms";
 import { submitResponse, checkUserHasResponses } from "../api/responses";
-import {
-  CHECKBOX,
-  DATE,
-  DATETIME,
-  FILE,
-  RADIO,
-  RATING,
-  SLIDER,
-  SORTABLE,
-  TIME,
-} from "../constants/questions";
 import { useUser } from "../hooks/useUser";
 import { useAlert } from "../hooks/useAlert";
 import Header from "../components/Header";
@@ -30,6 +19,7 @@ import Card from "../components/Card";
 import Question from "../components/Question";
 import AnswerPageText from "../components/AnswerPageText";
 import { useMemo } from "react";
+import { questionConfig } from "../questions";
 
 const AnswerForm = () => {
   const { id: formId } = useParams();
@@ -70,19 +60,8 @@ const AnswerForm = () => {
     const answers = {};
 
     questions.forEach((question) => {
-      if (question.type === CHECKBOX || question.type === FILE) {
-        answers[question.id] = [];
-      } else if (question.type === RADIO && question.required) {
-        answers[question.id] = question.options[0];
-      } else if (question.type === SLIDER) {
-        answers[question.id] = question.min;
-      } else if (question.type === SORTABLE) {
-        answers[question.id] = [...question.options];
-      } else if (question.type === RATING) {
-        answers[question.id] = 0;
-      } else {
-        answers[question.id] = "";
-      }
+      const type = question.type;
+      answers[question.id] = questionConfig[type].initializeAnswer(question);
     });
 
     setAnswers(answers);
@@ -159,18 +138,13 @@ const AnswerForm = () => {
 
       if (
         question.required &&
-        (((question.type === CHECKBOX || question.type === FILE) &&
-          !answers[question.id].length) ||
-          (question.type === RATING && !answers[question.id]))
+        !questionConfig[question.type].checkRequired(answers[question.id])
       ) {
         newErrors[question.id] = "Esta pregunta es obligatoria";
         shouldReturn = true;
       }
 
-      if (
-        [DATE, TIME, DATETIME].includes(question.type) &&
-        answers[question.id].toString() === "Invalid Date"
-      ) {
+      if (!questionConfig[question.type].checkFormat(answers[question.id])) {
         newErrors[question.id] = "El formato es inválido";
         shouldReturn = true;
       }

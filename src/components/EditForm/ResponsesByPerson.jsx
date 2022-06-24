@@ -1,10 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   Box,
-  Card as MuiCard,
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
   Pagination,
   PaginationItem,
   Tooltip,
@@ -14,22 +10,10 @@ import {
 } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { format } from "date-fns";
-import {
-  CHECKBOX,
-  FILE,
-  DATE,
-  DATETIME,
-  SLIDER,
-  SORTABLE,
-  RATING,
-  TIME,
-} from "../../constants/questions";
 import { useForm } from "../../hooks/useForm";
 import Comments from "./Comments";
 import Card from "../Card";
-import Slider from "../Slider";
-import Rating from "../Rating";
-import FilesResponse from "./FilesResponse";
+import { questionTypesConfig } from "../../questions/config";
 
 const Response = () => {
   const { responses, sections, questions } = useForm();
@@ -81,60 +65,6 @@ const Response = () => {
         </span>
       </Tooltip>
     );
-  };
-
-  const renderValue = (value, question) => {
-    if (question.type === CHECKBOX) {
-      return (
-        <FormGroup>
-          {value.map((option, i) => (
-            <FormControlLabel
-              key={i}
-              disabled
-              checked
-              control={<Checkbox />}
-              label={<Typography>{option}</Typography>}
-            />
-          ))}
-        </FormGroup>
-      );
-    }
-
-    if (question.type === SORTABLE) {
-      return (
-        <Stack spacing={1}>
-          {value.map((option, i) => (
-            <MuiCard key={i} sx={{ p: 2 }}>
-              <Typography>{option}</Typography>
-            </MuiCard>
-          ))}
-        </Stack>
-      );
-    }
-
-    if (question.type === SLIDER) {
-      return <Slider disabled question={question} value={value} />;
-    }
-
-    if (question.type === RATING) {
-      return <Rating readOnly value={value} />;
-    }
-
-    if (question.type === FILE) {
-      return <FilesResponse files={value} />;
-    }
-
-    let text = value;
-
-    if (question.type === DATE) {
-      text = format(value.toDate(), "dd/MM/yyyy");
-    } else if (question.type === DATETIME) {
-      text = format(value.toDate(), "dd/MM/yyyy hh:mm a");
-    } else if (question.type === TIME) {
-      text = format(value.toDate(), "hh:mm a");
-    }
-
-    return <Typography>{text}</Typography>;
   };
 
   const response = responses[page - 1];
@@ -227,10 +157,18 @@ const Response = () => {
                             >
                               Respuesta
                             </Typography>
-                            {renderValue(
-                              response.answers[question.id],
-                              question
-                            )}
+                            {/* TODO: Fix this sh!t */}
+                            {(() => {
+                              const type = question.type;
+                              const ResponseByPerson =
+                                questionTypesConfig[type].responseByPerson;
+                              return (
+                                <ResponseByPerson
+                                  question={question}
+                                  value={response.answers[question.id]}
+                                />
+                              );
+                            })()}
                           </Stack>
                         )}
                       </Card>

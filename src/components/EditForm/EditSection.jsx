@@ -102,12 +102,12 @@ const EditSection = ({ setOpenDrawer }) => {
     const { id, ...sectionData } = section;
 
     sectionData.index = newIndex;
+    sectionData.title = `${sectionData.title} - Copia`;
 
     const newSectionId = createSection(form.id, sectionData);
 
     const newSection = {
       ...sectionData,
-      title: `${sectionData.title} - Copia`,
       id: newSectionId,
     };
 

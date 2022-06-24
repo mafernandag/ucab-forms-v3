@@ -1,8 +1,6 @@
 import { useMemo } from "react";
 import {
   Box,
-  Checkbox,
-  FormControlLabel,
   IconButton,
   MenuItem,
   Stack,
@@ -17,18 +15,7 @@ import {
   Delete as DeleteIcon,
 } from "@mui/icons-material";
 import { debounce } from "lodash";
-import {
-  compatibility,
-  questionTypes,
-  CHECKBOX,
-  FILE,
-  RADIO,
-  SELECT,
-  SORTABLE,
-  SLIDER,
-  TEXT,
-  TEXTAREA,
-} from "../../constants/questions";
+import { compatibility } from "../../questions/constants";
 import {
   deleteQuestion,
   insertQuestion,
@@ -38,6 +25,7 @@ import { useForm } from "../../hooks/useForm";
 import { useAlert } from "../../hooks/useAlert";
 import EditOptions from "./EditOptions";
 import { calculateNewIndex } from "../../utils/forms";
+import { questionConfig, questionTypes } from "../../questions";
 
 const EditQuestion = ({ setOpenDrawer }) => {
   const {
@@ -59,10 +47,6 @@ const EditQuestion = ({ setOpenDrawer }) => {
     [form.id]
   );
 
-  const needsOptions = (type) => {
-    return [RADIO, CHECKBOX, SELECT, SORTABLE].includes(type);
-  };
-
   const handleChange = (field) => (e) => {
     const value = e.target.value;
 
@@ -78,65 +62,7 @@ const EditQuestion = ({ setOpenDrawer }) => {
   const handleChangeType = (e) => {
     const type = e.target.value;
 
-    const newQuestion = { ...question, type };
-
-    if (!needsOptions(type)) {
-      newQuestion.options = null;
-      newQuestion.randomOrder = null;
-    }
-
-    if (!newQuestion.options && needsOptions(type)) {
-      newQuestion.options = ["Opción 1"];
-      newQuestion.randomOrder = false;
-    }
-
-    const needsOther = [RADIO, CHECKBOX].includes(type);
-
-    if (!needsOther) {
-      newQuestion.other = null;
-    }
-
-    if (newQuestion.other === null && needsOther) {
-      newQuestion.other = false;
-    }
-
-    if (type === TEXT || type === TEXTAREA) {
-      newQuestion.specialType = "";
-    } else {
-      newQuestion.specialType = null;
-    }
-
-    if (type === SLIDER) {
-      newQuestion.min = 1;
-      newQuestion.max = 5;
-    } else {
-      newQuestion.min = null;
-      newQuestion.max = null;
-      newQuestion.minLabel = null;
-      newQuestion.maxLabel = null;
-    }
-
-    if (type === SORTABLE) {
-      newQuestion.required = true;
-    }
-
-    if (type === FILE) {
-      newQuestion.multipleFiles = false;
-    } else {
-      newQuestion.multipleFiles = null;
-    }
-
-    debouncedSave(newQuestion);
-
-    setQuestions((questions) =>
-      questions.map((q) => (q.id === question.id ? newQuestion : q))
-    );
-  };
-
-  const handleChangeChecked = (field) => (e) => {
-    const checked = e.target.checked;
-
-    const newQuestion = { ...question, [field]: checked };
+    const newQuestion = questionConfig[type].initializeFields(question, type);
 
     debouncedSave(newQuestion);
 
@@ -291,37 +217,10 @@ const EditQuestion = ({ setOpenDrawer }) => {
           </MenuItem>
         ))}
       </TextField>
-      <EditOptions question={question} debouncedSave={debouncedSave} />
       <Box>
-        {question.type === FILE && (
-          <Box>
-            <FormControlLabel
-              control={<Checkbox />}
-              checked={question.multipleFiles}
-              onChange={handleChangeChecked("multipleFiles")}
-              label="Múltiples archivos"
-            />
-          </Box>
-        )}
-        {needsOptions(question.type) && (
-          <Box>
-            <FormControlLabel
-              control={<Checkbox />}
-              checked={question.randomOrder}
-              onChange={handleChangeChecked("randomOrder")}
-              label="Orden aleatorio"
-            />
-          </Box>
-        )}
-        <Box>
-          <FormControlLabel
-            control={<Checkbox />}
-            disabled={question.type === SORTABLE}
-            checked={question.required}
-            onChange={handleChangeChecked("required")}
-            label="Obligatoria"
-          />
-        </Box>
+        <Stack spacing={3}>
+          <EditOptions question={question} debouncedSave={debouncedSave} />
+        </Stack>
         <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
           <Tooltip title="Duplicar pregunta" arrow>
             <IconButton onClick={() => duplicateQuestion()}>

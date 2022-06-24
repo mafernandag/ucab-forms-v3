@@ -1,10 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Box,
-  Card as MuiCard,
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
   Pagination,
   PaginationItem,
   Tooltip,
@@ -20,16 +16,11 @@ import {
   FILE,
   DATE,
   DATETIME,
-  SLIDER,
-  SORTABLE,
-  RATING,
   TIME,
-} from "../../constants/questions";
+} from "../../questions/constants";
 import { getResponseCountText } from "../../utils/stats";
 import Card from "../Card";
-import Slider from "../Slider";
-import Rating from "../Rating";
-import FilesResponse from "./FilesResponse";
+import { questionTypesConfig } from "../../questions/config";
 
 const ResponsesByQuestion = () => {
   const { responses, sections, questions } = useForm();
@@ -63,6 +54,7 @@ const ResponsesByQuestion = () => {
   const question = sectionQuestions[page - 1];
   const answers = responses.map((r) => r.answers);
 
+  // TODO: Refactor this
   const getAnswersWithStats = useCallback(() => {
     const responseCount = {};
 
@@ -129,49 +121,8 @@ const ResponsesByQuestion = () => {
     );
   };
 
-  const renderValue = (value) => {
-    if (question.type === CHECKBOX) {
-      return (
-        <FormGroup>
-          {value.map((option, i) => (
-            <FormControlLabel
-              key={i}
-              disabled
-              checked={true}
-              control={<Checkbox />}
-              label={<Typography>{option}</Typography>}
-            />
-          ))}
-        </FormGroup>
-      );
-    }
-
-    if (question.type === SORTABLE) {
-      return (
-        <Stack spacing={1}>
-          {value.map((option, i) => (
-            <MuiCard key={i} sx={{ p: 2 }}>
-              <Typography>{option}</Typography>
-            </MuiCard>
-          ))}
-        </Stack>
-      );
-    }
-
-    if (question.type === SLIDER) {
-      return <Slider disabled question={question} value={value} />;
-    }
-
-    if (question.type === RATING) {
-      return <Rating readOnly value={value} />;
-    }
-
-    if (question.type === FILE) {
-      return <FilesResponse files={value} />;
-    }
-
-    return <Typography>{value}</Typography>;
-  };
+  const type = question?.type;
+  const ResponseByQuestion = questionTypesConfig[type]?.responseByQuestion;
 
   return (
     <Box>
@@ -228,7 +179,10 @@ const ResponsesByQuestion = () => {
                                 Respuesta vacía
                               </Typography>
                             ) : (
-                              renderValue(response.value)
+                              <ResponseByQuestion
+                                question={question}
+                                value={response.value}
+                              />
                             )}
                           </Box>
                           <Typography color="text.secondary" variant="caption">

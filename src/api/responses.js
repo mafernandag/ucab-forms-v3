@@ -12,7 +12,7 @@ import {
 } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 import { uploadFiles } from "./storage";
-import { FILE } from "../constants/questions";
+import { FILE } from "../questions/constants";
 import { sendNotification } from "./notifications";
 
 export const submitResponse = async (form, response) => {
