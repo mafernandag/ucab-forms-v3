@@ -9,7 +9,6 @@ import {
   Tab,
 } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { format } from "date-fns";
 import { useForm } from "../../../hooks/useForm";
 import {
   CHECKBOX,
@@ -21,6 +20,7 @@ import {
 import { getResponseCountText } from "../../../utils/stats";
 import Card from "../../Card";
 import { questionTypesConfig } from "../../../questions/config";
+import { formatDate, formatDateTime, formatTime } from "../../../utils/dates";
 
 const ResponsesByQuestion = () => {
   const { responses, sections, questions } = useForm();
@@ -67,11 +67,11 @@ const ResponsesByQuestion = () => {
         }
         value = [...value].sort();
       } else if (question.type === DATE && value) {
-        value = format(value.toDate(), "dd/MM/yyyy");
+        value = formatDate(value);
       } else if (question.type === DATETIME && value) {
-        value = format(value.toDate(), "dd/MM/yyyy hh:mm a");
+        value = formatDateTime(value);
       } else if (question.type === TIME && value) {
-        value = format(value.toDate(), "hh:mm a");
+        value = formatTime(value);
       }
 
       if (question.type === FILE && !value) {

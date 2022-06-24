@@ -14,6 +14,7 @@ import { useForm } from "../../../hooks/useForm";
 import Comments from "./Comments";
 import Card from "../../Card";
 import { questionTypesConfig } from "../../../questions/config";
+import { formatDateTime } from "../../../utils/dates";
 
 const Response = () => {
   const { responses, sections, questions } = useForm();
@@ -48,10 +49,7 @@ const Response = () => {
     let title = "";
 
     if (item.type === "page") {
-      title = format(
-        responses[item.page - 1].submittedAt,
-        "dd/MM/yyyy hh:mm a"
-      );
+      title = formatDateTime(responses[item.page - 1].submittedAt);
     } else if (item.type === "previous") {
       title = "Anterior";
     } else if (item.type === "next") {
