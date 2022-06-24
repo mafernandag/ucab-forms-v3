@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { AppBar, Tab } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import Questions from "./Questions/Questions";
-import Responses from "./Responses/Responses";
+import Questions from "./questions/Questions";
+import Responses from "./responses/Responses";
 
 const Tabs = ({ setOpenDrawer }) => {
   const [currentTab, setCurrentTab] = useState("0");
