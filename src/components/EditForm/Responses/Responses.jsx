@@ -5,8 +5,8 @@ import {
   ToggleButtonGroup,
   Typography,
 } from "@mui/material";
-import { useForm } from "../../hooks/useForm";
-import { getResponseCountText } from "../../utils/stats";
+import { useForm } from "../../../hooks/useForm";
+import { getResponseCountText } from "../../../utils/stats";
 import ResponsesSummary from "./ResponsesSummary";
 import ResponsesByPerson from "./ResponsesByPerson";
 import ResponsesByQuestion from "./ResponsesByQuestion";

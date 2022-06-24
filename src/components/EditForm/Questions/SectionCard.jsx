@@ -1,5 +1,5 @@
 import { Typography } from "@mui/material";
-import { useForm } from "../../hooks/useForm";
+import { useForm } from "../../../hooks/useForm";
 import SelectableCard from "./SelectableCard";
 
 const SectionCard = ({ section, setOpenDrawer }) => {

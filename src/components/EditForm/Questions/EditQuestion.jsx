@@ -15,17 +15,17 @@ import {
   Delete as DeleteIcon,
 } from "@mui/icons-material";
 import { debounce } from "lodash";
-import { compatibility } from "../../questions/constants";
+import { compatibility } from "../../../questions/constants";
 import {
   deleteQuestion,
   insertQuestion,
   saveQuestion,
-} from "../../api/questions";
-import { useForm } from "../../hooks/useForm";
-import { useAlert } from "../../hooks/useAlert";
+} from "../../../api/questions";
+import { useForm } from "../../../hooks/useForm";
+import { useAlert } from "../../../hooks/useAlert";
 import EditOptions from "./EditOptions";
-import { calculateNewIndex } from "../../utils/forms";
-import { questionConfig, questionTypes } from "../../questions";
+import { calculateNewIndex } from "../../../utils/forms";
+import { questionConfig, questionTypes } from "../../../questions";
 
 const EditQuestion = ({ setOpenDrawer }) => {
   const {

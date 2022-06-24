@@ -13,11 +13,15 @@ import {
   Delete as DeleteIcon,
 } from "@mui/icons-material";
 import { debounce } from "lodash";
-import { deleteSection, createSection, saveSection } from "../../api/sections";
-import { deleteQuestion, insertQuestion } from "../../api/questions";
-import { useForm } from "../../hooks/useForm";
-import { useAlert } from "../../hooks/useAlert";
-import { calculateNewIndex } from "../../utils/forms";
+import {
+  deleteSection,
+  createSection,
+  saveSection,
+} from "../../../api/sections";
+import { deleteQuestion, insertQuestion } from "../../../api/questions";
+import { useForm } from "../../../hooks/useForm";
+import { useAlert } from "../../../hooks/useAlert";
+import { calculateNewIndex } from "../../../utils/forms";
 import { useMemo } from "react";
 
 const EditSection = ({ setOpenDrawer }) => {

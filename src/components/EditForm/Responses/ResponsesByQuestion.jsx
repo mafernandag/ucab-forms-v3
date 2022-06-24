@@ -10,17 +10,17 @@ import {
 } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { format } from "date-fns";
-import { useForm } from "../../hooks/useForm";
+import { useForm } from "../../../hooks/useForm";
 import {
   CHECKBOX,
   FILE,
   DATE,
   DATETIME,
   TIME,
-} from "../../questions/constants";
-import { getResponseCountText } from "../../utils/stats";
-import Card from "../Card";
-import { questionTypesConfig } from "../../questions/config";
+} from "../../../questions/constants";
+import { getResponseCountText } from "../../../utils/stats";
+import Card from "../../Card";
+import { questionTypesConfig } from "../../../questions/config";
 
 const ResponsesByQuestion = () => {
   const { responses, sections, questions } = useForm();

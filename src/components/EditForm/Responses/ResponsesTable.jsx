@@ -2,10 +2,10 @@ import { useMemo } from "react";
 import { Link } from "@mui/material";
 import { ExportCsv, ExportPdf } from "@material-table/exporters";
 import { format } from "date-fns";
-import Table from "../Table";
-import { useForm } from "../../hooks/useForm";
-import { stringifyAnswers } from "../../utils/stats";
-import { FILE } from "../../questions/constants";
+import Table from "../../Table";
+import { useForm } from "../../../hooks/useForm";
+import { stringifyAnswers } from "../../../utils/stats";
+import { FILE } from "../../../questions/constants";
 
 const ResponsesTable = () => {
   const { responses, questions } = useForm();

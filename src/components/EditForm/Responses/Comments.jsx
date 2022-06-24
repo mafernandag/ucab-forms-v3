@@ -13,9 +13,9 @@ import {
 } from "@mui/material";
 import { ExpandMore as ExpandMoreIcon } from "@mui/icons-material";
 import { format } from "date-fns";
-import { useForm } from "../../hooks/useForm";
-import { useUser } from "../../hooks/useUser";
-import { addComment } from "../../api/responses";
+import { useForm } from "../../../hooks/useForm";
+import { useUser } from "../../../hooks/useUser";
+import { addComment } from "../../../api/responses";
 
 const Comments = ({ response, question }) => {
   const { form } = useForm();

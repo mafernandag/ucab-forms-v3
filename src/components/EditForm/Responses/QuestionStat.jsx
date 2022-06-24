@@ -8,8 +8,8 @@ import {
   LinearScale,
   BarElement,
 } from "chart.js";
-import { getResponseCountText } from "../../utils/stats";
-import { questionTypesConfig } from "../../questions/config";
+import { getResponseCountText } from "../../../utils/stats";
+import { questionTypesConfig } from "../../../questions/config";
 
 ChartJS.register(
   ArcElement,

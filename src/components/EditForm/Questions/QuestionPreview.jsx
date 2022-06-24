@@ -1,8 +1,8 @@
 import { Typography } from "@mui/material";
-import { useForm } from "../../hooks/useForm";
-import AllQuestionsPreview from "../AllQuestionsPreview";
+import { useForm } from "../../../hooks/useForm";
+import AllQuestionsPreview from "./AllQuestionsPreview";
 import SelectableCard from "./SelectableCard";
-import RequiredMark from "../RequiredMark";
+import RequiredMark from "../../RequiredMark";
 
 const EditQuestion = ({ question, setOpenDrawer }) => {
   const { currentQuestionId, setCurrentQuestionId } = useForm();

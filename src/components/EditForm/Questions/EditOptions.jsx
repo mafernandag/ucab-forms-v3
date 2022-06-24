@@ -1,5 +1,5 @@
-import { useForm } from "../../hooks/useForm";
-import { questionConfig } from "../../questions";
+import { useForm } from "../../../hooks/useForm";
+import { questionConfig } from "../../../questions";
 
 const EditOptions = ({ question, debouncedSave }) => {
   const { setQuestions } = useForm();

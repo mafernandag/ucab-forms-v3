@@ -1,4 +1,4 @@
-import { questionConfig } from "../questions";
+import { questionConfig } from "../../../questions";
 
 const QuestionPreview = ({ question }) => {
   const type = question.type;

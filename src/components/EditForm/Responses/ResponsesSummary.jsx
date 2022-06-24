@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { Box, Typography, Stack, Tab } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { useForm } from "../../hooks/useForm";
+import { useForm } from "../../../hooks/useForm";
 import QuestionStat from "./QuestionStat";
-import Card from "../Card";
+import Card from "../../Card";
 
 const ResponsesSummary = () => {
   const { questions, sections, responses } = useForm();

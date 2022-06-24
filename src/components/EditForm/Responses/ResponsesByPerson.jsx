@@ -10,10 +10,10 @@ import {
 } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { format } from "date-fns";
-import { useForm } from "../../hooks/useForm";
+import { useForm } from "../../../hooks/useForm";
 import Comments from "./Comments";
-import Card from "../Card";
-import { questionTypesConfig } from "../../questions/config";
+import Card from "../../Card";
+import { questionTypesConfig } from "../../../questions/config";
 
 const Response = () => {
   const { responses, sections, questions } = useForm();
