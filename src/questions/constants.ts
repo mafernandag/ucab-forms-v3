@@ -6,6 +6,7 @@ export const SELECT = "select";
 export const SORTABLE = "sortable";
 export const SLIDER = "slider";
 export const RATING = "rating";
+export const EMOJI = "emoji";
 export const DATE = "date";
 export const TIME = "time";
 export const DATETIME = "datetime";
@@ -18,8 +19,9 @@ export const compatibility = {
   [CHECKBOX]: [CHECKBOX],
   [SELECT]: [TEXT, TEXTAREA, RADIO, SELECT],
   [SORTABLE]: [SORTABLE],
-  [SLIDER]: [TEXT, TEXTAREA, RADIO, SELECT, SLIDER, RATING],
-  [RATING]: [TEXT, TEXTAREA, RADIO, SELECT, SLIDER, RATING],
+  [SLIDER]: [TEXT, TEXTAREA, RADIO, SELECT, SLIDER, RATING, EMOJI],
+  [RATING]: [TEXT, TEXTAREA, RADIO, SELECT, SLIDER, RATING, EMOJI],
+  [EMOJI]: [TEXT, TEXTAREA, RADIO, SELECT, SLIDER, RATING, EMOJI],
   [DATE]: [DATE, TIME, DATETIME],
   [TIME]: [DATE, TIME, DATETIME],
   [DATETIME]: [DATE, TIME, DATETIME],
