@@ -7,7 +7,6 @@ import {
   Delete as DeleteIcon,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { format } from "date-fns";
 import {
   createForm,
   deleteForm,
@@ -18,6 +17,7 @@ import {
 import { useUser } from "../hooks/useUser";
 import { useAlert } from "../hooks/useAlert";
 import Table from "./Table";
+import { formatDateTime } from "../utils/dates";
 
 const columns = [
   {
@@ -28,7 +28,7 @@ const columns = [
     title: "Fecha de creación",
     field: "createdAt",
     type: "datetime",
-    render: (rowData) => format(rowData.createdAt, "dd/MM/yyyy hh:mm a"),
+    render: (rowData) => formatDateTime(rowData.createdAt),
   },
   {
     title: "Autor",

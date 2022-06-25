@@ -13,7 +13,7 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "./firebaseConfig";
-import { defaultQuestion } from "../constants/questions";
+import { defaultQuestion } from "../questions/constants";
 import { defaultSection } from "../constants/sections";
 import { getQuestionsOnce, insertQuestion } from "./questions";
 import { sendNotification } from "./notifications";

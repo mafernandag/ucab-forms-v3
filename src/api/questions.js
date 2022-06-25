@@ -7,7 +7,6 @@ import {
   orderBy,
   query,
   setDoc,
-  updateDoc,
 } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 
@@ -72,7 +71,7 @@ export const insertQuestion = (formId, question) => {
 export const saveQuestion = (formId, question) => {
   const { id: questionId, ...questionData } = question;
   const questionRef = doc(db, "forms", formId, "questions", questionId);
-  updateDoc(questionRef, questionData);
+  setDoc(questionRef, questionData);
 };
 
 export const deleteQuestion = (formId, questionId) => {

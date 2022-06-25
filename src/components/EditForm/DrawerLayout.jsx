@@ -1,8 +1,8 @@
 import { Box, Container, Drawer, Toolbar, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useForm } from "../../hooks/useForm";
-import EditQuestion from "./EditQuestion";
-import EditSection from "./EditSection";
+import EditQuestion from "./questions/EditQuestion";
+import EditSection from "./questions/EditSection";
 
 const drawerWidth = 350;
 
