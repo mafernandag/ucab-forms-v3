@@ -5,6 +5,7 @@ import {
   TextField,
   Tooltip,
   Typography,
+  Chip,
 } from "@mui/material";
 import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 import {
@@ -19,7 +20,7 @@ import { deleteQuestion, insertQuestion } from "../../api/questions";
 import { useForm } from "../../hooks/useForm";
 import { useAlert } from "../../hooks/useAlert";
 import { calculateNewIndex } from "../../utils/forms";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 //BORRAR
 function makeid(length) {
@@ -47,6 +48,9 @@ const EditSection = ({ setOpenDrawer }) => {
     labelsAndSections,
     setLabelsAndSections,
   } = useForm();
+
+  const [currentLabels, setCurrentLabels] = useState([]);
+
   const openAlert = useAlert();
 
   const filter = createFilterOptions();
@@ -217,17 +221,17 @@ const EditSection = ({ setOpenDrawer }) => {
           //selected option
           if (option.labelId) {
             const label = labels.find(label => label.id === option.labelId);
-            return label ? label.title : null;
+            return label ? label.title : '';
           }
           // Regular option
           return option.title;
         }}
         isOptionEqualToValue={(option, value) => (option.id === value.labelId)}
-        groupBy={(label) => {
-          const section = sections.find(s => s.id === label.originSectionId);
-          return section ? section.title : null;
-        }}
-        value={labelsAndSections.filter(label => label.sectionId === currentSectionId)}
+        // groupBy={(label) => {
+        //   const section = sections.find(s => s.id === label.originSectionId);
+        //   return section ? section.title : null;
+        // }}
+        value={currentLabels}
         filterOptions={(options, params) => {
           const filtered = filter(options, params);
 
@@ -247,12 +251,9 @@ const EditSection = ({ setOpenDrawer }) => {
           return filtered;
         }}
         onChange={(event, newValue, reason) => {
-          if (typeof newValue === "string") {
-            // setValue({
-            //   title: newValue,
-            // });
-          } else if (newValue) {
-            const currentLabels = newValue.map((label) => {
+          console.log('PASO POR AQUI')
+          if (newValue) {
+            const newCurrentLabels = newValue.map((label) => {
               //Creating new label
               if (label.addLabelText) {
                 const newLabel = {
@@ -283,35 +284,44 @@ const EditSection = ({ setOpenDrawer }) => {
               return label;
             });
 
+            setCurrentLabels(newCurrentLabels);
+
             setLabelsAndSections(labelsAndSections => {
               const foreignLabels = labelsAndSections.filter(
                 (label) => label.sectionId !== currentSectionId
               );
-              return foreignLabels.concat(currentLabels);
+              return foreignLabels.concat(newCurrentLabels);
             });
           }
         }}
-        //renderTags={() => null}
+        renderTags={(value, getTagProps, ownerState) => {
+          return (
+            <Stack spacing={1} sx={{ padding: 1 }}>
+              {value.map(option => {
+                const label = labels.find(label => label.id === option.labelId);
+                const title = label ? label.title : '';
+                return <Chip key={option.labelId} label={title} onDelete={() => {
+                  value.splice(0, 1);
+                  // setCurrentLabels( currentLabels => {
+                  //   const index = currentLabels.findIndex( r => 
+                  //     r.labelId ===  option.labelId &&
+                  //     r.sectionId === currentSectionId
+                  //   );
+                  //   console.log(index);
+                  //   currentLabels.splice(index, 1);
+                  //   return currentLabels;
+                  // })
+                }} />
+              })}
+            </Stack>
+          )
+        }}
         renderInput={(params) => (
           <TextField {...params} label="Etiquetas" variant="standard" />
         )}
       />
-      <h2>labelsAndSections</h2>
       <ul>
-        {labelsAndSections.map((option,index) => {
-          if (option.sectionId === currentSectionId){
-            const title = labels.find(l => l.id === option.labelId).title;
-            return <li key={index} >{title}</li>;
-          }
-          return null;
-        })}
-      </ul>
-      <br/>
-      <h2>labels</h2>
-      <ul>
-        {labels.map((option,index) => {
-          return <li key={index} >{option.title}</li>;
-        })}
+        {labelsAndSections.map(option => (<li key={option.labelId}>{option.labelId}</li>))}
       </ul>
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
         <Tooltip title="Duplicar sección" arrow>
