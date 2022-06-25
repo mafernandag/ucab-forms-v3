@@ -7,6 +7,10 @@ export const stringify = (value: SelectDbAnswer) => {
   return value;
 };
 
+export const getSerializableValue = (value: SelectDbAnswer) => {
+  return value || "";
+};
+
 export const getInitializedAnswer = (question: SelectQuestion) => {
   return "";
 };

@@ -12,7 +12,7 @@ import { ratingLabels } from "../constants";
 
 interface Props {
   value: number;
-  onChange?: (value: number) => void;
+  onChange?: (value: number | "") => void;
   readOnly?: boolean;
   ratingProps?: RatingProps;
   typographyProps?: TypographyProps;
@@ -33,7 +33,7 @@ const Rating = ({
 
   const handleChange = (e: React.SyntheticEvent, value: number | null) => {
     setHover(-1);
-    onChange?.(value || 0);
+    onChange?.(value || "");
   };
 
   const handleChangeActive = (e: React.SyntheticEvent, value: number) => {

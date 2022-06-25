@@ -7,6 +7,10 @@ export const stringify = (value: SortableDbAnswer) => {
   return value.join(", ");
 };
 
+export const getSerializableValue = (value: SortableDbAnswer) => {
+  return value || [];
+};
+
 export const getInitializedAnswer = (question: SortableQuestion) => {
   return [...question.options];
 };

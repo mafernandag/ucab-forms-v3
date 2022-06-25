@@ -7,6 +7,14 @@ export const stringify = (value: CheckboxDbAnswer) => {
   return value.join(", ");
 };
 
+export const getSerializableValue = (value: CheckboxDbAnswer) => {
+  if (!value) {
+    return [];
+  }
+
+  return [...value].sort();
+};
+
 export const getInitializedAnswer = (question: CheckboxQuestion) => {
   return [];
 };

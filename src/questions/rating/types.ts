@@ -10,9 +10,9 @@ import {
 
 export interface RatingQuestion extends BaseQuestion {}
 
-export type RatingAnswer = number;
+export type RatingAnswer = number | "";
 
-export type RatingDbAnswer = number;
+export type RatingDbAnswer = number | "";
 
 export type RatingPreviewProps = PreviewProps<RatingQuestion>;
 

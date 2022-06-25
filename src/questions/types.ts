@@ -55,6 +55,7 @@ export interface QuestionTypeConfig<T, K, V> {
   responseByQuestion: (props: ResponseByQuestionProps<T, V>) => JSX.Element;
   responseByPerson: (props: ResponseByPersonProps<T, V>) => JSX.Element;
   stringify: (value: V) => string;
+  getSerializableValue: (value: V) => any;
   getInitializedAnswer: (question: T) => K;
   checkRequired: (value: K) => boolean;
   checkFormat: (value: K) => boolean;

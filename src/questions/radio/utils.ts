@@ -7,6 +7,10 @@ export const stringify = (value: RadioDbAnswer) => {
   return value;
 };
 
+export const getSerializableValue = (value: RadioDbAnswer) => {
+  return value || "";
+};
+
 export const getInitializedAnswer = (question: RadioQuestion) => {
   if (question.required) {
     return question.options[0];

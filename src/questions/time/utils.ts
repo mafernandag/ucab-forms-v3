@@ -12,6 +12,14 @@ export const stringify = (value: TimeDbAnswer) => {
   return formatTime(value);
 };
 
+export const getSerializableValue = (value: TimeDbAnswer) => {
+  if (!value) {
+    return "";
+  }
+
+  return formatTime(value);
+};
+
 export const getInitializedAnswer = (question: TimeQuestion): TimeAnswer => {
   return "";
 };

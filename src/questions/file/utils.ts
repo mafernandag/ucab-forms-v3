@@ -6,6 +6,10 @@ export const stringify = (value: FileDbAnswer) => {
   return value.map((f) => f.url).join(", ");
 };
 
+export const getSerializableValue = (value: FileDbAnswer) => {
+  return value || [];
+};
+
 export const getInitializedAnswer = (question: FileQuestion) => {
   return [];
 };
@@ -27,7 +31,7 @@ export const getInitializedFields = (
   const newQuestion: FileQuestion = {
     ...baseQuestion,
     type: newType,
-    multipleFiles: (question as FileQuestion).multipleFiles ?? "",
+    multipleFiles: (question as FileQuestion).multipleFiles ?? false,
   };
 
   return newQuestion;

@@ -6,6 +6,10 @@ export const stringify = (value: TextDbAnswer) => {
   return value;
 };
 
+export const getSerializableValue = (value: TextDbAnswer) => {
+  return value || "";
+};
+
 export const getInitializedAnswer = (question: TextQuestion) => {
   return "";
 };

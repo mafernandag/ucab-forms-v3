@@ -12,6 +12,14 @@ export const stringify = (value: DateDbAnswer) => {
   return formatDate(value);
 };
 
+export const getSerializableValue = (value: DateDbAnswer) => {
+  if (!value) {
+    return "";
+  }
+
+  return formatDate(value);
+};
+
 export const getInitializedAnswer = (question: DateQuestion): DateAnswer => {
   return "";
 };

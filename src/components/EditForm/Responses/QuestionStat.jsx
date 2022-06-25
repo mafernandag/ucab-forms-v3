@@ -21,10 +21,11 @@ ChartJS.register(
 );
 
 const QuestionStat = ({ question, responses }) => {
-  const responseCount = responses.filter(
-    (r) =>
+  const responseCount = responses.filter((r) => {
+    return (
       (r[question.id] || r[question.id] === 0) && r[question.id].length !== 0
-  ).length;
+    );
+  }).length;
 
   const responseCountText = getResponseCountText(responseCount);
 

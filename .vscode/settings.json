@@ -3,5 +3,11 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "editor.formatOnPaste": true,
-  "cSpell.words": ["Autocompletado", "DATETIME", "Regístrate", "UCAB"]
+  "cSpell.words": [
+    "Autocompletado",
+    "DATETIME",
+    "Regístrate",
+    "strigified",
+    "UCAB"
+  ]
 }

@@ -10,6 +10,7 @@ import {
   checkRequired,
   getInitializedAnswer,
   getInitializedFields,
+  getSerializableValue,
   stringify,
 } from "./utils";
 import { SortableAnswer, SortableDbAnswer, SortableQuestion } from "./types";
@@ -27,6 +28,7 @@ export const config: QuestionTypeConfig<
   responseByPerson: ResponseByPerson,
   responseByQuestion: ResponseByQuestion,
   stringify: stringify,
+  getSerializableValue: getSerializableValue,
   getInitializedAnswer: getInitializedAnswer,
   checkRequired: checkRequired,
   checkFormat: checkFormat,

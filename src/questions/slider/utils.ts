@@ -8,6 +8,10 @@ export const stringify = (value: SliderDbAnswer) => {
   return value.toString();
 };
 
+export const getSerializableValue = (value: SliderDbAnswer) => {
+  return value || value === 0 ? value : "";
+};
+
 export const getInitializedAnswer = (question: SliderQuestion) => {
   return question.min;
 };

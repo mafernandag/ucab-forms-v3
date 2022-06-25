@@ -10,17 +10,9 @@ import {
 } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { useForm } from "../../../hooks/useForm";
-import {
-  CHECKBOX,
-  FILE,
-  DATE,
-  DATETIME,
-  TIME,
-} from "../../../questions/constants";
 import { getResponseCountText } from "../../../utils/stats";
 import Card from "../../Card";
 import { questionTypesConfig } from "../../../questions/config";
-import { formatDate, formatDateTime, formatTime } from "../../../utils/dates";
 
 const ResponsesByQuestion = () => {
   const { responses, sections, questions } = useForm();
@@ -54,40 +46,21 @@ const ResponsesByQuestion = () => {
   const question = sectionQuestions[page - 1];
   const answers = responses.map((r) => r.answers);
 
-  // TODO: Refactor this
   const getAnswersWithStats = useCallback(() => {
     const responseCount = {};
 
     answers.forEach((response) => {
-      let value = response[question.id];
+      const getSerializableValue =
+        questionTypesConfig[question.type].getSerializableValue;
 
-      if (question.type === CHECKBOX) {
-        if (!value) {
-          value = [];
-        }
-        value = [...value].sort();
-      } else if (question.type === DATE && value) {
-        value = formatDate(value);
-      } else if (question.type === DATETIME && value) {
-        value = formatDateTime(value);
-      } else if (question.type === TIME && value) {
-        value = formatTime(value);
-      }
+      const value = getSerializableValue(response[question.id]);
 
-      if (question.type === FILE && !value) {
-        value = [];
-      }
+      const strigifiedValue = JSON.stringify(value);
 
-      if (!value) {
-        value = "";
-      }
-
-      value = JSON.stringify(value);
-
-      if (responseCount[value]) {
-        responseCount[value]++;
+      if (responseCount[strigifiedValue]) {
+        responseCount[strigifiedValue]++;
       } else {
-        responseCount[value] = 1;
+        responseCount[strigifiedValue] = 1;
       }
     });
 
@@ -168,25 +141,25 @@ const ResponsesByQuestion = () => {
                           {question.title}
                         </Typography>
                       </Card>
-                      {getAnswersWithStats().map((response, i) => (
+                      {getAnswersWithStats().map((answer, i) => (
                         <Card key={i}>
                           <Box sx={{ mb: 1 }}>
-                            {response.value === "" ||
-                            response.value === undefined ||
-                            response.value === null ||
-                            response.value.length === 0 ? (
+                            {answer.value === "" ||
+                            answer.value === undefined ||
+                            answer.value === null ||
+                            answer.value.length === 0 ? (
                               <Typography fontStyle="italic">
                                 Respuesta vacía
                               </Typography>
                             ) : (
                               <ResponseByQuestion
                                 question={question}
-                                value={response.value}
+                                value={answer.value}
                               />
                             )}
                           </Box>
                           <Typography color="text.secondary" variant="caption">
-                            {getResponseCountText(response.count)}
+                            {getResponseCountText(answer.count)}
                           </Typography>
                         </Card>
                       ))}

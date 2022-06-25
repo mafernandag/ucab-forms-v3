@@ -3,12 +3,16 @@ import { getBaseQuestion } from "../utils";
 import { RatingQuestion, RatingAnswer, RatingDbAnswer } from "./types";
 
 export const stringify = (value: RatingDbAnswer) => {
-  // TODO: See if this breaks anything
+  // TODO: See if this breaks anything and try to see if it's better to include the label instead
   return value.toString();
 };
 
-export const getInitializedAnswer = (question: RatingQuestion) => {
-  return 0;
+export const getSerializableValue = (value: RatingDbAnswer) => {
+  return value || "";
+};
+
+export const getInitializedAnswer = (question: RatingQuestion): "" => {
+  return "";
 };
 
 export const checkRequired = (value: RatingAnswer) => {
