@@ -20,7 +20,7 @@ import { deleteQuestion, insertQuestion } from "../../api/questions";
 import { useForm } from "../../hooks/useForm";
 import { useAlert } from "../../hooks/useAlert";
 import { calculateNewIndex } from "../../utils/forms";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 //BORRAR
 function makeid(length) {
@@ -48,8 +48,6 @@ const EditSection = ({ setOpenDrawer }) => {
     labelsAndSections,
     setLabelsAndSections,
   } = useForm();
-
-  const [currentLabels, setCurrentLabels] = useState([]);
 
   const openAlert = useAlert();
 
@@ -231,7 +229,7 @@ const EditSection = ({ setOpenDrawer }) => {
         //   const section = sections.find(s => s.id === label.originSectionId);
         //   return section ? section.title : null;
         // }}
-        value={currentLabels}
+        value={labelsAndSections.filter(label => label.sectionId === currentSectionId)}
         filterOptions={(options, params) => {
           const filtered = filter(options, params);
 
@@ -251,9 +249,9 @@ const EditSection = ({ setOpenDrawer }) => {
           return filtered;
         }}
         onChange={(event, newValue, reason) => {
-          console.log('PASO POR AQUI')
+          console.log(event);
           if (newValue) {
-            const newCurrentLabels = newValue.map((label) => {
+            const currentLabels = newValue.map((label) => {
               //Creating new label
               if (label.addLabelText) {
                 const newLabel = {
@@ -284,13 +282,11 @@ const EditSection = ({ setOpenDrawer }) => {
               return label;
             });
 
-            setCurrentLabels(newCurrentLabels);
-
             setLabelsAndSections(labelsAndSections => {
               const foreignLabels = labelsAndSections.filter(
                 (label) => label.sectionId !== currentSectionId
               );
-              return foreignLabels.concat(newCurrentLabels);
+              return foreignLabels.concat(currentLabels);
             });
           }
         }}
@@ -301,16 +297,21 @@ const EditSection = ({ setOpenDrawer }) => {
                 const label = labels.find(label => label.id === option.labelId);
                 const title = label ? label.title : '';
                 return <Chip key={option.labelId} label={title} onDelete={() => {
-                  value.splice(0, 1);
-                  // setCurrentLabels( currentLabels => {
-                  //   const index = currentLabels.findIndex( r => 
-                  //     r.labelId ===  option.labelId &&
-                  //     r.sectionId === currentSectionId
-                  //   );
-                  //   console.log(index);
-                  //   currentLabels.splice(index, 1);
-                  //   return currentLabels;
-                  // })
+                  setLabelsAndSections( labelsAndSections => {
+                    const index = labelsAndSections.findIndex( r => 
+                      r.labelId ===  option.labelId &&
+                      r.sectionId === currentSectionId
+                    );
+                    labelsAndSections.splice(index, 1);
+                    return labelsAndSections;
+                  })
+
+                  const index = value.findIndex( r => 
+                    r.labelId ===  option.labelId &&
+                    r.sectionId === currentSectionId
+                  );
+                  console.log(index);
+                  value.splice(index, 1);
                 }} />
               })}
             </Stack>
