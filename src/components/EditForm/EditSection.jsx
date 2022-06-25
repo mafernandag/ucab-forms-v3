@@ -6,7 +6,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
+import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 import {
   ArrowBack,
   ArrowForward,
@@ -19,18 +19,18 @@ import { deleteQuestion, insertQuestion } from "../../api/questions";
 import { useForm } from "../../hooks/useForm";
 import { useAlert } from "../../hooks/useAlert";
 import { calculateNewIndex } from "../../utils/forms";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 //BORRAR
 function makeid(length) {
-    var result           = '';
-    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var charactersLength = characters.length;
-    for ( var i = 0; i < length; i++ ) {
-      result += characters.charAt(Math.floor(Math.random() * 
- charactersLength));
-   }
-   return result;
+  var result = "";
+  var characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  var charactersLength = characters.length;
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
 }
 
 const EditSection = ({ setOpenDrawer }) => {
@@ -43,11 +43,11 @@ const EditSection = ({ setOpenDrawer }) => {
     setCurrentSectionId,
     sectionQuestions,
     labels,
-    setLabels
+    setLabels,
+    labelsAndSections,
+    setLabelsAndSections,
   } = useForm();
   const openAlert = useAlert();
-
-  //const [currentLabels, setCurrentLabels] = useState([]);
 
   const filter = createFilterOptions();
 
@@ -99,7 +99,6 @@ const EditSection = ({ setOpenDrawer }) => {
     const k = direction === "left" ? i - 2 : i + 2;
 
     let newIndex;
-
     if (!sections[k]) {
       newIndex = sections[j].index + (direction === "left" ? -1 : 1);
     } else {
@@ -204,7 +203,6 @@ const EditSection = ({ setOpenDrawer }) => {
         selectOnFocus
         clearOnBlur
         handleHomeEndKeys
-        id="labels"
         noOptionsText="No hay etiquetas"
         options={labels}
         getOptionLabel={(option) => {
@@ -212,20 +210,24 @@ const EditSection = ({ setOpenDrawer }) => {
           if (typeof option === "string") {
             return option;
           }
-          // Add "xxx" option created dynamically
-          if (option.realTitle) {
-            return option.realTitle;
+          //Add "xxx" option created dynamically
+          if (option.addLabelText) {
+            return option.addLabelText;
+          }
+          //selected option
+          if (option.labelId) {
+            const label = labels.find(label => label.id === option.labelId);
+            return label ? label.title : null;
           }
           // Regular option
           return option.title;
         }}
+        isOptionEqualToValue={(option, value) => (option.id === value.labelId)}
         groupBy={(label) => {
-          const section = sections.find(s => s.id === label.originSection);
+          const section = sections.find(s => s.id === label.originSectionId);
           return section ? section.title : null;
         }}
-        value={labels.filter(
-            label => label.sections.some(section => section.id === currentSectionId)
-          )}
+        value={labelsAndSections.filter(label => label.sectionId === currentSectionId)}
         filterOptions={(options, params) => {
           const filtered = filter(options, params);
 
@@ -234,38 +236,59 @@ const EditSection = ({ setOpenDrawer }) => {
           const isExisting = options.some(
             (option) => inputValue === option.title
           );
-          
+
           if (inputValue !== "" && !isExisting) {
             filtered.push({
-              title: `Agregar "${inputValue}"`,
-              realTitle: inputValue,
+              addLabelText: `Agregar "${inputValue}"`,
+              title: inputValue,
             });
           }
 
           return filtered;
         }}
-        onChange={(event, newValue) => {
+        onChange={(event, newValue, reason) => {
           if (typeof newValue === "string") {
             // setValue({
             //   title: newValue,
             // });
-          } else if (newValue && newValue.length>0) {
-            // Create a new value from the user input
-            const newLabels = [
-              ...labels,
-              {
-                id: makeid(20),
-                title: newValue.pop().realTitle,
-                sections: [currentSectionId],
-                originSection: currentSectionId,
+          } else if (newValue) {
+            const currentLabels = newValue.map((label) => {
+              //Creating new label
+              if (label.addLabelText) {
+                const newLabel = {
+                  id: makeid(20),
+                  title: label.title,
+                  originSectionId: currentSectionId,
+                };
+
+                setLabels(labels => {
+                  labels.push(newLabel);
+                  return labels;
+                });
+
+                return {
+                  labelId: newLabel.id,
+                  sectionId: currentSectionId,
+                }
               }
-            ]
-            setLabels(newLabels);
-          } else {
-            const newLabels = labels.filter(
-              label => !label.sections.some(section => section.id === currentSectionId)
-            )
-            setLabels(newLabels.concat(newValue));
+
+              //Adding an existing label
+              if (label.id) {
+                return {
+                  labelId: label.id,
+                  sectionId: currentSectionId,
+                }
+              }
+
+              return label;
+            });
+
+            setLabelsAndSections(labelsAndSections => {
+              const foreignLabels = labelsAndSections.filter(
+                (label) => label.sectionId !== currentSectionId
+              );
+              return foreignLabels.concat(currentLabels);
+            });
           }
         }}
         //renderTags={() => null}
@@ -273,6 +296,23 @@ const EditSection = ({ setOpenDrawer }) => {
           <TextField {...params} label="Etiquetas" variant="standard" />
         )}
       />
+      <h2>labelsAndSections</h2>
+      <ul>
+        {labelsAndSections.map((option,index) => {
+          if (option.sectionId === currentSectionId){
+            const title = labels.find(l => l.id === option.labelId).title;
+            return <li key={index} >{title}</li>;
+          }
+          return null;
+        })}
+      </ul>
+      <br/>
+      <h2>labels</h2>
+      <ul>
+        {labels.map((option,index) => {
+          return <li key={index} >{option.title}</li>;
+        })}
+      </ul>
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
         <Tooltip title="Duplicar sección" arrow>
           <IconButton onClick={() => duplicateSection()}>

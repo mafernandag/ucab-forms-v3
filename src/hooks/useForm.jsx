@@ -9,24 +9,30 @@ const mylabels = [
   {
     id: "AAA",
     title: "Etiqueta1",
-    sections: ["section1"],
+    originSectionId: "section1",
   },
   {
     id: "BBB",
     title: "Etiqueta2",
-    sections: ["section1"],
-  },
-  {
-    id: "BBB",
-    title: "Etiqueta3",
-    sections: ["section2"],
+    originSectionId: "section1",
   },
   {
     id: "CCC",
-    title: "Etiqueta1",
-    sections: ["section1"],
+    title: "Etiqueta3",
+    originSectionId: "section2",
   },
 ];
+
+const mylabelsAndSections = [
+  {
+    labelId: "AAA",
+    sectionId: "section1"
+  },
+  {
+    labelId: "BBB",
+    sectionId: "section1"
+  },
+]
 
 const FormContext = createContext();
 
@@ -41,6 +47,7 @@ const FormProvider = ({ children }) => {
   const [questions, setQuestions] = useState([]);
   const [responses, setResponses] = useState([]);
   const [labels, setLabels] = useState([]);
+  const [labelsAndSections, setLabelsAndSections] = useState([]);
   const [currentSectionId, setCurrentSectionId] = useState(null);
   const [currentQuestionId, setCurrentQuestionId] = useState(null);
   const [isSectionSelected, setSectionSelected] = useState(false);
@@ -185,6 +192,8 @@ const FormProvider = ({ children }) => {
     setQuestions,
     labels,
     setLabels,
+    labelsAndSections,
+    setLabelsAndSections,
     sectionQuestions,
     responses,
     loading,
