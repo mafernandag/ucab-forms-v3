@@ -151,6 +151,23 @@ const EditSection = ({ setOpenDrawer }) => {
     return null;
   }
 
+  const removeLabel = (option) => {
+    setLabelsAndSections( labelsAndSections => {
+      const index = labelsAndSections.findIndex( r => 
+        r.labelId ===  option.labelId &&
+        r.sectionId === currentSectionId
+      );
+      labelsAndSections.splice(index, 1);
+      return labelsAndSections;
+    })
+
+    // const index = value.findIndex( r => 
+    //   r.labelId ===  option.labelId &&
+    //   r.sectionId === currentSectionId
+    // );
+    // value.splice(index, 1);
+  }
+
   return (
     <Stack spacing={3}>
       <Box
@@ -249,7 +266,6 @@ const EditSection = ({ setOpenDrawer }) => {
           return filtered;
         }}
         onChange={(event, newValue, reason) => {
-          console.log(event);
           if (newValue) {
             const currentLabels = newValue.map((label) => {
               //Creating new label
@@ -296,23 +312,7 @@ const EditSection = ({ setOpenDrawer }) => {
               {value.map(option => {
                 const label = labels.find(label => label.id === option.labelId);
                 const title = label ? label.title : '';
-                return <Chip key={option.labelId} label={title} onDelete={() => {
-                  setLabelsAndSections( labelsAndSections => {
-                    const index = labelsAndSections.findIndex( r => 
-                      r.labelId ===  option.labelId &&
-                      r.sectionId === currentSectionId
-                    );
-                    labelsAndSections.splice(index, 1);
-                    return labelsAndSections;
-                  })
-
-                  const index = value.findIndex( r => 
-                    r.labelId ===  option.labelId &&
-                    r.sectionId === currentSectionId
-                  );
-                  console.log(index);
-                  value.splice(index, 1);
-                }} />
+                return <Chip key={option.labelId} label={title} onDelete={() => removeLabel(option)} />
               })}
             </Stack>
           )
@@ -321,9 +321,6 @@ const EditSection = ({ setOpenDrawer }) => {
           <TextField {...params} label="Etiquetas" variant="standard" />
         )}
       />
-      <ul>
-        {labelsAndSections.map(option => (<li key={option.labelId}>{option.labelId}</li>))}
-      </ul>
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
         <Tooltip title="Duplicar sección" arrow>
           <IconButton onClick={() => duplicateSection()}>
