@@ -11,7 +11,13 @@ const SectionCard = ({ section, setOpenDrawer }) => {
   };
 
   return (
-    <SelectableCard onClick={handleClick} selected={isSectionSelected}>
+    <SelectableCard
+      onClick={handleClick}
+      selected={isSectionSelected}
+      sx={{
+        borderBottom: (theme) => `4px solid ${theme.palette.primary.main}`,
+      }}
+    >
       <Typography variant="h6" mb={1}>
         {section.title}
       </Typography>

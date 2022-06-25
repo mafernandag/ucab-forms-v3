@@ -254,8 +254,13 @@ const AnswerForm = () => {
                 * Obligatorio
               </Typography>
             </Card>
-            {currentSection && (
-              <Card>
+            {currentSection && !currentSection.hideCard && (
+              <Card
+                sx={{
+                  borderBottom: (theme) =>
+                    `4px solid ${theme.palette.primary.main}`,
+                }}
+              >
                 <Typography variant="h6" mb={1}>
                   {currentSection.title}
                 </Typography>
