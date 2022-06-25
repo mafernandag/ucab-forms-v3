@@ -1,9 +1,9 @@
 import Card from "../../Card";
 
-const SelectableCard = ({ selected, ...props }) => {
+const SelectableCard = ({ selected, sx, ...props }) => {
   return (
     <Card
-      sx={{ cursor: "pointer" }}
+      sx={{ cursor: "pointer", ...sx }}
       elevation={selected ? 5 : 0}
       variant={selected ? "elevation" : "outlined"}
       {...props}

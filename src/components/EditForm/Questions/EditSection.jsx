@@ -1,5 +1,7 @@
 import {
   Box,
+  Checkbox,
+  FormControlLabel,
   IconButton,
   Stack,
   TextField,
@@ -48,6 +50,16 @@ const EditSection = ({ setOpenDrawer }) => {
     const value = e.target.value;
 
     const newSection = { ...section, [field]: value };
+
+    debouncedSave(newSection);
+
+    setSections((sections) =>
+      sections.map((s) => (s.id === section.id ? newSection : s))
+    );
+  };
+
+  const handleChangeChecked = (field) => (e, checked) => {
+    const newSection = { ...section, [field]: checked };
 
     debouncedSave(newSection);
 
@@ -182,17 +194,25 @@ const EditSection = ({ setOpenDrawer }) => {
         value={section.description}
         onChange={handleChange("description")}
       />
-      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-        <Tooltip title="Duplicar sección" arrow>
-          <IconButton onClick={() => duplicateSection()}>
-            <ContentCopy />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Eliminar sección" arrow>
-          <IconButton onClick={() => removeSection()}>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
+      <Box>
+        <FormControlLabel
+          control={<Checkbox />}
+          checked={section.hideCard}
+          onChange={handleChangeChecked("hideCard")}
+          label="Ocultar tarjeta de sección"
+        />
+        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+          <Tooltip title="Duplicar sección" arrow>
+            <IconButton onClick={() => duplicateSection()}>
+              <ContentCopy />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Eliminar sección" arrow>
+            <IconButton onClick={() => removeSection()}>
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </Box>
       </Box>
     </Stack>
   );
