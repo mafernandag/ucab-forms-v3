@@ -2,22 +2,14 @@ import { useState } from "react";
 import {
   Box,
   BoxProps,
-  IconContainerProps,
   Rating,
   RatingProps,
   SxProps,
   Typography,
   TypographyProps,
 } from "@mui/material";
-import {
-  SentimentDissatisfied,
-  SentimentSatisfied,
-  SentimentSatisfiedAlt,
-  SentimentVeryDissatisfied,
-  SentimentVerySatisfied,
-} from "@mui/icons-material";
 import { emojiLabels } from "../constants";
-import { flowRight } from "lodash";
+import IconContainer from "./IconContainer";
 
 interface Props {
   value?: number;
@@ -29,39 +21,6 @@ interface Props {
   boxProps?: BoxProps;
   boxSx?: SxProps;
 }
-
-const customIcons: {
-  [index: string]: {
-    icon: React.ReactElement;
-    label: string;
-  };
-} = {
-  1: {
-    icon: <SentimentVeryDissatisfied />,
-    label: "Very Dissatisfied",
-  },
-  2: {
-    icon: <SentimentDissatisfied />,
-    label: "Dissatisfied",
-  },
-  3: {
-    icon: <SentimentSatisfied />,
-    label: "Neutral",
-  },
-  4: {
-    icon: <SentimentSatisfiedAlt />,
-    label: "Satisfied",
-  },
-  5: {
-    icon: <SentimentVerySatisfied />,
-    label: "Very Satisfied",
-  },
-};
-
-const IconContainer = (props: IconContainerProps) => {
-  const { value, ...other } = props;
-  return <span {...other}>{customIcons[value].icon}</span>;
-};
 
 const Emoji = ({
   value,
