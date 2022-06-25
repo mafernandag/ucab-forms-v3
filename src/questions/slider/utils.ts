@@ -8,7 +8,7 @@ export const stringify = (value: SliderDbAnswer) => {
   return value.toString();
 };
 
-export const initializeAnswer = (question: SliderQuestion) => {
+export const getInitializedAnswer = (question: SliderQuestion) => {
   return question.min;
 };
 
@@ -20,7 +20,10 @@ export const checkFormat = (value: SliderAnswer) => {
   return true;
 };
 
-export const initializeFields = (question: BaseQuestion, newType: string) => {
+export const getInitializedFields = (
+  question: BaseQuestion,
+  newType: string
+) => {
   const baseQuestion = getBaseQuestion(question);
 
   const newQuestion: SliderQuestion = {

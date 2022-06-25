@@ -7,7 +7,7 @@ export const stringify = (value: CheckboxDbAnswer) => {
   return value.join(", ");
 };
 
-export const initializeAnswer = (question: CheckboxQuestion) => {
+export const getInitializedAnswer = (question: CheckboxQuestion) => {
   return [];
 };
 
@@ -19,7 +19,10 @@ export const checkFormat = (value: CheckboxAnswer) => {
   return true;
 };
 
-export const initializeFields = (question: BaseQuestion, newType: string) => {
+export const getInitializedFields = (
+  question: BaseQuestion,
+  newType: string
+) => {
   const baseQuestion = getBaseQuestion(question);
 
   const newQuestion: CheckboxQuestion = {

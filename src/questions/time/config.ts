@@ -8,8 +8,8 @@ import ResponseByQuestion from "./ResponseByQuestion";
 import {
   checkFormat,
   checkRequired,
-  initializeAnswer,
-  initializeFields,
+  getInitializedAnswer,
+  getInitializedFields,
   stringify,
 } from "./utils";
 import { TimeAnswer, TimeDbAnswer, TimeQuestion } from "./types";
@@ -27,9 +27,9 @@ export const config: QuestionTypeConfig<
   responseByPerson: ResponseByPerson,
   responseByQuestion: ResponseByQuestion,
   stringify: stringify,
-  initializeAnswer: initializeAnswer,
+  getInitializedAnswer: getInitializedAnswer,
   checkRequired: checkRequired,
   checkFormat: checkFormat,
-  initializeFields: initializeFields,
+  getInitializedFields: getInitializedFields,
   alwaysRequired: false,
 };

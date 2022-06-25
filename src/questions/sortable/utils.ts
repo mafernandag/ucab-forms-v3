@@ -7,7 +7,7 @@ export const stringify = (value: SortableDbAnswer) => {
   return value.join(", ");
 };
 
-export const initializeAnswer = (question: SortableQuestion) => {
+export const getInitializedAnswer = (question: SortableQuestion) => {
   return [...question.options];
 };
 
@@ -19,7 +19,10 @@ export const checkFormat = (value: SortableAnswer) => {
   return true;
 };
 
-export const initializeFields = (question: BaseQuestion, newType: string) => {
+export const getInitializedFields = (
+  question: BaseQuestion,
+  newType: string
+) => {
   const baseQuestion = getBaseQuestion(question);
 
   const newQuestion: SortableQuestion = {

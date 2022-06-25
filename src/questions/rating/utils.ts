@@ -7,7 +7,7 @@ export const stringify = (value: RatingDbAnswer) => {
   return value.toString();
 };
 
-export const initializeAnswer = (question: RatingQuestion) => {
+export const getInitializedAnswer = (question: RatingQuestion) => {
   return 0;
 };
 
@@ -19,7 +19,10 @@ export const checkFormat = (value: RatingAnswer) => {
   return true;
 };
 
-export const initializeFields = (question: BaseQuestion, newType: string) => {
+export const getInitializedFields = (
+  question: BaseQuestion,
+  newType: string
+) => {
   const baseQuestion = getBaseQuestion(question);
 
   const newQuestion: RatingQuestion = {

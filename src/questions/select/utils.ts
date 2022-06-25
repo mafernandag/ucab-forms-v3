@@ -7,7 +7,7 @@ export const stringify = (value: SelectDbAnswer) => {
   return value;
 };
 
-export const initializeAnswer = (question: SelectQuestion) => {
+export const getInitializedAnswer = (question: SelectQuestion) => {
   return "";
 };
 
@@ -19,7 +19,10 @@ export const checkFormat = (value: SelectAnswer) => {
   return true;
 };
 
-export const initializeFields = (question: BaseQuestion, newType: string) => {
+export const getInitializedFields = (
+  question: BaseQuestion,
+  newType: string
+) => {
   const baseQuestion = getBaseQuestion(question);
 
   const newQuestion: SelectQuestion = {

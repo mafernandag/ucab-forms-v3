@@ -56,12 +56,13 @@ const AnswerForm = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentSectionId]);
 
-  const initializeAnswers = useCallback((questions) => {
+  const getInitializedAnswers = useCallback((questions) => {
     const answers = {};
 
     questions.forEach((question) => {
       const type = question.type;
-      answers[question.id] = questionConfig[type].initializeAnswer(question);
+      answers[question.id] =
+        questionConfig[type].getInitializedAnswer(question);
     });
 
     setAnswers(answers);
@@ -74,7 +75,7 @@ const AnswerForm = () => {
       fullWidth: false,
       action: () => {
         setErrors({});
-        initializeAnswers(form.questions);
+        getInitializedAnswers(form.questions);
         setCurrentSectionId(form.sections[0].id);
       },
     });
@@ -111,7 +112,7 @@ const AnswerForm = () => {
 
         setForm(form);
         setCurrentSectionId(form.sections[0]?.id);
-        initializeAnswers(form.questions);
+        getInitializedAnswers(form.questions);
 
         navigator.geolocation.getCurrentPosition((position) => {
           const { latitude, longitude } = position.coords;
@@ -125,7 +126,7 @@ const AnswerForm = () => {
     };
 
     getForm();
-  }, [formId, initializeAnswers, user]);
+  }, [formId, getInitializedAnswers, user]);
 
   const submit = async (e) => {
     e.preventDefault();

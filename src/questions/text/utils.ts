@@ -6,7 +6,7 @@ export const stringify = (value: TextDbAnswer) => {
   return value;
 };
 
-export const initializeAnswer = (question: TextQuestion) => {
+export const getInitializedAnswer = (question: TextQuestion) => {
   return "";
 };
 
@@ -18,7 +18,10 @@ export const checkFormat = (value: TextAnswer) => {
   return true;
 };
 
-export const initializeFields = (question: BaseQuestion, newType: string) => {
+export const getInitializedFields = (
+  question: BaseQuestion,
+  newType: string
+) => {
   const baseQuestion = getBaseQuestion(question);
 
   const newQuestion: TextQuestion = {

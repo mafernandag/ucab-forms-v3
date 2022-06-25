@@ -12,7 +12,7 @@ export const stringify = (value: TimeDbAnswer) => {
   return formatTime(value);
 };
 
-export const initializeAnswer = (question: TimeQuestion): TimeAnswer => {
+export const getInitializedAnswer = (question: TimeQuestion): TimeAnswer => {
   return "";
 };
 
@@ -24,7 +24,10 @@ export const checkFormat = (value: TimeAnswer) => {
   return value.toString() !== "Invalid Date";
 };
 
-export const initializeFields = (question: BaseQuestion, newType: string) => {
+export const getInitializedFields = (
+  question: BaseQuestion,
+  newType: string
+) => {
   const baseQuestion = getBaseQuestion(question);
 
   const newQuestion: TimeQuestion = {

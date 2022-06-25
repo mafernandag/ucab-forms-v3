@@ -62,7 +62,10 @@ const EditQuestion = ({ setOpenDrawer }) => {
   const handleChangeType = (e) => {
     const type = e.target.value;
 
-    const newQuestion = questionConfig[type].initializeFields(question, type);
+    const newQuestion = questionConfig[type].getInitializedFields(
+      question,
+      type
+    );
 
     debouncedSave(newQuestion);
 

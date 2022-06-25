@@ -7,7 +7,7 @@ export const stringify = (value: RadioDbAnswer) => {
   return value;
 };
 
-export const initializeAnswer = (question: RadioQuestion) => {
+export const getInitializedAnswer = (question: RadioQuestion) => {
   if (question.required) {
     return question.options[0];
   }
@@ -23,7 +23,10 @@ export const checkFormat = (value: RadioAnswer) => {
   return true;
 };
 
-export const initializeFields = (question: BaseQuestion, newType: string) => {
+export const getInitializedFields = (
+  question: BaseQuestion,
+  newType: string
+) => {
   const baseQuestion = getBaseQuestion(question);
 
   const newQuestion: RadioQuestion = {
