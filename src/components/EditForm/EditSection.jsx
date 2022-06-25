@@ -6,6 +6,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 import {
   ArrowBack,
   ArrowForward,
@@ -18,7 +19,19 @@ import { deleteQuestion, insertQuestion } from "../../api/questions";
 import { useForm } from "../../hooks/useForm";
 import { useAlert } from "../../hooks/useAlert";
 import { calculateNewIndex } from "../../utils/forms";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+
+//BORRAR
+function makeid(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * 
+ charactersLength));
+   }
+   return result;
+}
 
 const EditSection = ({ setOpenDrawer }) => {
   const {
@@ -29,8 +42,14 @@ const EditSection = ({ setOpenDrawer }) => {
     currentSectionId,
     setCurrentSectionId,
     sectionQuestions,
+    labels,
+    setLabels
   } = useForm();
   const openAlert = useAlert();
+
+  //const [currentLabels, setCurrentLabels] = useState([]);
+
+  const filter = createFilterOptions();
 
   const debouncedSave = useMemo(
     () =>
@@ -177,6 +196,82 @@ const EditSection = ({ setOpenDrawer }) => {
         label="Descripción de la sección"
         value={section.description}
         onChange={handleChange("description")}
+      />
+      <Autocomplete
+        disablePortal
+        multiple
+        disableCloseOnSelect
+        selectOnFocus
+        clearOnBlur
+        handleHomeEndKeys
+        id="labels"
+        noOptionsText="No hay etiquetas"
+        options={labels}
+        getOptionLabel={(option) => {
+          // Value selected with enter, right from the input
+          if (typeof option === "string") {
+            return option;
+          }
+          // Add "xxx" option created dynamically
+          if (option.realTitle) {
+            return option.realTitle;
+          }
+          // Regular option
+          return option.title;
+        }}
+        groupBy={(label) => {
+          const section = sections.find(s => s.id === label.originSection);
+          return section ? section.title : null;
+        }}
+        value={labels.filter(
+            label => label.sections.some(section => section.id === currentSectionId)
+          )}
+        filterOptions={(options, params) => {
+          const filtered = filter(options, params);
+
+          const { inputValue } = params;
+          // Suggest the creation of a new value
+          const isExisting = options.some(
+            (option) => inputValue === option.title
+          );
+          
+          if (inputValue !== "" && !isExisting) {
+            filtered.push({
+              title: `Agregar "${inputValue}"`,
+              realTitle: inputValue,
+            });
+          }
+
+          return filtered;
+        }}
+        onChange={(event, newValue) => {
+          if (typeof newValue === "string") {
+            // setValue({
+            //   title: newValue,
+            // });
+          } else if (newValue && newValue.length>0) {
+            // Create a new value from the user input
+            const newLabels = [
+              ...labels,
+              {
+                id: makeid(20),
+                title: newValue.pop().realTitle,
+                sections: [currentSectionId],
+                originSection: currentSectionId,
+              }
+            ]
+            setLabels(newLabels);
+          } else {
+            const newLabels = labels.filter(
+              label => !label.sections.some(section => section.id === currentSectionId)
+            )
+            setLabels(newLabels.concat(newValue));
+          }
+        }}
+        //renderTags={() => null}
+        renderInput={(params) => (
+          <TextField {...params} label="Etiquetas" variant="standard" />
+        )}
       />
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
         <Tooltip title="Duplicar sección" arrow>

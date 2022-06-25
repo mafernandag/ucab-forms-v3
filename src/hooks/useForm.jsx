@@ -5,6 +5,29 @@ import { getQuestionsChanges } from "../api/questions";
 import { getResponses } from "../api/responses";
 import { getSectionsChanges } from "../api/sections";
 
+const mylabels = [
+  {
+    id: "AAA",
+    title: "Etiqueta1",
+    sections: ["section1"],
+  },
+  {
+    id: "BBB",
+    title: "Etiqueta2",
+    sections: ["section1"],
+  },
+  {
+    id: "BBB",
+    title: "Etiqueta3",
+    sections: ["section2"],
+  },
+  {
+    id: "CCC",
+    title: "Etiqueta1",
+    sections: ["section1"],
+  },
+];
+
 const FormContext = createContext();
 
 const useForm = () => {
@@ -17,6 +40,7 @@ const FormProvider = ({ children }) => {
   const [sections, setSections] = useState([]);
   const [questions, setQuestions] = useState([]);
   const [responses, setResponses] = useState([]);
+  const [labels, setLabels] = useState([]);
   const [currentSectionId, setCurrentSectionId] = useState(null);
   const [currentQuestionId, setCurrentQuestionId] = useState(null);
   const [isSectionSelected, setSectionSelected] = useState(false);
@@ -159,6 +183,8 @@ const FormProvider = ({ children }) => {
     question,
     questions,
     setQuestions,
+    labels,
+    setLabels,
     sectionQuestions,
     responses,
     loading,
