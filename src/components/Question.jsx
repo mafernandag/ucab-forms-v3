@@ -4,7 +4,7 @@ import { questionConfig } from "../questions";
 
 const Question = ({ answers, question, setAnswers }) => {
   const type = question.type;
-  const MyQuestion = questionConfig[type].question;
+  const MyQuestion = questionConfig[type].Question;
 
   const answer = answers[question.id];
 

@@ -159,7 +159,7 @@ const Response = () => {
                             {(() => {
                               const type = question.type;
                               const ResponseByPerson =
-                                questionTypesConfig[type].responseByPerson;
+                                questionTypesConfig[type].ResponseByPerson;
                               return (
                                 <ResponseByPerson
                                   question={question}
