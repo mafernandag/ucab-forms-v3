@@ -30,7 +30,7 @@ const QuestionStat = ({ question, responses }) => {
   const responseCountText = getResponseCountText(responseCount);
 
   const type = question.type;
-  const Stat = questionTypesConfig[type].stat;
+  const Stat = questionTypesConfig[type].Stat;
 
   return (
     <>

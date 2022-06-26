@@ -48,17 +48,16 @@ export interface ResponseByPersonProps<T, K> {
 
 export interface QuestionTypeConfig<T, K, V> {
   label: string;
-  preview: (props: PreviewProps<T>) => JSX.Element;
-  settings: (props: SettingsProps<T>) => JSX.Element;
-  question: (props: QuestionProps<T, K>) => JSX.Element;
-  stat: (props: StatProps<T, V>) => JSX.Element;
-  responseByQuestion: (props: ResponseByQuestionProps<T, V>) => JSX.Element;
-  responseByPerson: (props: ResponseByPersonProps<T, V>) => JSX.Element;
+  Preview: (props: PreviewProps<T>) => JSX.Element;
+  Settings: (props: SettingsProps<T>) => JSX.Element;
+  Question: (props: QuestionProps<T, K>) => JSX.Element;
+  Stat: (props: StatProps<T, V>) => JSX.Element;
+  ResponseByQuestion: (props: ResponseByQuestionProps<T, V>) => JSX.Element;
+  ResponseByPerson: (props: ResponseByPersonProps<T, V>) => JSX.Element;
   stringify: (value: V) => string;
   getSerializableValue: (value: V) => any;
   getInitializedAnswer: (question: T) => K;
   checkRequired: (value: K) => boolean;
   checkFormat: (value: K) => boolean;
   getInitializedFields: (question: BaseQuestion, newType: string) => T;
-  alwaysRequired: boolean;
 }

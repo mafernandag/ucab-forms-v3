@@ -95,7 +95,7 @@ const ResponsesByQuestion = () => {
   };
 
   const type = question?.type;
-  const ResponseByQuestion = questionTypesConfig[type]?.responseByQuestion;
+  const ResponseByQuestion = questionTypesConfig[type]?.ResponseByQuestion;
 
   return (
     <Box>

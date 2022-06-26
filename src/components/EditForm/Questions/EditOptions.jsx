@@ -14,7 +14,7 @@ const EditOptions = ({ question, debouncedSave }) => {
 
   const type = question.type;
 
-  const Settings = questionConfig[type].settings;
+  const Settings = questionConfig[type].Settings;
 
   return <Settings question={question} updateQuestion={updateQuestion} />;
 };

@@ -21,17 +21,16 @@ export const config: QuestionTypeConfig<
   TimeDbAnswer
 > = {
   label: "Hora",
-  preview: Preview,
-  settings: Settings,
-  question: Question,
-  stat: Stat,
-  responseByPerson: ResponseByPerson,
-  responseByQuestion: ResponseByQuestion,
+  Preview,
+  Settings,
+  Question,
+  Stat,
+  ResponseByPerson,
+  ResponseByQuestion,
   stringify: stringify,
   getSerializableValue: getSerializableValue,
   getInitializedAnswer: getInitializedAnswer,
   checkRequired: checkRequired,
   checkFormat: checkFormat,
   getInitializedFields: getInitializedFields,
-  alwaysRequired: false,
 };
