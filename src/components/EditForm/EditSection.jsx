@@ -23,6 +23,8 @@ import { calculateNewIndex } from "../../utils/forms";
 import { useMemo } from "react";
 
 //BORRAR
+//Funcion para generar ID's de prueba, borrar una vez implementado el back
+// para las estiquetas
 function makeid(length) {
   var result = "";
   var characters =
@@ -33,6 +35,7 @@ function makeid(length) {
   }
   return result;
 }
+//BORRAR
 
 const EditSection = ({ setOpenDrawer }) => {
   const {
@@ -151,23 +154,6 @@ const EditSection = ({ setOpenDrawer }) => {
     return null;
   }
 
-  const removeLabel = (option) => {
-    setLabelsAndSections( labelsAndSections => {
-      const index = labelsAndSections.findIndex( r => 
-        r.labelId ===  option.labelId &&
-        r.sectionId === currentSectionId
-      );
-      labelsAndSections.splice(index, 1);
-      return labelsAndSections;
-    })
-
-    // const index = value.findIndex( r => 
-    //   r.labelId ===  option.labelId &&
-    //   r.sectionId === currentSectionId
-    // );
-    // value.splice(index, 1);
-  }
-
   return (
     <Stack spacing={3}>
       <Box
@@ -235,18 +221,16 @@ const EditSection = ({ setOpenDrawer }) => {
           }
           //selected option
           if (option.labelId) {
-            const label = labels.find(label => label.id === option.labelId);
-            return label ? label.title : '';
+            const label = labels.find((label) => label.id === option.labelId);
+            return label ? label.title : "";
           }
           // Regular option
           return option.title;
         }}
-        isOptionEqualToValue={(option, value) => (option.id === value.labelId)}
-        // groupBy={(label) => {
-        //   const section = sections.find(s => s.id === label.originSectionId);
-        //   return section ? section.title : null;
-        // }}
-        value={labelsAndSections.filter(label => label.sectionId === currentSectionId)}
+        isOptionEqualToValue={(option, value) => option.id === value.labelId}
+        value={labelsAndSections.filter(
+          (label) => label.sectionId === currentSectionId
+        )}
         filterOptions={(options, params) => {
           const filtered = filter(options, params);
 
@@ -276,7 +260,7 @@ const EditSection = ({ setOpenDrawer }) => {
                   originSectionId: currentSectionId,
                 };
 
-                setLabels(labels => {
+                setLabels((labels) => {
                   labels.push(newLabel);
                   return labels;
                 });
@@ -284,7 +268,7 @@ const EditSection = ({ setOpenDrawer }) => {
                 return {
                   labelId: newLabel.id,
                   sectionId: currentSectionId,
-                }
+                };
               }
 
               //Adding an existing label
@@ -292,13 +276,13 @@ const EditSection = ({ setOpenDrawer }) => {
                 return {
                   labelId: label.id,
                   sectionId: currentSectionId,
-                }
+                };
               }
 
               return label;
             });
 
-            setLabelsAndSections(labelsAndSections => {
+            setLabelsAndSections((labelsAndSections) => {
               const foreignLabels = labelsAndSections.filter(
                 (label) => label.sectionId !== currentSectionId
               );
@@ -306,17 +290,7 @@ const EditSection = ({ setOpenDrawer }) => {
             });
           }
         }}
-        renderTags={(value, getTagProps, ownerState) => {
-          return (
-            <Stack spacing={1} sx={{ padding: 1 }}>
-              {value.map(option => {
-                const label = labels.find(label => label.id === option.labelId);
-                const title = label ? label.title : '';
-                return <Chip key={option.labelId} label={title} onDelete={() => removeLabel(option)} />
-              })}
-            </Stack>
-          )
-        }}
+        ChipProps={{ sx: { width: "100%", justifyContent: "space-between" } }}
         renderInput={(params) => (
           <TextField {...params} label="Etiquetas" variant="standard" />
         )}
