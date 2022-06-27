@@ -5,7 +5,7 @@ import {
   TextField,
   Tooltip,
   Typography,
-  Chip,
+  Popover,
 } from "@mui/material";
 import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 import {
@@ -20,7 +20,7 @@ import { deleteQuestion, insertQuestion } from "../../api/questions";
 import { useForm } from "../../hooks/useForm";
 import { useAlert } from "../../hooks/useAlert";
 import { calculateNewIndex } from "../../utils/forms";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 //BORRAR
 //Funcion para generar ID's de prueba, borrar una vez implementado el back
@@ -51,6 +51,10 @@ const EditSection = ({ setOpenDrawer }) => {
     labelsAndSections,
     setLabelsAndSections,
   } = useForm();
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [currentLabel, setCurrentLabel] = useState(null);
+  const [errorPopover, setErrorPopover] = useState(false);
 
   const openAlert = useAlert();
 
@@ -153,6 +157,37 @@ const EditSection = ({ setOpenDrawer }) => {
   if (!section) {
     return null;
   }
+
+  const handlePopoverClick = (event) => {
+    setAnchorEl(event.currentTarget);
+    const labelTitle = event.target.children[0].innerText;
+    const label = labels.find((l) => l.title === labelTitle);
+    setCurrentLabel(label);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+    setCurrentLabel(null);
+  };
+
+  const handlePopoverChange = (e) => {
+    const value = e.target.value;
+
+    const newLabel = { ...currentLabel, title: value };
+
+    setCurrentLabel(newLabel);
+
+    const titleExists = labels.find((l) => l.title === value);
+
+    if (titleExists) {
+      setErrorPopover(true);
+    } else {
+      setLabels((labels) =>
+        labels.map((l) => (l.id === currentLabel.id ? newLabel : l))
+      );
+      setErrorPopover(false);
+    }
+  };
 
   return (
     <Stack spacing={3}>
@@ -290,11 +325,38 @@ const EditSection = ({ setOpenDrawer }) => {
             });
           }
         }}
-        ChipProps={{ sx: { width: "100%", justifyContent: "space-between" } }}
+        ChipProps={{
+          sx: { width: "100%", justifyContent: "space-between" },
+          onClick: (event) => handlePopoverClick(event),
+        }}
         renderInput={(params) => (
           <TextField {...params} label="Etiquetas" variant="standard" />
         )}
       />
+      {currentLabel !== null && (
+        <Popover
+          open={anchorEl !== null}
+          anchorEl={anchorEl}
+          onClose={handlePopoverClose}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "left",
+          }}
+        >
+          <Box sx={{ padding: 3 }}>
+            <TextField
+              variant="standard"
+              error={errorPopover}
+              helperText={
+                errorPopover ? "Ya existe esa etiqueta con ese titulo" : ""
+              }
+              label="Titulo de la etiqueta"
+              value={currentLabel.title}
+              onChange={handlePopoverChange}
+            />
+          </Box>
+        </Popover>
+      )}
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
         <Tooltip title="Duplicar sección" arrow>
           <IconButton onClick={() => duplicateSection()}>
