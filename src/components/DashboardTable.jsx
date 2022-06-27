@@ -115,6 +115,14 @@ const DashboardTable = () => {
     });
   };
 
+  const getIconColor = (theme) => {
+    if (theme.palette.mode === "light") {
+      return theme.palette.text.secondary;
+    }
+
+    return theme.palette.text.primary;
+  };
+
   return (
     <Table
       columns={columns}
@@ -123,25 +131,25 @@ const DashboardTable = () => {
       isLoading={loadingUserForms || loadingCollaborationForms || duplicating}
       actions={[
         {
-          icon: () => <AddIcon />,
+          icon: () => <AddIcon sx={{ color: getIconColor }} />,
           tooltip: "Crear",
           isFreeAction: true,
           onClick: createNewForm,
         },
         {
-          icon: () => <EditIcon />,
+          icon: () => <EditIcon sx={{ color: getIconColor }} />,
           tooltip: "Editar",
           onClick: (event, rowData) => {
             navigate("/forms/edit/" + rowData.id);
           },
         },
         {
-          icon: () => <ContentCopy />,
+          icon: () => <ContentCopy sx={{ color: getIconColor }} />,
           tooltip: "Duplicar",
           onClick: handleDuplicate,
         },
         {
-          icon: () => <DeleteIcon />,
+          icon: () => <DeleteIcon sx={{ color: getIconColor }} />,
           tooltip: "Eliminar",
           onClick: handleDelete,
         },
