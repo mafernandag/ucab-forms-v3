@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import {
   Box,
   Checkbox,
@@ -24,7 +25,7 @@ import { deleteQuestion, insertQuestion } from "../../../api/questions";
 import { useForm } from "../../../hooks/useForm";
 import { useAlert } from "../../../hooks/useAlert";
 import { calculateNewIndex } from "../../../utils/forms";
-import { useMemo } from "react";
+import Labels from "./Labels";
 
 const EditSection = ({ setOpenDrawer }) => {
   const {
@@ -46,11 +47,7 @@ const EditSection = ({ setOpenDrawer }) => {
     [form.id]
   );
 
-  const handleChange = (field) => (e) => {
-    const value = e.target.value;
-
-    const newSection = { ...section, [field]: value };
-
+  const updateSection = (newSection) => {
     debouncedSave(newSection);
 
     setSections((sections) =>
@@ -58,14 +55,18 @@ const EditSection = ({ setOpenDrawer }) => {
     );
   };
 
+  const handleChange = (field) => (e) => {
+    const value = e.target.value;
+
+    const newSection = { ...section, [field]: value };
+
+    updateSection(newSection);
+  };
+
   const handleChangeChecked = (field) => (e, checked) => {
     const newSection = { ...section, [field]: checked };
 
-    debouncedSave(newSection);
-
-    setSections((sections) =>
-      sections.map((s) => (s.id === section.id ? newSection : s))
-    );
+    updateSection(newSection);
   };
 
   const removeSection = () => {
@@ -194,6 +195,7 @@ const EditSection = ({ setOpenDrawer }) => {
         value={section.description}
         onChange={handleChange("description")}
       />
+      <Labels updateSection={updateSection} />
       <Box>
         <FormControlLabel
           control={<Checkbox />}
