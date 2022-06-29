@@ -10,13 +10,19 @@ import {
   TextField,
   Tooltip,
 } from "@mui/material";
-import { Clear as ClearIcon } from "@mui/icons-material";
+import {
+  Clear as ClearIcon,
+  ExitToAppRounded as GoToIcon,
+} from "@mui/icons-material";
 import { CheckboxSettingsProps } from "./types";
 import RandomOrderCheckbox from "../components/RandomOrderCheckbox";
 import { RequiredCheckbox } from "../components";
 import ConditionedQuestion from "../components/ConditionedQuestionCheckbox";
+import SelectSectionDialog from "../../components/EditForm/SelectSectionDialog";
+import { useState } from "react";
 
 const Settings = ({ question, updateQuestion }: CheckboxSettingsProps) => {
+  const [openSelectSection, setOpenSelectSection] = useState(false);
   const handleChangeOption =
     (i: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
       const option = e.target.value;
@@ -53,6 +59,11 @@ const Settings = ({ question, updateQuestion }: CheckboxSettingsProps) => {
     updateQuestion(newQuestion);
   };
 
+  //Here should be according to the i question
+  const goToSectionOption = () => {
+    setOpenSelectSection(true);
+  };
+
   return (
     <>
       <FormControl component="fieldset">
@@ -61,25 +72,40 @@ const Settings = ({ question, updateQuestion }: CheckboxSettingsProps) => {
           {question.options.map((option, i) => (
             <Box
               key={i}
-              sx={{ display: "flex", justifyContent: "space-between" }}
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                flexDirection: "column",
+                alignItems: "flex-start",
+              }}
             >
-              <FormControlLabel
-                disabled
-                control={<Checkbox />}
-                value={option}
-                label={
-                  <TextField
-                    variant="standard"
-                    value={option}
-                    onChange={handleChangeOption(i)}
-                  />
-                }
-              />
-              <Tooltip title="Eliminar opción" arrow>
-                <IconButton onClick={deleteOption(i)}>
-                  <ClearIcon />
-                </IconButton>
-              </Tooltip>
+              <Box>
+                <FormControlLabel
+                  disabled
+                  control={<Checkbox />}
+                  value={option}
+                  label={
+                    <TextField
+                      variant="standard"
+                      value={option}
+                      onChange={handleChangeOption(i)}
+                    />
+                  }
+                />
+                <Tooltip title="Eliminar opción" arrow>
+                  <IconButton onClick={deleteOption(i)}>
+                    <ClearIcon />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+              <Button
+                variant="text"
+                startIcon={<GoToIcon />}
+                onClick={goToSectionOption}
+                size="small"
+              >
+                Llevar a sección
+              </Button>
             </Box>
           ))}
           {question.other && (
@@ -118,6 +144,10 @@ const Settings = ({ question, updateQuestion }: CheckboxSettingsProps) => {
           updateQuestion={updateQuestion}
         />
       </Box>
+      <SelectSectionDialog
+        open={openSelectSection}
+        setOpen={setOpenSelectSection}
+      />
     </>
   );
 };

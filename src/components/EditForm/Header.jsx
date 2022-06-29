@@ -50,8 +50,6 @@ const EditFormHeader = ({ setOpenDrawer }) => {
   const [openCollaborators, setOpenCollaborators] = useState(false);
   const [duplicating, setDuplicating] = useState(false);
 
-  const [openSelectSection, setOpenSelectSection] = useState(false);
-
   const popupStateMore = usePopupState({
     variant: "popover",
     popupId: "more-menu-aaaa",
@@ -196,14 +194,14 @@ const EditFormHeader = ({ setOpenDrawer }) => {
       />
       <SettingsDialog open={openSettings} setOpen={setOpenSettings} />
       <SendDialog open={openSend} setOpen={setOpenSend} />
-      {/* <CollaboratorsDialog
-        open={openCollaborators}
-        setOpen={setOpenCollaborators}
-      /> */}
-      <SelectSectionDialog
+      <CollaboratorsDialog
         open={openCollaborators}
         setOpen={setOpenCollaborators}
       />
+      {/* <SelectSectionDialog
+        open={openCollaborators}
+        setOpen={setOpenCollaborators}
+      /> */}
       <Backdrop
         sx={{ zIndex: (theme) => theme.zIndex.drawer + 2 }}
         open={duplicating}

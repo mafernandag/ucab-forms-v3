@@ -10,13 +10,19 @@ import {
   Tooltip,
   RadioGroup,
 } from "@mui/material";
-import { Clear as ClearIcon } from "@mui/icons-material";
+import {
+  Clear as ClearIcon,
+  ExitToAppRounded as GoToIcon,
+} from "@mui/icons-material";
 import { RadioSettingsProps } from "./types";
 import RandomOrderCheckbox from "../components/RandomOrderCheckbox";
 import { RequiredCheckbox } from "../components";
 import ConditionedQuestion from "../components/ConditionedQuestionCheckbox";
+import SelectSectionDialog from "../../components/EditForm/SelectSectionDialog";
+import { useState } from "react";
 
 const Settings = ({ question, updateQuestion }: RadioSettingsProps) => {
+  const [openSelectSection, setOpenSelectSection] = useState(false);
   const handleChangeOption =
     (i: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
       const option = e.target.value;
@@ -52,7 +58,10 @@ const Settings = ({ question, updateQuestion }: RadioSettingsProps) => {
     const newQuestion = { ...question, other: false };
     updateQuestion(newQuestion);
   };
-
+  //Here should be according to the i question
+  const goToSectionOption = () => {
+    setOpenSelectSection(true);
+  };
   return (
     <>
       <FormControl component="fieldset">
@@ -83,18 +92,35 @@ const Settings = ({ question, updateQuestion }: RadioSettingsProps) => {
             </Box>
           ))}
           {question.other && (
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              <FormControlLabel
-                disabled
-                control={<Radio />}
-                value="otros"
-                label="Otros"
-              />
-              <Tooltip title="Eliminar">
-                <IconButton onClick={removeOther}>
-                  <ClearIcon />
-                </IconButton>
-              </Tooltip>
+            <Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                }}
+              >
+                <FormControlLabel
+                  disabled
+                  control={<Radio />}
+                  value="otros"
+                  label="Otros"
+                />
+                <Tooltip title="Eliminar">
+                  <IconButton onClick={removeOther}>
+                    <ClearIcon />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+              <Button
+                variant="text"
+                startIcon={<GoToIcon />}
+                onClick={goToSectionOption}
+                size="small"
+              >
+                Llevar a sección
+              </Button>
             </Box>
           )}
         </RadioGroup>
@@ -118,6 +144,10 @@ const Settings = ({ question, updateQuestion }: RadioSettingsProps) => {
           updateQuestion={updateQuestion}
         />
       </Box>
+      <SelectSectionDialog
+        open={openSelectSection}
+        setOpen={setOpenSelectSection}
+      />
     </>
   );
 };
