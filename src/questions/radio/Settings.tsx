@@ -14,6 +14,7 @@ import { Clear as ClearIcon } from "@mui/icons-material";
 import { RadioSettingsProps } from "./types";
 import RandomOrderCheckbox from "../components/RandomOrderCheckbox";
 import { RequiredCheckbox } from "../components";
+import ConditionedQuestion from "../components/ConditionedQuestionCheckbox";
 
 const Settings = ({ question, updateQuestion }: RadioSettingsProps) => {
   const handleChangeOption =
@@ -112,6 +113,10 @@ const Settings = ({ question, updateQuestion }: RadioSettingsProps) => {
           updateQuestion={updateQuestion}
         />
         <RequiredCheckbox question={question} updateQuestion={updateQuestion} />
+        <ConditionedQuestion
+          question={question}
+          updateQuestion={updateQuestion}
+        />
       </Box>
     </>
   );

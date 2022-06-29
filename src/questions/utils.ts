@@ -7,6 +7,7 @@ export const getBaseQuestion = (question: BaseQuestion) => {
     "title",
     "type",
     "required",
+    "conditioned",
     "index",
     "sectionId",
   ]);

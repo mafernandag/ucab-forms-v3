@@ -3,8 +3,13 @@ export interface BaseQuestion {
   title: string;
   type: string;
   required: boolean;
+  conditioned: boolean;
   index: number;
   sectionId: string;
+}
+
+export interface ConditionedQuestion extends BaseQuestion {
+  conditioned: boolean;
 }
 
 export interface QuestionWithOptions extends BaseQuestion {

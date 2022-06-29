@@ -1,6 +1,7 @@
 import { SortableSettingsProps } from "./types";
 import { EnumeratedOptions, RequiredCheckbox } from "../components";
 import RandomOrderCheckbox from "../components/RandomOrderCheckbox";
+import ConditionedQuestion from "../components/ConditionedQuestionCheckbox";
 import { Box } from "@mui/system";
 
 const Settings = (props: SortableSettingsProps) => {
@@ -10,6 +11,7 @@ const Settings = (props: SortableSettingsProps) => {
       <Box>
         <RandomOrderCheckbox {...props} />
         <RequiredCheckbox disabled {...props} />
+        <ConditionedQuestion {...props} />
       </Box>
     </>
   );
