@@ -70,16 +70,14 @@ const Settings = ({ question, updateQuestion }: CheckboxSettingsProps) => {
         <FormLabel component="legend">Opciones</FormLabel>
         <FormGroup sx={{ mb: 1 }}>
           {question.options.map((option, i) => (
-            <Box
-              key={i}
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                flexDirection: "column",
-                alignItems: "flex-start",
-              }}
-            >
-              <Box>
+            <Box>
+              <Box
+                key={i}
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
                 <FormControlLabel
                   disabled
                   control={<Checkbox />}
