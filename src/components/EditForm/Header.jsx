@@ -35,6 +35,7 @@ import SettingsDialog from "./SettingsDialog";
 import SendDialog from "./SendDialog";
 import CollaboratorsDialog from "./CollaboratorsDialog";
 import Header from "../Header";
+import SelectSectionDialog from "./SelectSectionDialog";
 
 const EditFormHeader = ({ setOpenDrawer }) => {
   const { form } = useForm();
@@ -48,6 +49,8 @@ const EditFormHeader = ({ setOpenDrawer }) => {
   const [openSend, setOpenSend] = useState(false);
   const [openCollaborators, setOpenCollaborators] = useState(false);
   const [duplicating, setDuplicating] = useState(false);
+
+  const [openSelectSection, setOpenSelectSection] = useState(false);
 
   const popupStateMore = usePopupState({
     variant: "popover",
@@ -193,7 +196,11 @@ const EditFormHeader = ({ setOpenDrawer }) => {
       />
       <SettingsDialog open={openSettings} setOpen={setOpenSettings} />
       <SendDialog open={openSend} setOpen={setOpenSend} />
-      <CollaboratorsDialog
+      {/* <CollaboratorsDialog
+        open={openCollaborators}
+        setOpen={setOpenCollaborators}
+      /> */}
+      <SelectSectionDialog
         open={openCollaborators}
         setOpen={setOpenCollaborators}
       />
