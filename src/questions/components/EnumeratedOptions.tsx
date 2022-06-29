@@ -87,14 +87,16 @@ const EnumeratedOptions = ({ question, updateQuestion }: Props) => {
                   </IconButton>
                 </Tooltip>
               </Box>
-              <Button
-                variant="text"
-                startIcon={<GoToIcon />}
-                onClick={goToSectionOption}
-                size="small"
-              >
-                Llevar a sección
-              </Button>
+              {question.conditioned && (
+                <Button
+                  variant="text"
+                  startIcon={<GoToIcon />}
+                  onClick={goToSectionOption}
+                  size="small"
+                >
+                  Llevar a sección
+                </Button>
+              )}
             </Box>
           ))}
         </FormGroup>

@@ -68,59 +68,61 @@ const Settings = ({ question, updateQuestion }: RadioSettingsProps) => {
         <FormLabel component="legend">Opciones</FormLabel>
         <RadioGroup sx={{ mb: 1 }}>
           {question.options.map((option, i) => (
-            <Box
-              key={i}
-              sx={{ display: "flex", justifyContent: "space-between" }}
-            >
-              <FormControlLabel
-                disabled
-                control={<Radio />}
-                value={option}
-                label={
-                  <TextField
-                    variant="standard"
-                    value={option}
-                    onChange={handleChangeOption(i)}
-                  />
-                }
-              />
-              <Tooltip title="Eliminar">
-                <IconButton onClick={deleteOption(i)}>
-                  <ClearIcon />
-                </IconButton>
-              </Tooltip>
-            </Box>
-          ))}
-          {question.other && (
             <Box>
               <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  flexDirection: "column",
-                  alignItems: "flex-start",
-                }}
+                key={i}
+                sx={{ display: "flex", justifyContent: "space-between" }}
               >
                 <FormControlLabel
                   disabled
                   control={<Radio />}
-                  value="otros"
-                  label="Otros"
+                  value={option}
+                  label={
+                    <TextField
+                      variant="standard"
+                      value={option}
+                      onChange={handleChangeOption(i)}
+                    />
+                  }
                 />
                 <Tooltip title="Eliminar">
-                  <IconButton onClick={removeOther}>
+                  <IconButton onClick={deleteOption(i)}>
                     <ClearIcon />
                   </IconButton>
                 </Tooltip>
               </Box>
-              <Button
-                variant="text"
-                startIcon={<GoToIcon />}
-                onClick={goToSectionOption}
-                size="small"
-              >
-                Llevar a sección
-              </Button>
+              {question.conditioned && (
+                <Button
+                  variant="text"
+                  startIcon={<GoToIcon />}
+                  onClick={goToSectionOption}
+                  size="small"
+                >
+                  Llevar a sección
+                </Button>
+              )}
+            </Box>
+          ))}
+          {question.other && (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                flexDirection: "column",
+                alignItems: "flex-start",
+              }}
+            >
+              <FormControlLabel
+                disabled
+                control={<Radio />}
+                value="otros"
+                label="Otros"
+              />
+              <Tooltip title="Eliminar">
+                <IconButton onClick={removeOther}>
+                  <ClearIcon />
+                </IconButton>
+              </Tooltip>
             </Box>
           )}
         </RadioGroup>
@@ -139,10 +141,12 @@ const Settings = ({ question, updateQuestion }: RadioSettingsProps) => {
           updateQuestion={updateQuestion}
         />
         <RequiredCheckbox question={question} updateQuestion={updateQuestion} />
-        <ConditionedQuestion
-          question={question}
-          updateQuestion={updateQuestion}
-        />
+        {question.required && (
+          <ConditionedQuestion
+            question={question}
+            updateQuestion={updateQuestion}
+          />
+        )}
       </Box>
       <SelectSectionDialog
         open={openSelectSection}

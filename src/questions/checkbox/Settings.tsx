@@ -98,14 +98,16 @@ const Settings = ({ question, updateQuestion }: CheckboxSettingsProps) => {
                   </IconButton>
                 </Tooltip>
               </Box>
-              <Button
-                variant="text"
-                startIcon={<GoToIcon />}
-                onClick={goToSectionOption}
-                size="small"
-              >
-                Llevar a sección
-              </Button>
+              {question.conditioned && (
+                <Button
+                  variant="text"
+                  startIcon={<GoToIcon />}
+                  onClick={goToSectionOption}
+                  size="small"
+                >
+                  Llevar a sección
+                </Button>
+              )}
             </Box>
           ))}
           {question.other && (
@@ -139,10 +141,12 @@ const Settings = ({ question, updateQuestion }: CheckboxSettingsProps) => {
           updateQuestion={updateQuestion}
         />
         <RequiredCheckbox question={question} updateQuestion={updateQuestion} />
-        <ConditionedQuestion
-          question={question}
-          updateQuestion={updateQuestion}
-        />
+        {question.required && (
+          <ConditionedQuestion
+            question={question}
+            updateQuestion={updateQuestion}
+          />
+        )}
       </Box>
       <SelectSectionDialog
         open={openSelectSection}
