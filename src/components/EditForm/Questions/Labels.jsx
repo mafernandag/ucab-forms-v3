@@ -79,9 +79,6 @@ const Labels = ({ updateSection }) => {
             }}
           >
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Typography mr={1} minWidth={15} align="right">
-                {`${i + 1}. `}
-              </Typography>
               <Typography>{label}</Typography>
             </Box>
             <Tooltip title="Eliminar etiqueta" arrow>
