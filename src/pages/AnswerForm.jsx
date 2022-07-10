@@ -20,11 +20,13 @@ import Question from "../components/Question";
 import AnswerPageText from "../components/AnswerPageText";
 import { useMemo } from "react";
 import { questionConfig } from "../questions";
+import { DEFAULT_LABEL } from "../questions/constants";
 
 const AnswerForm = () => {
   const { id: formId } = useParams();
   const [form, setForm] = useState(null);
   const [currentSectionId, setCurrentSectionId] = useState(null);
+  const [currentLabel, setCurrentLabel] = useState();
   const [response, setResponse] = useState({});
   const [errors, setErrors] = useState({});
   const [answers, setAnswers] = useState();
@@ -54,15 +56,27 @@ const AnswerForm = () => {
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [currentSectionId]);
+  }, [currentSectionId, currentLabel]);
 
-  const getInitializedAnswers = useCallback((questions) => {
+  const initializeAnswers = useCallback((sections, questions) => {
     const answers = {};
 
     questions.forEach((question) => {
-      const type = question.type;
-      answers[question.id] =
-        questionConfig[type].getInitializedAnswer(question);
+      answers[question.id] = {};
+
+      const section = sections.find(
+        (section) => section.id === question.sectionId
+      );
+
+      if (section) {
+        const labels = section.labels.length ? section.labels : [DEFAULT_LABEL];
+
+        labels.forEach((label) => {
+          const type = question.type;
+          answers[question.id][label] =
+            questionConfig[type].getInitializedAnswer(question);
+        });
+      }
     });
 
     setAnswers(answers);
@@ -75,7 +89,7 @@ const AnswerForm = () => {
       fullWidth: false,
       action: () => {
         setErrors({});
-        getInitializedAnswers(form.questions);
+        initializeAnswers(form.sections, form.questions);
         setCurrentSectionId(form.sections[0].id);
       },
     });
@@ -112,7 +126,8 @@ const AnswerForm = () => {
 
         setForm(form);
         setCurrentSectionId(form.sections[0]?.id);
-        getInitializedAnswers(form.questions);
+        setCurrentLabel(form.sections[0]?.labels[0] || DEFAULT_LABEL);
+        initializeAnswers(form.sections, form.questions);
 
         navigator.geolocation.getCurrentPosition((position) => {
           const { latitude, longitude } = position.coords;
@@ -126,7 +141,7 @@ const AnswerForm = () => {
     };
 
     getForm();
-  }, [formId, getInitializedAnswers, user]);
+  }, [formId, initializeAnswers, user]);
 
   const submit = async (e) => {
     e.preventDefault();
@@ -139,13 +154,19 @@ const AnswerForm = () => {
 
       if (
         question.required &&
-        !questionConfig[question.type].checkRequired(answers[question.id])
+        !questionConfig[question.type].checkRequired(
+          answers[question.id][currentLabel]
+        )
       ) {
         newErrors[question.id] = "Esta pregunta es obligatoria";
         shouldReturn = true;
       }
 
-      if (!questionConfig[question.type].checkFormat(answers[question.id])) {
+      if (
+        !questionConfig[question.type].checkFormat(
+          answers[question.id][currentLabel]
+        )
+      ) {
         newErrors[question.id] = "El formato es inválido";
         shouldReturn = true;
       }
@@ -159,16 +180,25 @@ const AnswerForm = () => {
       });
     }
 
+    const currentLabelIndex = currentSection.labels.indexOf(currentLabel);
+
+    if (currentLabelIndex !== currentSection.labels.length - 1) {
+      return setCurrentLabel(
+        currentSection.labels[currentLabelIndex + 1] || DEFAULT_LABEL
+      );
+    }
+
     if (currentSectionPosition !== form.sections.length - 1) {
-      return setCurrentSectionId(form.sections[currentSectionPosition + 1].id);
+      const nextSection = form.sections[currentSectionPosition + 1];
+      setCurrentLabel(nextSection.labels[0] || DEFAULT_LABEL);
+      return setCurrentSectionId(nextSection.id);
     }
 
     setSubmitting(true);
 
     const responseData = {
       ...response,
-      answers: { ...answers },
-      comments: {},
+      answers,
     };
 
     if (form.settings.onlyOneResponse) {
@@ -267,6 +297,11 @@ const AnswerForm = () => {
                 <Typography>{currentSection.description}</Typography>
               </Card>
             )}
+            {currentSection && currentLabel !== DEFAULT_LABEL && (
+              <Card>
+                <Typography variant="h6">{currentLabel}</Typography>
+              </Card>
+            )}
             {sectionQuestions.map((question) => (
               <Card
                 key={question.id}
@@ -277,6 +312,7 @@ const AnswerForm = () => {
                 }}
               >
                 <Question
+                  label={currentLabel}
                   question={question}
                   answers={answers}
                   setAnswers={setAnswers}
@@ -325,21 +361,47 @@ const AnswerForm = () => {
               >
                 Borrar respuestas
               </Button>
-              {currentSectionPosition !== 0 && (
+              {(currentSectionPosition !== 0 ||
+                currentLabel !==
+                  (currentSection.labels[0] || DEFAULT_LABEL)) && (
                 <Button
                   variant="outlined"
                   sx={{ px: 3 }}
                   onClick={(e) => {
                     e.preventDefault();
-                    setCurrentSectionId(
-                      form.sections[currentSectionPosition - 1].id
+
+                    if (
+                      currentLabel !==
+                      (currentSection.labels[0] || DEFAULT_LABEL)
+                    ) {
+                      const currentLabelIndex =
+                        currentSection.labels.indexOf(currentLabel);
+
+                      return setCurrentLabel(
+                        currentSection.labels[currentLabelIndex - 1] ||
+                          DEFAULT_LABEL
+                      );
+                    }
+
+                    const previousSection =
+                      form.sections[currentSectionPosition - 1];
+
+                    setCurrentLabel(
+                      previousSection.labels[
+                        previousSection.labels.length - 1
+                      ] || DEFAULT_LABEL
                     );
+
+                    setCurrentSectionId(previousSection.id);
                   }}
                 >
                   Atrás
                 </Button>
               )}
-              {currentSectionPosition === form.sections.length - 1 ? (
+              {currentSectionPosition === form.sections.length - 1 &&
+              currentLabel ===
+                (currentSection.labels[currentSection.labels.length - 1] ||
+                  DEFAULT_LABEL) ? (
                 <Button
                   type="submit"
                   disabled={submitting}

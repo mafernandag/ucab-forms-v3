@@ -20,7 +20,7 @@ const getTheme = (mode) => {
               MuiCssBaseline: {
                 styleOverrides: {
                   body: {
-                    backgroundColor: "#fffafa",
+                    backgroundColor: "#fafaff",
                   },
                 },
               },

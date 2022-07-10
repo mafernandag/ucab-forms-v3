@@ -1,23 +1,54 @@
 import { useMemo } from "react";
 import { Link } from "@mui/material";
 import { ExportCsv, ExportPdf } from "@material-table/exporters";
-import { format } from "date-fns";
+import { flatMap, sortBy } from "lodash";
 import Table from "../../Table";
 import { useForm } from "../../../hooks/useForm";
 import { stringifyAnswers } from "../../../utils/stats";
-import { FILE } from "../../../questions/constants";
+import { DEFAULT_LABEL, FILE } from "../../../questions/constants";
+import { formatDateTime } from "../../../utils/dates";
+import { getSectionLabels } from "../../../questions/utils";
 
 const ResponsesTable = () => {
-  const { responses, questions } = useForm();
+  const { responses, sections, questions } = useForm();
 
-  // TODO: Sort questions by section index
+  const labeledQuestions = useMemo(() => {
+    const sortedQuestions = sortBy(questions, (question) => {
+      const section = sections.find(
+        (section) => section.id === question.sectionId
+      );
+
+      return section.index;
+    });
+
+    const labeledQuestions = flatMap(sortedQuestions, (question) => {
+      const section = sections.find(
+        (section) => section.id === question.sectionId
+      );
+
+      const sectionLabels = getSectionLabels(section);
+
+      return sectionLabels.map((label) => ({
+        ...question,
+        title:
+          label !== DEFAULT_LABEL
+            ? `${question.title} (${label})`
+            : question.title,
+        id: `${question.id}-${label}`,
+      }));
+    });
+
+    return labeledQuestions;
+  }, [questions, sections]);
+
   const columns = useMemo(() => {
     return [
       { title: "Fecha de respuesta", field: "submittedAt" },
-      ...questions.map((question) => ({
+      ...labeledQuestions.map((question) => ({
         title: question.title,
         field: question.id,
         emptyValue: "-",
+        align: "center",
         ...(question.type === FILE && {
           render: (rowData) => (
             <>
@@ -38,12 +69,12 @@ const ResponsesTable = () => {
         }),
       })),
     ];
-  }, [questions]);
+  }, [labeledQuestions]);
 
   const data = useMemo(() => {
     return responses.map((response) => ({
       id: response.id,
-      submittedAt: format(response.submittedAt, "dd/MM/yyyy HH:mm"),
+      submittedAt: formatDateTime(response.submittedAt),
       ...stringifyAnswers(response.answers, questions),
     }));
   }, [questions, responses]);

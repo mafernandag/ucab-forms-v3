@@ -120,7 +120,7 @@ const DashboardTable = () => {
       return theme.palette.text.secondary;
     }
 
-    return theme.palette.text.primary;
+    return "inherit";
   };
 
   return (

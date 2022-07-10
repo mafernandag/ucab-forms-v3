@@ -39,13 +39,12 @@ const EditQuestion = ({ setOpenDrawer }) => {
   } = useForm();
   const openAlert = useAlert();
 
-  const debouncedSave = useMemo(
-    () =>
-      debounce((newQuestion) => {
-        saveQuestion(form.id, newQuestion);
-      }, 1500),
-    [form.id]
-  );
+  const debouncedSave = useMemo(() => {
+    return debounce((newQuestion) => {
+      saveQuestion(form.id, newQuestion);
+    }, 1500);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.id, currentQuestionId]);
 
   const handleChange = (field) => (e) => {
     const value = e.target.value;

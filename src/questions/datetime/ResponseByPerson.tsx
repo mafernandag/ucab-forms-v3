@@ -4,7 +4,7 @@ import { stringify } from "./utils";
 
 const ResponseByPerson = ({ value }: DateTimeResponseByPersonProps) => {
   const text = stringify(value);
-  return <Typography>{text}</Typography>;
+  return <Typography variant="body2">{text}</Typography>;
 };
 
 export default ResponseByPerson;

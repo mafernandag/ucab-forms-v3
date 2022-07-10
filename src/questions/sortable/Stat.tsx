@@ -1,46 +1,62 @@
-import { Container } from "@mui/material";
-import { useColorMode } from "../../hooks/useColorMode";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@mui/material";
+import { getSectionLabels } from "../utils";
 import { SortableStatProps } from "./types";
 
-// TODO: Improve UI
-
-const Stat = ({ answers, question }: SortableStatProps) => {
-  const { colorMode } = useColorMode();
-
-  const borderColor = colorMode === "light" ? "black" : "white";
+const Stat = ({ answers, section, question }: SortableStatProps) => {
+  const sectionLabels = getSectionLabels(section);
 
   return (
-    <Container maxWidth="sm">
-      <table
-        style={{
-          width: "100%",
-          border: `1px solid ${borderColor}`,
-          borderRadius: "4px",
-          padding: "8px",
-        }}
-      >
-        <tbody>
-          <tr>
-            <td />
-            {question.options.map((o, i) => (
-              <td style={{ fontWeight: "bold" }} key={i}>
-                {i + 1}
-              </td>
-            ))}
-          </tr>
-          {question.options.map((option, i) => (
-            <tr key={i}>
-              <td style={{ fontWeight: "bold" }}>{option}</td>
-              {question.options.map((o, j) => (
-                <td key={j}>
-                  {answers.filter((a) => a[question.id]?.[j] === option).length}
-                </td>
+    <>
+      {sectionLabels.map((label) => (
+        <TableContainer key={label} sx={{ maxHeight: 300 }}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell align="center" colSpan={question.options.length + 1}>
+                  {label}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell />
+                {question.options.map((o, i) => (
+                  <TableCell align="center" key={i}>
+                    {i + 1}º
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {question.options.map((option, i) => (
+                <TableRow
+                  key={i}
+                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                >
+                  <TableCell align="center" variant="head">
+                    {option}
+                  </TableCell>
+                  {question.options.map((o, j) => (
+                    <TableCell align="center" key={j}>
+                      {
+                        answers.filter(
+                          (a) => a[question.id]?.[label]?.[j] === option
+                        ).length
+                      }
+                    </TableCell>
+                  ))}
+                </TableRow>
               ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </Container>
+            </TableBody>
+          </Table>
+        </TableContainer>
+      ))}
+    </>
   );
 };
 

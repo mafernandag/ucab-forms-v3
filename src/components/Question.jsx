@@ -2,14 +2,20 @@ import { Box, Typography } from "@mui/material";
 import RequiredMark from "./RequiredMark";
 import { questionConfig } from "../questions";
 
-const Question = ({ answers, question, setAnswers }) => {
+const Question = ({ label, answers, question, setAnswers }) => {
   const type = question.type;
   const MyQuestion = questionConfig[type].Question;
 
-  const answer = answers[question.id];
+  const answer = answers[question.id][label];
 
   const updateAnswer = (answer) => {
-    setAnswers({ ...answers, [question.id]: answer });
+    setAnswers({
+      ...answers,
+      [question.id]: {
+        ...answers[question.id],
+        [label]: answer,
+      },
+    });
   };
 
   return (

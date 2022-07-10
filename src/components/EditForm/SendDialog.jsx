@@ -7,18 +7,15 @@ import {
   TextField,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
-import { useForm } from "../../hooks/useForm";
-import { APP_URL } from "../../constants/urls";
 
 const SendDialog = ({ open, setOpen }) => {
-  const { form } = useForm();
   const { enqueueSnackbar } = useSnackbar();
 
   const handleClose = () => {
     setOpen(false);
   };
 
-  const formUrl = `${APP_URL}/forms/answer/${form.id}`;
+  const formUrl = window.location.href.replace("edit", "answer");
 
   const handleCopy = async () => {
     try {

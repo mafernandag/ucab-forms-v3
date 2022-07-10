@@ -39,13 +39,12 @@ const EditSection = ({ setOpenDrawer }) => {
   } = useForm();
   const openAlert = useAlert();
 
-  const debouncedSave = useMemo(
-    () =>
-      debounce((newSection) => {
-        saveSection(form.id, newSection);
-      }, 1500),
-    [form.id]
-  );
+  const debouncedSave = useMemo(() => {
+    return debounce((newSection) => {
+      saveSection(form.id, newSection);
+    }, 1500);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.id, currentSectionId]);
 
   const updateSection = (newSection) => {
     debouncedSave(newSection);

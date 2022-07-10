@@ -12,7 +12,7 @@ const Question = ({ answer, question, updateAnswer }: SliderQuestionProps) => {
   };
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", mb: 1 }}>
+    <Box sx={{ display: "flex", flexDirection: "column" }}>
       <Slider
         disabled={answer === ""}
         question={question}
@@ -21,11 +21,11 @@ const Question = ({ answer, question, updateAnswer }: SliderQuestionProps) => {
       />
       {!question.required &&
         (answer === "" ? (
-          <Button sx={{ alignSelf: "flex-end" }} onClick={activate}>
+          <Button sx={{ alignSelf: "flex-end", mt: 3 }} onClick={activate}>
             Activar selección
           </Button>
         ) : (
-          <Button sx={{ alignSelf: "flex-end" }} onClick={deactivate}>
+          <Button sx={{ alignSelf: "flex-end", mt: 3 }} onClick={deactivate}>
             Borrar selección
           </Button>
         ))}

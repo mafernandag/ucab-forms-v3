@@ -1,4 +1,4 @@
-import { Card, Stack, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import {
   SortableResponseByPersonProps,
   SortableResponseByQuestionProps,
@@ -8,13 +8,13 @@ type Props = SortableResponseByPersonProps | SortableResponseByQuestionProps;
 
 const SortableResponse = ({ value }: Props) => {
   return (
-    <Stack spacing={1}>
+    <>
       {value.map((option, i) => (
-        <Card key={i} sx={{ p: 2 }}>
-          <Typography>{option}</Typography>
-        </Card>
+        <Typography variant="body2" key={i}>
+          {i + 1}. {option}
+        </Typography>
       ))}
-    </Stack>
+    </>
   );
 };
 

@@ -12,8 +12,7 @@ import {
 } from "@mui/material";
 import { Clear as ClearIcon } from "@mui/icons-material";
 import { CheckboxSettingsProps } from "./types";
-import RandomOrderCheckbox from "../components/RandomOrderCheckbox";
-import { RequiredCheckbox } from "../components";
+import { RandomOrderCheckbox, RequiredCheckbox } from "../components";
 
 const Settings = ({ question, updateQuestion }: CheckboxSettingsProps) => {
   const handleChangeOption =

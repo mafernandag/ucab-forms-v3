@@ -61,7 +61,11 @@ const ResponsesSummary = () => {
                   {sectionQuestions.map((question) => (
                     <Card key={question.id}>
                       <Typography>{question.title}</Typography>
-                      <QuestionStat question={question} responses={answers} />
+                      <QuestionStat
+                        question={question}
+                        section={section}
+                        answers={answers}
+                      />
                     </Card>
                   ))}
                 </Stack>

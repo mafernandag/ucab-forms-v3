@@ -1,77 +1,25 @@
-import { Container } from "@mui/material";
-import { Bar } from "react-chartjs-2";
-import ChartDataLabels from "chartjs-plugin-datalabels";
-import { ChartOptions } from "chart.js";
 import { EmojiStatProps } from "./types";
 import { emojiLabels } from "./constants";
+import { getSectionLabels } from "../utils";
+import { BarDiagram } from "../components";
 
-const Stat = ({ answers, question }: EmojiStatProps) => {
+const Stat = ({ answers, section, question }: EmojiStatProps) => {
+  const sectionLabels = getSectionLabels(section);
+  const diagramLabels = emojiLabels.slice(1);
   const values = [1, 2, 3, 4, 5];
 
-  const data = {
-    labels: emojiLabels.slice(1),
-    datasets: [
-      {
-        label: "Respuestas",
-        data: values.map(
-          (v) => answers.filter((a) => a[question.id] === v).length
-        ),
-        backgroundColor: [
-          "rgba(255, 64, 129, 0.2)",
-          "rgba(0, 230, 118, 0.2)",
-          "rgba(255, 241, 118, 0.2)",
-          "rgba(132, 255, 255, 0.2)",
-          "rgba(179, 136, 255, 0.2)",
-        ],
-        borderColor: [
-          "rgba(255, 64, 129, 1)",
-          "rgba(0, 230, 118, 1)",
-          "rgba(255, 241, 118, 1)",
-          "rgba(132, 255, 255, 1)",
-          "rgba(179, 136, 255, 1)",
-        ],
-      },
-    ],
-  };
+  const datasets = sectionLabels.map((label) => {
+    return {
+      label,
+      data: values.map((value) => {
+        return answers.filter(
+          (answer) => answer[question.id]?.[label] === value
+        ).length;
+      }),
+    };
+  });
 
-  const options: ChartOptions = {
-    elements: {
-      bar: {
-        borderWidth: 1,
-      },
-    },
-    responsive: true,
-    plugins: {
-      legend: {
-        display: false,
-      },
-      datalabels: {
-        align: "start",
-        anchor: "end",
-        formatter: (value, ctx) => {
-          let sum = 0;
-          let dataArr = ctx.chart.data.datasets[0].data;
-          dataArr.forEach((data) => {
-            if (typeof data === "number") {
-              sum += data;
-            }
-          });
-          let percentage = " ";
-          if (value > 0) {
-            percentage = ((value * 100) / sum).toFixed(2) + "%";
-          }
-          return percentage;
-        },
-        color: "#fff",
-      },
-    },
-  };
-
-  return (
-    <Container maxWidth="sm">
-      <Bar data={data} plugins={[ChartDataLabels]} options={options} />
-    </Container>
-  );
+  return <BarDiagram labels={diagramLabels} datasets={datasets} />;
 };
 
 export default Stat;

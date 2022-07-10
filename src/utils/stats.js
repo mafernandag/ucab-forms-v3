@@ -14,8 +14,7 @@ export const stringifyAnswers = (answers, questions) => {
   for (const questionId in answers) {
     const answer = answers[questionId];
 
-    if (answer !== 0 && (!answer || answer.length === 0)) {
-      newAnswers[questionId] = null;
+    if (!answer) {
       continue;
     }
 
@@ -25,8 +24,11 @@ export const stringifyAnswers = (answers, questions) => {
       continue;
     }
 
-    const stringify = questionConfig[question.type].stringify;
-    newAnswers[questionId] = stringify(answer);
+    for (const label in answer) {
+      const stringify = questionConfig[question.type].stringify;
+      const value = stringify(answer[label]);
+      newAnswers[`${questionId}-${label}`] = value !== "" ? value : null;
+    }
   }
 
   return newAnswers;

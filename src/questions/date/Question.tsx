@@ -3,9 +3,12 @@ import { TextField } from "@mui/material";
 import { DateQuestionProps } from "./types";
 
 const Question = ({ answer, question, updateAnswer }: DateQuestionProps) => {
-  // TODO: Check the possibility of null value
   const handleChange = (value: Date | null) => {
-    updateAnswer(value as Date);
+    if (!value) {
+      return updateAnswer("");
+    }
+
+    updateAnswer(value);
   };
 
   return (
