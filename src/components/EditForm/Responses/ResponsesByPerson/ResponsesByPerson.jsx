@@ -9,12 +9,11 @@ import {
   Tab,
 } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { format } from "date-fns";
-import { useForm } from "../../../hooks/useForm";
-import Comments from "./Comments";
-import Card from "../../Card";
-import { questionTypesConfig } from "../../../questions/config";
-import { formatDateTime } from "../../../utils/dates";
+import { formatDateTime } from "../../../../utils/dates";
+import { useForm } from "../../../../hooks/useForm";
+import Comments from "../Comments";
+import Card from "../../../Card";
+import AnswerCard from "./AnswerCard";
 
 const Response = () => {
   const { responses, sections, questions } = useForm();
@@ -79,7 +78,7 @@ const Response = () => {
           renderItem={renderItem}
         />
         <Typography align="right" variant="caption" color="text.secondary">
-          Respondido el {format(response.submittedAt, "dd/MM/yyyy, hh:mm a")}
+          Respondido el {formatDateTime(response.submittedAt)}
         </Typography>
         {response.location && (
           <Card>
@@ -137,41 +136,14 @@ const Response = () => {
               <TabPanel key={section.id} sx={{ p: 0 }} value={section.id}>
                 <Stack spacing={2}>
                   {sectionQuestions.map((question) => (
-                    <Box key={question.id}>
-                      <Card sx={{ mb: 1 }}>
-                        <Typography gutterBottom>{question.title}</Typography>
-                        {response.answers[question.id] === "" ||
-                        response.answers[question.id] === null ||
-                        response.answers[question.id] === undefined ||
-                        response.answers[question.id]?.length === 0 ? (
-                          <Typography fontStyle="italic">
-                            Respuesta vacía
-                          </Typography>
-                        ) : (
-                          <Stack spacing={1}>
-                            <Typography
-                              variant="caption"
-                              color="text.secondary"
-                            >
-                              Respuesta
-                            </Typography>
-                            {/* TODO: Fix this sh!t */}
-                            {(() => {
-                              const type = question.type;
-                              const ResponseByPerson =
-                                questionTypesConfig[type].ResponseByPerson;
-                              return (
-                                <ResponseByPerson
-                                  question={question}
-                                  value={response.answers[question.id]}
-                                />
-                              );
-                            })()}
-                          </Stack>
-                        )}
-                      </Card>
+                    <Stack key={question.id} spacing={1}>
+                      <AnswerCard
+                        answer={response.answers[question.id]}
+                        section={section}
+                        question={question}
+                      />
                       <Comments response={response} question={question} />
-                    </Box>
+                    </Stack>
                   ))}
                 </Stack>
               </TabPanel>

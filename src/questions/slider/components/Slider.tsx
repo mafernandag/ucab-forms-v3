@@ -33,7 +33,11 @@ const Slider = ({ question, onChange, ...props }: SliderProps) => {
 
   return (
     <Box sx={{ display: "flex", alignItems: "center" }}>
-      <Typography align="center" sx={{ mb: 2, maxWidth: "25%" }}>
+      <Typography
+        align="center"
+        variant="body2"
+        sx={{ maxWidth: "25%", mb: 1 }}
+      >
         {question.minLabel}
       </Typography>
       <MuiSlider
@@ -45,7 +49,11 @@ const Slider = ({ question, onChange, ...props }: SliderProps) => {
         onChange={handleChange}
         {...props}
       />
-      <Typography align="center" sx={{ mb: 2, maxWidth: "25%" }}>
+      <Typography
+        align="center"
+        variant="body2"
+        sx={{ maxWidth: "25%", mb: 1 }}
+      >
         {question.maxLabel}
       </Typography>
     </Box>

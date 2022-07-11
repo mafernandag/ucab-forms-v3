@@ -82,7 +82,7 @@ const Comments = ({ response, question }) => {
               <Stack
                 component="form"
                 onSubmit={handleAddComment}
-                spacing={1.5}
+                spacing={2}
                 flexGrow={1}
               >
                 <TextField

@@ -1,7 +1,10 @@
+import { Box } from "@mui/material";
 import { SortableSettingsProps } from "./types";
-import { EnumeratedOptions, RequiredCheckbox } from "../components";
-import RandomOrderCheckbox from "../components/RandomOrderCheckbox";
-import { Box } from "@mui/system";
+import {
+  EnumeratedOptions,
+  RandomOrderCheckbox,
+  RequiredCheckbox,
+} from "../components";
 
 const Settings = (props: SortableSettingsProps) => {
   return (

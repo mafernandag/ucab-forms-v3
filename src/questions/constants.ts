@@ -36,3 +36,37 @@ export const defaultQuestion = {
 };
 
 export const defaultOption = "Opción 1";
+
+export const DEFAULT_LABEL = "Respuestas";
+
+export const BACKGROUND_COLORS = [
+  "rgba(255, 64, 129, 0.2)",
+  "rgba(0, 230, 118, 0.2)",
+  "rgba(255, 241, 118, 0.2)",
+  "rgba(132, 255, 255, 0.2)",
+  "rgba(179, 136, 255, 0.2)",
+  "rgba(255, 145, 128, 0.2)",
+  "rgba(83, 109, 254, 0.2)",
+  "rgba(29, 233, 182, 0.2)",
+  "rgba(186, 104, 200, 0.2)",
+  "rgba(244, 143, 177, 0.2)",
+  "rgba(255, 204, 128, 0.2)",
+  "rgba(124, 77, 255, 0.2)",
+  "rgba(204, 255, 144, 0.2)",
+];
+
+export const BORDER_COLORS = [
+  "rgba(255, 64, 129, 1)",
+  "rgba(0, 230, 118, 1)",
+  "rgba(255, 241, 118, 1)",
+  "rgba(132, 255, 255, 1)",
+  "rgba(179, 136, 255, 1)",
+  "rgba(255, 145, 128, 1)",
+  "rgba(83, 109, 254, 1)",
+  "rgba(29, 233, 182, 1)",
+  "rgba(186, 104, 200, 1)",
+  "rgba(244, 143, 177, 1)",
+  "rgba(255, 204, 128, 1)",
+  "rgba(124, 77, 255, 1)",
+  "rgba(204, 255, 144, 1)",
+];

@@ -5,8 +5,17 @@ import { arrayMoveImmutable } from "array-move";
 
 // TODO: Use a different library to make this sortable
 const SortableItem = SortableElement(({ value }) => {
+  const getIconColor = (theme) => {
+    if (theme.palette.mode === "light") {
+      return theme.palette.text.secondary;
+    }
+
+    return "inherit";
+  };
+
   return (
     <Card
+      variant="outlined"
       sx={{
         p: 2,
         cursor: "move",
@@ -17,14 +26,14 @@ const SortableItem = SortableElement(({ value }) => {
       }}
     >
       <Typography>{value}</Typography>
-      <DragHandleIcon />
+      <DragHandleIcon sx={{ color: getIconColor }} />
     </Card>
   );
 });
 
 const SortableListContainer = SortableContainer(({ items }) => {
   return (
-    <Stack spacing={1}>
+    <Stack py={1} spacing={1.5}>
       {items.map((value, index) => (
         <SortableItem key={index} index={index} value={value} />
       ))}

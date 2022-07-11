@@ -14,20 +14,30 @@ import { db } from "./firebaseConfig";
 import { uploadFiles } from "./storage";
 import { FILE } from "../questions/constants";
 import { sendNotification } from "./notifications";
+import { getSectionLabels } from "../questions/utils";
+import { cloneDeep } from "lodash";
 
-export const submitResponse = async (form, response) => {
+export const submitResponse = async (form, responseData) => {
   try {
+    const response = cloneDeep(responseData);
+    response.comments = {};
     response.submittedAt = new Date();
 
-    await Promise.all(
-      form.questions.map(async (question) => {
-        if (question.type === FILE) {
-          response.answers[question.id] = await uploadFiles(
-            response.answers[question.id]
+    for (const question of form.questions) {
+      if (question.type === FILE) {
+        const section = form.sections.find(
+          (section) => section.id === question.sectionId
+        );
+
+        const sectionLabels = getSectionLabels(section);
+
+        for (const label of sectionLabels) {
+          response.answers[question.id][label] = await uploadFiles(
+            response.answers[question.id][label]
           );
         }
-      })
-    );
+      }
+    }
 
     const responsesRef = collection(db, "forms", form.id, "responses");
     const responseRef = doc(responsesRef);
@@ -55,7 +65,7 @@ export const submitResponse = async (form, response) => {
 
     return { responseId: responseRef.id };
   } catch (error) {
-    console.log(response);
+    console.log(responseData);
     console.log(error);
     return { error: { message: "Error al guardar las respuestas" } };
   }

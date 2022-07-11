@@ -1,26 +1,37 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Box,
+  MenuItem,
   Pagination,
   PaginationItem,
   Tooltip,
   Typography,
   Stack,
   Tab,
+  TextField,
 } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { useForm } from "../../../hooks/useForm";
 import { getResponseCountText } from "../../../utils/stats";
 import Card from "../../Card";
 import { questionTypesConfig } from "../../../questions/config";
+import { getSectionLabels, isEmpty } from "../../../questions/utils";
+import { DEFAULT_LABEL } from "../../../questions/constants";
 
 const ResponsesByQuestion = () => {
   const { responses, sections, questions } = useForm();
   const [page, setPage] = useState(1);
   const [currentSectionId, setCurrentSectionId] = useState(null);
+  const [currentLabel, setCurrentLabel] = useState("");
 
   const currentSection = useMemo(() => {
-    return sections.find((section) => section.id === currentSectionId);
+    const section = sections.find((section) => section.id === currentSectionId);
+
+    if (section) {
+      setCurrentLabel(getSectionLabels(section)[0]);
+    }
+
+    return section;
   }, [currentSectionId, sections]);
 
   const sectionQuestions = useMemo(() => {
@@ -31,7 +42,7 @@ const ResponsesByQuestion = () => {
 
   useEffect(() => {
     if (!currentSection && sections.length) {
-      setCurrentSectionId(sections[0].id);
+      return setCurrentSectionId(sections[0].id);
     }
   }, [currentSection, sections, setCurrentSectionId]);
 
@@ -46,6 +57,8 @@ const ResponsesByQuestion = () => {
   const question = sectionQuestions[page - 1];
   const answers = responses.map((r) => r.answers);
 
+  const sectionLabels = currentSection ? getSectionLabels(currentSection) : [];
+
   const getAnswersWithStats = useCallback(() => {
     const responseCount = {};
 
@@ -53,7 +66,7 @@ const ResponsesByQuestion = () => {
       const getSerializableValue =
         questionTypesConfig[question.type].getSerializableValue;
 
-      const value = getSerializableValue(response[question.id]);
+      const value = getSerializableValue(response[question.id]?.[currentLabel]);
 
       const strigifiedValue = JSON.stringify(value);
 
@@ -72,7 +85,7 @@ const ResponsesByQuestion = () => {
       value: JSON.parse(value),
       count,
     }));
-  }, [answers, question]);
+  }, [answers, currentLabel, question]);
 
   const renderItem = (item) => {
     let title = "";
@@ -125,15 +138,43 @@ const ResponsesByQuestion = () => {
             {sections.map((section) => (
               <TabPanel key={section.id} sx={{ p: 0 }} value={section.id}>
                 <Stack spacing={2}>
-                  <Pagination
-                    count={sectionQuestions.length}
-                    page={page}
-                    onChange={(e, p) => setPage(p)}
-                    color="primary"
-                    shape="rounded"
-                    renderItem={renderItem}
-                    sx={{ py: 1 }}
-                  />
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: { xs: "column", sm: "row" },
+                      justifyContent: "space-between",
+                      alignItems: { xs: "center", sm: "center" },
+                      gap: 1.5,
+                    }}
+                  >
+                    <Pagination
+                      count={sectionQuestions.length}
+                      page={page}
+                      onChange={(e, p) => setPage(p)}
+                      color="primary"
+                      shape="rounded"
+                      renderItem={renderItem}
+                      sx={{ py: 1 }}
+                    />
+                    {sectionLabels[0] !== DEFAULT_LABEL && (
+                      <TextField
+                        select
+                        variant="standard"
+                        label="Etiqueta"
+                        sx={{ width: 150 }}
+                        value={currentLabel}
+                        onChange={(e) => {
+                          setCurrentLabel(e.target.value);
+                        }}
+                      >
+                        {sectionLabels.map((label) => (
+                          <MenuItem key={label} value={label}>
+                            {label}
+                          </MenuItem>
+                        ))}
+                      </TextField>
+                    )}
+                  </Box>
                   {question && (
                     <>
                       <Card>
@@ -144,10 +185,7 @@ const ResponsesByQuestion = () => {
                       {getAnswersWithStats().map((answer, i) => (
                         <Card key={i}>
                           <Box sx={{ mb: 1 }}>
-                            {answer.value === "" ||
-                            answer.value === undefined ||
-                            answer.value === null ||
-                            answer.value.length === 0 ? (
+                            {isEmpty(answer.value) ? (
                               <Typography fontStyle="italic">
                                 Respuesta vacía
                               </Typography>

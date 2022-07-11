@@ -4,12 +4,28 @@ import {
   ArcElement,
   Tooltip,
   Legend,
+  Title,
   CategoryScale,
   LinearScale,
   BarElement,
 } from "chart.js";
+import zoomPlugin from "chartjs-plugin-zoom";
 import { getResponseCountText } from "../../../utils/stats";
 import { questionTypesConfig } from "../../../questions/config";
+import { useMemo } from "react";
+import { getSectionLabels, isEmpty } from "../../../questions/utils";
+
+const legendMarginPlugin = {
+  id: "legendMargin",
+  beforeInit: (chart) => {
+    const originalFit = chart.legend.fit;
+
+    chart.legend.fit = function () {
+      originalFit.bind(chart.legend)();
+      this.height += 20;
+    };
+  },
+};
 
 ChartJS.register(
   ArcElement,
@@ -17,15 +33,22 @@ ChartJS.register(
   LinearScale,
   BarElement,
   Tooltip,
-  Legend
+  Legend,
+  Title,
+  zoomPlugin,
+  legendMarginPlugin
 );
 
-const QuestionStat = ({ question, responses }) => {
-  const responseCount = responses.filter((r) => {
-    return (
-      (r[question.id] || r[question.id] === 0) && r[question.id].length !== 0
+const QuestionStat = ({ question, section, answers }) => {
+  const responseCount = useMemo(() => {
+    const sectionLabels = getSectionLabels(section);
+
+    const filteredAnswers = answers.filter((answer) =>
+      sectionLabels.some((label) => !isEmpty(answer[question.id]?.[label]))
     );
-  }).length;
+
+    return filteredAnswers.length;
+  }, [section, answers, question.id]);
 
   const responseCountText = getResponseCountText(responseCount);
 
@@ -42,7 +65,9 @@ const QuestionStat = ({ question, responses }) => {
       >
         {responseCountText}
       </Typography>
-      <Stat question={question} answers={responses} />
+      {responseCount > 0 && (
+        <Stat question={question} section={section} answers={answers} />
+      )}
     </>
   );
 };

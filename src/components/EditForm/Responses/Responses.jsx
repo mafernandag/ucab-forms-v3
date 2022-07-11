@@ -8,7 +8,7 @@ import {
 import { useForm } from "../../../hooks/useForm";
 import { getResponseCountText } from "../../../utils/stats";
 import ResponsesSummary from "./ResponsesSummary";
-import ResponsesByPerson from "./ResponsesByPerson";
+import ResponsesByPerson from "./ResponsesByPerson/ResponsesByPerson";
 import ResponsesByQuestion from "./ResponsesByQuestion";
 import ResponsesTable from "./ResponsesTable";
 
@@ -29,14 +29,14 @@ const Responses = () => {
           justifyContent: "space-between",
           alignItems: "center",
           gap: 2,
-          mb: 4,
+          mb: 2,
         }}
       >
         <ToggleButtonGroup
           color="primary"
           value={view}
           exclusive
-          onChange={(event, value) => setView(value)}
+          onChange={(event, value) => value && setView(value)}
         >
           <ToggleButton sx={{ px: { sm: 2, lg: 3 } }} value="summary">
             Resumen
@@ -63,11 +63,6 @@ const Responses = () => {
           {view === "question" && <ResponsesByQuestion />}
           {view === "person" && <ResponsesByPerson />}
           {view === "table" && <ResponsesTable />}
-          {!view && (
-            <Typography>
-              Selecciona una opción para visualizar las respuestas
-            </Typography>
-          )}
         </>
       )}
     </Box>

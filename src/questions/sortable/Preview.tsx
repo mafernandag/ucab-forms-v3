@@ -4,13 +4,14 @@ import { SortablePreviewProps } from "./types";
 
 const Preview = ({ question }: SortablePreviewProps) => {
   return (
-    <Stack spacing={1}>
+    <Stack py={1} spacing={1.5}>
       {question.options.map((option, i) => (
         <Card
           key={i}
+          variant="outlined"
           sx={{
             p: 2,
-            color: "text.disabled",
+            color: "text.secondary",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",

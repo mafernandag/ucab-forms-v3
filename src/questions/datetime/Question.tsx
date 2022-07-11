@@ -7,9 +7,12 @@ const Question = ({
   question,
   updateAnswer,
 }: DateTimeQuestionProps) => {
-  // TODO: Check the possibility of null value
   const handleChange = (value: Date | null) => {
-    updateAnswer(value as Date);
+    if (!value) {
+      return updateAnswer("");
+    }
+
+    updateAnswer(value);
   };
 
   return (

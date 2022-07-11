@@ -19,8 +19,8 @@ const CheckboxResponse = ({ value }: Props) => {
           key={i}
           disabled
           checked
-          control={<Checkbox />}
-          label={<Typography>{option}</Typography>}
+          control={<Checkbox size="small" />}
+          label={<Typography variant="body2">{option}</Typography>}
         />
       ))}
     </FormGroup>
