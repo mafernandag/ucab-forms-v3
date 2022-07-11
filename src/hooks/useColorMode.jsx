@@ -39,8 +39,17 @@ const ColorModeProvider = ({ children }) => {
 
   const theme = useMemo(() => getTheme(colorMode), [colorMode]);
 
+  const [customFormColor, setCustomFormColor] = useState(null);
+
   return (
-    <ColorModeContext.Provider value={{ colorMode, toggleColorMode }}>
+    <ColorModeContext.Provider
+      value={{
+        colorMode,
+        toggleColorMode,
+        customFormColor,
+        setCustomFormColor,
+      }}
+    >
       <ThemeProvider theme={theme}>{children}</ThemeProvider>
     </ColorModeContext.Provider>
   );
