@@ -32,7 +32,7 @@ const PersonalizationDialogBody = ({
 }) => {
   const { form } = useForm();
   const [settings, setSettings] = useState(form.settings);
-  const { customFormColor, setCustomFormColor } = useColorMode();
+  const { formTheme, setFormTheme } = useColorMode();
   const [font, setFont] = useState("");
 
   return useMemo(() => {
@@ -52,9 +52,31 @@ const PersonalizationDialogBody = ({
       closeDialog();
     };
 
-    const greens = ["#4A903C", "#59AD48", "#63B752", "#70BD61"];
-    const blues = ["#5DBFE9", "#6FC6EB", "#81CDEE", "#93D4F0"];
-    const yellows = ["#F5B400", "#FFCE47", "#FFD35C", "#FFD970"];
+    const handlePrimaryChange = (color) => {
+      setFormTheme((formTheme) => {
+        const i = primaryColors.indexOf(color.hex);
+        const newFormTheme = {
+          primary: color.hex,
+          background: backgroundColors[i][0],
+        };
+        return newFormTheme;
+      });
+    };
+
+    const handleBackgroundChange = (color) => {
+      setFormTheme((formTheme) => {
+        const newFormTheme = { ...formTheme, background: color.hex };
+        return newFormTheme;
+      });
+    };
+
+    const primaryColors = ["#ffc526", "#6bc4eb", "#047732"]; //yellow, blue, green
+
+    const backgroundColors = [
+      ["#fffafa", "#fff0d9", "#ffe5bf", "#ffdba6", "#0a0a0a"], //yellow
+      ["#fffafa", "#d9f2fd", "#c0eafc", "#a7e1fb", "#0a0a0a"], //blue
+      ["#fffafa", "#e4f3e5", "#d2ebd3", "#c0e3c2", "#0a0a0a"], //green
+    ];
 
     return (
       <>
@@ -74,24 +96,7 @@ const PersonalizationDialogBody = ({
         </DialogTitle>
 
         <DialogContent sx={{ background: "inherit" }}>
-          {/* <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "flex-start",
-              flexDirection: "column",
-              marginBottom: 2,
-            }}
-          >
-            <Typography sx={{ fontSize: "22" }}>Encabezado</Typography>
-
-            <Button variant="outlined" startIcon={<AddImageIcon />}>
-              Añadir encabezado
-            </Button>
-          </Box> */}
-
           <Divider variant="fullWidth" />
-
           <Box
             sx={{
               display: "flex",
@@ -102,10 +107,9 @@ const PersonalizationDialogBody = ({
             }}
           >
             <Typography sx={{ fontSize: "22" }}>Color del tema</Typography>
-
             <CirclePicker
-              colors={["#ffc526", "#40b4e5", "#047732"]}
-              onChange={(color) => setCustomFormColor(color.hex)}
+              colors={primaryColors}
+              onChange={handlePrimaryChange}
             />
           </Box>
 
@@ -121,43 +125,13 @@ const PersonalizationDialogBody = ({
             }}
           >
             <Typography sx={{ fontSize: "22" }}>Color de fondo</Typography>
-            <CirclePicker colors={yellows} />
-            <CirclePicker colors={blues} />
-            <CirclePicker colors={greens} />
+            <CirclePicker
+              colors={
+                backgroundColors[primaryColors.indexOf(formTheme.primary)]
+              }
+              onChange={handleBackgroundChange}
+            />
           </Box>
-
-          <Divider variant="fullWidth" />
-
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "flex-start",
-              flexDirection: "column",
-              my: 2,
-            }}
-          >
-            <Typography sx={{ fontSize: "22" }}>Estilo de fuente</Typography>
-
-            <Select
-              labelId="selectFontLabel"
-              id="selectFont"
-              value={font}
-              label="Estilo de fuente"
-              onChange={handleChange}
-              fullWidth
-            >
-              <MenuItem value={"Roboto"}> Básico </MenuItem>
-              <MenuItem value={"Aguafina Script"}> Aguafina Script </MenuItem>
-              <MenuItem value={"Alegreya"}> Alegreya </MenuItem>
-              <MenuItem value={"Annie Use Your Telescope"}>
-                {" "}
-                Annie Use Your Telescope{" "}
-              </MenuItem>
-            </Select>
-          </Box>
-
-          <Divider variant="fullWidth" />
         </DialogContent>
         <DialogActions>
           <Button onClick={discardDialog}>Descartar</Button>
@@ -170,9 +144,9 @@ const PersonalizationDialogBody = ({
     discardDialog,
     setChanges,
     settings,
-    font,
     form,
-    setCustomFormColor,
+    formTheme,
+    setFormTheme,
   ]);
 };
 

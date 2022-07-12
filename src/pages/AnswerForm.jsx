@@ -20,6 +20,7 @@ import Question from "../components/Question";
 import AnswerPageText from "../components/AnswerPageText";
 import { useMemo } from "react";
 import { questionConfig } from "../questions";
+import CustomThemeProvider from "../components/CustomThemeProvider";
 
 const AnswerForm = () => {
   const { id: formId } = useParams();
@@ -239,125 +240,129 @@ const AnswerForm = () => {
     return <AnswerPageText>Esta encuesta no tiene preguntas</AnswerPageText>;
   }
 
+  const formTheme = { primary: "#ffc526", background: "#e3c572" };
+
   return (
-    <Box>
-      <Header />
-      <Container sx={{ p: 3 }} maxWidth="md">
-        <form onSubmit={submit}>
-          <Stack spacing={2}>
-            <Card>
-              <Typography variant="h5" mb={2}>
-                {form.title}
-              </Typography>
-              <Typography mb={2}>{form.description}</Typography>
-              <Typography color="error" variant="caption">
-                * Obligatorio
-              </Typography>
-            </Card>
-            {currentSection && !currentSection.hideCard && (
-              <Card
-                sx={{
-                  borderBottom: (theme) =>
-                    `4px solid ${theme.palette.primary.main}`,
-                }}
-              >
-                <Typography variant="h6" mb={1}>
-                  {currentSection.title}
+    <CustomThemeProvider formTheme={formTheme}>
+      <Box sx={{ backgroundColor: "primary.light" }}>
+        <Header />
+        <Container sx={{ p: 3 }} maxWidth="md">
+          <form onSubmit={submit}>
+            <Stack spacing={2}>
+              <Card>
+                <Typography variant="h5" mb={2}>
+                  {form.title}
                 </Typography>
-                <Typography>{currentSection.description}</Typography>
+                <Typography mb={2}>{form.description}</Typography>
+                <Typography color="error" variant="caption">
+                  * Obligatorio
+                </Typography>
               </Card>
-            )}
-            {sectionQuestions.map((question) => (
-              <Card
-                key={question.id}
-                sx={{
-                  ...(errors[question.id] && {
-                    borderColor: (theme) => theme.palette.error.light,
-                  }),
-                }}
-              >
-                <Question
-                  question={question}
-                  answers={answers}
-                  setAnswers={setAnswers}
-                />
-                {errors[question.id] && (
-                  <Alert
-                    variant="outlined"
-                    severity="error"
-                    sx={{ mt: 3, border: "none", p: 0 }}
-                  >
-                    {errors[question.id]}
-                  </Alert>
-                )}
-              </Card>
-            ))}
-          </Stack>
-          <Box
-            sx={{
-              mt: 3,
-              display: "flex",
-              flexDirection: { xs: "column-reverse", sm: "row" },
-              justifyContent: { sm: "space-between" },
-              alignItems: "center",
-            }}
-          >
-            <Typography
-              variant="caption"
-              color="text.secondary"
-              sx={{ ml: { sm: 1 }, mr: { sm: 2 } }}
-            >
-              Nunca envíes contraseñas a través de UCAB Forms
-            </Typography>
-            <Box
-              sx={{
-                display: "flex",
-                flexShrink: 0,
-                alignItems: "center",
-                mb: { xs: 2, sm: 0 },
-                gap: { xs: 1, sm: 2 },
-              }}
-            >
-              <Button
-                sx={{ px: 1, mr: { xs: 1, sm: 2 } }}
-                disabled={submitting}
-                onClick={resetForm}
-              >
-                Borrar respuestas
-              </Button>
-              {currentSectionPosition !== 0 && (
-                <Button
-                  variant="outlined"
-                  sx={{ px: 3 }}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setCurrentSectionId(
-                      form.sections[currentSectionPosition - 1].id
-                    );
+              {currentSection && !currentSection.hideCard && (
+                <Card
+                  sx={{
+                    borderBottom: (theme) =>
+                      `4px solid ${theme.palette.primary.main}`,
                   }}
                 >
-                  Atrás
-                </Button>
+                  <Typography variant="h6" mb={1}>
+                    {currentSection.title}
+                  </Typography>
+                  <Typography>{currentSection.description}</Typography>
+                </Card>
               )}
-              {currentSectionPosition === form.sections.length - 1 ? (
-                <Button
-                  type="submit"
-                  disabled={submitting}
-                  variant="contained"
-                  sx={{ px: 4 }}
+              {sectionQuestions.map((question) => (
+                <Card
+                  key={question.id}
+                  sx={{
+                    ...(errors[question.id] && {
+                      borderColor: (theme) => theme.palette.error.light,
+                    }),
+                  }}
                 >
-                  Enviar
+                  <Question
+                    question={question}
+                    answers={answers}
+                    setAnswers={setAnswers}
+                  />
+                  {errors[question.id] && (
+                    <Alert
+                      variant="outlined"
+                      severity="error"
+                      sx={{ mt: 3, border: "none", p: 0 }}
+                    >
+                      {errors[question.id]}
+                    </Alert>
+                  )}
+                </Card>
+              ))}
+            </Stack>
+            <Box
+              sx={{
+                mt: 3,
+                display: "flex",
+                flexDirection: { xs: "column-reverse", sm: "row" },
+                justifyContent: { sm: "space-between" },
+                alignItems: "center",
+              }}
+            >
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ ml: { sm: 1 }, mr: { sm: 2 } }}
+              >
+                Nunca envíes contraseñas a través de UCAB Forms
+              </Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexShrink: 0,
+                  alignItems: "center",
+                  mb: { xs: 2, sm: 0 },
+                  gap: { xs: 1, sm: 2 },
+                }}
+              >
+                <Button
+                  sx={{ px: 1, mr: { xs: 1, sm: 2 } }}
+                  disabled={submitting}
+                  onClick={resetForm}
+                >
+                  Borrar respuestas
                 </Button>
-              ) : (
-                <Button type="submit" variant="contained" sx={{ px: 3 }}>
-                  Siguiente
-                </Button>
-              )}
+                {currentSectionPosition !== 0 && (
+                  <Button
+                    variant="outlined"
+                    sx={{ px: 3 }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setCurrentSectionId(
+                        form.sections[currentSectionPosition - 1].id
+                      );
+                    }}
+                  >
+                    Atrás
+                  </Button>
+                )}
+                {currentSectionPosition === form.sections.length - 1 ? (
+                  <Button
+                    type="submit"
+                    disabled={submitting}
+                    variant="contained"
+                    sx={{ px: 4 }}
+                  >
+                    Enviar
+                  </Button>
+                ) : (
+                  <Button type="submit" variant="contained" sx={{ px: 3 }}>
+                    Siguiente
+                  </Button>
+                )}
+              </Box>
             </Box>
-          </Box>
-        </form>
-      </Container>
-    </Box>
+          </form>
+        </Container>
+      </Box>
+    </CustomThemeProvider>
   );
 };
 

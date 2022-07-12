@@ -1,11 +1,11 @@
 import { useMemo, useState } from "react";
 import { Box, LinearProgress, Stack, TextField } from "@mui/material";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { debounce } from "lodash";
 import { saveForm } from "../api/forms";
 import { useUser } from "../hooks/useUser";
 import { useForm } from "../hooks/useForm";
 import { useColorMode } from "../hooks/useColorMode";
+import CustomThemeProvider from "../components/CustomThemeProvider";
 import Header from "../components/Header";
 import Card from "../components/Card";
 import EditFormHeader from "../components/EditForm/Header";
@@ -17,7 +17,7 @@ const EditForm = () => {
   const user = useUser();
   const { form, setForm, loading } = useForm();
   const [openDrawer, setOpenDrawer] = useState(false);
-  const { customFormColor } = useColorMode();
+  const { formTheme } = useColorMode();
 
   const debouncedSave = useMemo(() => {
     return debounce((form) => {
@@ -58,22 +58,8 @@ const EditForm = () => {
   }
 
   return (
-    <ThemeProvider
-      theme={(theme) =>
-        createTheme({
-          ...theme,
-          palette: {
-            ...theme.palette,
-            primary: {
-              main: customFormColor
-                ? customFormColor
-                : theme.palette.primary.main,
-            },
-          },
-        })
-      }
-    >
-      <Box>
+    <CustomThemeProvider formTheme={formTheme}>
+      <Box sx={{ backgroundColor: "primary.light" }}>
         <EditFormHeader setOpenDrawer={setOpenDrawer} />
         <DrawerLayout open={openDrawer} setOpen={setOpenDrawer}>
           <Stack spacing={2}>
@@ -99,7 +85,7 @@ const EditForm = () => {
           </Stack>
         </DrawerLayout>
       </Box>
-    </ThemeProvider>
+    </CustomThemeProvider>
   );
 };
 
