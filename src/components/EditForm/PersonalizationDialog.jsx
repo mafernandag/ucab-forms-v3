@@ -11,17 +11,17 @@ import {
   Typography,
   Divider,
   Box,
-  Select,
-  MenuItem,
+  //Select,
+  //MenuItem,
 } from "@mui/material";
 import {
-  AddPhotoAlternateRounded as AddImageIcon,
+  //AddPhotoAlternateRounded as AddImageIcon,
   Close as CloseIcon,
 } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
-import { saveForm } from "../../api/forms";
+//import { saveForm } from "../../api/forms";
 import { CirclePicker } from "react-color";
-import { useForm } from "../../hooks/useForm";
+//import { useForm } from "../../hooks/useForm";
 import { useAlert } from "../../hooks/useAlert";
 import { useColorMode } from "../../hooks/useColorMode";
 import colors from "../../theme/colors";
@@ -31,8 +31,8 @@ const PersonalizationDialogBody = ({
   discardDialog,
   setChanges,
 }) => {
-  const { form } = useForm();
-  const [settings, setSettings] = useState(form.settings);
+  //const { form } = useForm();
+  //const [settings, setSettings] = useState(form.settings);
   const { formTheme, setFormTheme } = useColorMode();
   const theme = useTheme();
   //const [font, setFont] = useState("");
@@ -47,30 +47,29 @@ const PersonalizationDialogBody = ({
     // const handleChange = (event) => {
     //   setFont(event.target.value);
     // };
-    const handleSaveForm = () => {
-      const formData = { ...form, settings };
-      saveForm(formData);
+    // const handleSaveForm = () => {
+    //   const formData = { ...form, settings };
+    //   saveForm(formData);
 
-      closeDialog();
-    };
+    //   closeDialog();
+    // };
 
     const handleMainChange = (color) => {
       const i = colors.main.indexOf(color.hex);
-      setFormTheme({
-        main: color.hex,
-        light: colors.light[i][0],
-        dark: colors.dark[i][0],
+      setFormTheme((formTheme) => {
+        return {
+          ...formTheme,
+          main: i,
+        };
       });
     };
 
     const handleBackgroundChange = (color) => {
       setFormTheme((formTheme) => {
-        const i = colors.main.indexOf(formTheme.main);
-        const j = colors[theme.palette.mode][i].indexOf(color.hex);
+        const j = colors[theme.palette.mode][formTheme.main].indexOf(color.hex);
         const newFormTheme = {
           ...formTheme,
-          light: colors.light[i][j],
-          dark: colors.dark[i][j],
+          background: j,
         };
         return newFormTheme;
       });
@@ -121,24 +120,22 @@ const PersonalizationDialogBody = ({
           >
             <Typography sx={{ fontSize: "22" }}>Color de fondo</Typography>
             <CirclePicker
-              colors={
-                colors[theme.palette.mode][colors.main.indexOf(formTheme.main)]
-              }
+              colors={colors[theme.palette.mode][formTheme.main]}
               onChange={handleBackgroundChange}
             />
           </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={discardDialog}>Descartar</Button>
-          <Button onClick={handleSaveForm}>Guardar</Button>
+          {/* <Button onClick={handleSaveForm}>Guardar</Button> */}
         </DialogActions>
       </>
     );
   }, [
-    closeDialog,
+    //closeDialog,
     discardDialog,
-    settings,
-    form,
+    //settings,
+    //form,
     formTheme,
     setFormTheme,
     theme.palette.mode,

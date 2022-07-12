@@ -242,7 +242,7 @@ const AnswerForm = () => {
     return <AnswerPageText>Esta encuesta no tiene preguntas</AnswerPageText>;
   }
 
-  const formTheme = { main: "#ffc526", light: "#e3c572", dark: "#b1933b" };
+  const formTheme = { main: 0, background: 3 };
 
   return (
     <CustomThemeProvider formTheme={formTheme}>

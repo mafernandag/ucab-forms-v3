@@ -1,4 +1,5 @@
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import colors from "../theme/colors";
 
 const CustomThemeProvider = ({ children, formTheme }) => {
   return (
@@ -9,11 +10,9 @@ const CustomThemeProvider = ({ children, formTheme }) => {
           palette: {
             ...theme.palette,
             primary: {
-              main: formTheme.main
-                ? formTheme.main
-                : theme.palette.primary.main,
-              light: formTheme.light,
-              dark: formTheme.dark,
+              main: colors.main[formTheme.main],
+              light: colors.light[formTheme.main][formTheme.background],
+              dark: colors.dark[formTheme.main][formTheme.background],
             },
           },
         })

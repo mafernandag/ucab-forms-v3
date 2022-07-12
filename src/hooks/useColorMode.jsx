@@ -40,7 +40,8 @@ const ColorModeProvider = ({ children }) => {
   const theme = useMemo(() => getTheme(colorMode), [colorMode]);
 
   const [formTheme, setFormTheme] = useState({
-    main: theme.palette.primary.main,
+    main: 0,
+    background: 0,
   });
 
   return (
