@@ -104,7 +104,11 @@ const PersonalizationDialogBody = ({
             }}
           >
             <Typography sx={{ fontSize: "22" }}>Color del tema</Typography>
-            <CirclePicker colors={colors.main} onChange={handleMainChange} />
+            <CirclePicker
+              colors={colors.main}
+              onChange={handleMainChange}
+              color={colors.main[formTheme.main]}
+            />
           </Box>
 
           <Divider variant="fullWidth" />
@@ -121,6 +125,9 @@ const PersonalizationDialogBody = ({
             <Typography sx={{ fontSize: "22" }}>Color de fondo</Typography>
             <CirclePicker
               colors={colors[theme.palette.mode][formTheme.main]}
+              color={
+                colors[theme.palette.mode][formTheme.main][formTheme.background]
+              }
               onChange={handleBackgroundChange}
             />
           </Box>
