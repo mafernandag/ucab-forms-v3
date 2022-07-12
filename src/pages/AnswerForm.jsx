@@ -14,6 +14,7 @@ import { getFormOnce } from "../api/forms";
 import { submitResponse, checkUserHasResponses } from "../api/responses";
 import { useUser } from "../hooks/useUser";
 import { useAlert } from "../hooks/useAlert";
+import { useTheme } from "@mui/material/styles";
 import Header from "../components/Header";
 import Card from "../components/Card";
 import Question from "../components/Question";
@@ -36,6 +37,7 @@ const AnswerForm = () => {
   const { enqueueSnackbar } = useSnackbar();
   const user = useUser();
   const openAlert = useAlert();
+  const theme = useTheme();
 
   const sectionQuestions = useMemo(() => {
     return form?.questions.filter(
@@ -240,11 +242,11 @@ const AnswerForm = () => {
     return <AnswerPageText>Esta encuesta no tiene preguntas</AnswerPageText>;
   }
 
-  const formTheme = { primary: "#ffc526", background: "#e3c572" };
+  const formTheme = { main: "#ffc526", light: "#e3c572", dark: "#b1933b" };
 
   return (
     <CustomThemeProvider formTheme={formTheme}>
-      <Box sx={{ backgroundColor: "primary.light" }}>
+      <Box sx={{ backgroundColor: `primary.${theme.palette.mode}` }}>
         <Header />
         <Container sx={{ p: 3 }} maxWidth="md">
           <form onSubmit={submit}>

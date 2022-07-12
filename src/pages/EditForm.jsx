@@ -5,6 +5,7 @@ import { saveForm } from "../api/forms";
 import { useUser } from "../hooks/useUser";
 import { useForm } from "../hooks/useForm";
 import { useColorMode } from "../hooks/useColorMode";
+import { useTheme } from "@mui/material/styles";
 import CustomThemeProvider from "../components/CustomThemeProvider";
 import Header from "../components/Header";
 import Card from "../components/Card";
@@ -18,6 +19,7 @@ const EditForm = () => {
   const { form, setForm, loading } = useForm();
   const [openDrawer, setOpenDrawer] = useState(false);
   const { formTheme } = useColorMode();
+  const theme = useTheme();
 
   const debouncedSave = useMemo(() => {
     return debounce((form) => {
@@ -59,7 +61,7 @@ const EditForm = () => {
 
   return (
     <CustomThemeProvider formTheme={formTheme}>
-      <Box sx={{ backgroundColor: "primary.light" }}>
+      <Box sx={{ backgroundColor: `primary.${theme.palette.mode}` }}>
         <EditFormHeader setOpenDrawer={setOpenDrawer} />
         <DrawerLayout open={openDrawer} setOpen={setOpenDrawer}>
           <Stack spacing={2}>
