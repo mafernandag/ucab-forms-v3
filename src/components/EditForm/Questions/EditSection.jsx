@@ -66,6 +66,16 @@ const EditSection = ({ setOpenDrawer }) => {
   const handleChangeChecked = (field) => (e, checked) => {
     const newSection = { ...section, [field]: checked };
 
+    if (field === "dynamicLabels") {
+      if (checked) {
+        newSection.labels = [];
+      } else {
+        newSection.dynamicLabelsSection = null;
+        newSection.dynamicLabelsSectionLabel = null;
+        newSection.dynamicLabelsQuestion = null;
+      }
+    }
+
     updateSection(newSection);
   };
 
