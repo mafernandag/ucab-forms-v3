@@ -35,8 +35,9 @@ export interface QuestionProps<T, K> {
 
 export interface StatProps<T, K> {
   question: T;
-  section: Section;
+  section: Section; // TODO: Consider removing the section
   answers: Record<string, Record<string, K>>[];
+  labels: string[];
 }
 
 export interface ResponseByQuestionProps<T, K> {

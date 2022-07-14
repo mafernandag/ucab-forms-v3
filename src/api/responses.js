@@ -29,7 +29,11 @@ export const submitResponse = async (form, responseData) => {
           (section) => section.id === question.sectionId
         );
 
-        const sectionLabels = getSectionLabels(section);
+        const sectionLabels = getSectionLabels(
+          section,
+          form.sections,
+          form.questions
+        );
 
         for (const label of sectionLabels) {
           response.answers[question.id][label] = await uploadFiles(

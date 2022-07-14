@@ -1,14 +1,11 @@
 import { Stack, Typography } from "@mui/material";
-import { getSectionLabels } from "../utils";
 import { FilesResponse } from "./components";
 import { FileStatProps } from "./types";
 
-const Stat = ({ answers, section, question }: FileStatProps) => {
-  const sectionLabels = getSectionLabels(section);
-
+const Stat = ({ answers, question, labels }: FileStatProps) => {
   return (
     <Stack spacing={2}>
-      {sectionLabels.map((label) => (
+      {labels.map((label) => (
         <Stack spacing={1} key={label}>
           <Typography variant="body2" fontWeight={500}>
             {label}

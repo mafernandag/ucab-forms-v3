@@ -6,15 +6,12 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { getSectionLabels } from "../utils";
 import { SortableStatProps } from "./types";
 
-const Stat = ({ answers, section, question }: SortableStatProps) => {
-  const sectionLabels = getSectionLabels(section);
-
+const Stat = ({ answers, question, labels }: SortableStatProps) => {
   return (
     <>
-      {sectionLabels.map((label) => (
+      {labels.map((label) => (
         <TableContainer key={label} sx={{ maxHeight: 300 }}>
           <Table>
             <TableHead>

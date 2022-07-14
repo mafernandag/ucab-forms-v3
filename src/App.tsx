@@ -11,7 +11,7 @@ import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import EditForm from "./pages/EditForm";
-import AnswerForm from "./pages/AnswerForm";
+import AnswerForm from "./components/AnswerForm";
 import Sent from "./pages/Sent";
 
 const App = () => {

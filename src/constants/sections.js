@@ -3,4 +3,8 @@ export const defaultSection = {
   description: "Sin descripción",
   labels: [],
   hideCard: false,
+  dynamicLabels: false,
+  dynamicLabelsSection: null,
+  dynamicLabelsSectionLabel: null,
+  dynamicLabelsQuestion: null,
 };

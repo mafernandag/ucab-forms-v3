@@ -1,9 +1,7 @@
 import { SliderStatProps } from "./types";
-import { getSectionLabels } from "../utils";
 import { BarDiagram } from "../components";
 
-const Stat = ({ answers, section, question }: SliderStatProps) => {
-  const sectionLabels = getSectionLabels(section);
+const Stat = ({ answers, question, labels }: SliderStatProps) => {
   const values: number[] = [];
 
   for (let i = question.min; i <= question.max; i++) {
@@ -12,7 +10,7 @@ const Stat = ({ answers, section, question }: SliderStatProps) => {
 
   const diagramLabels = values.map((value) => value.toString());
 
-  const datasets = sectionLabels.map((label) => {
+  const datasets = labels.map((label) => {
     return {
       label,
       data: values.map((value) => {

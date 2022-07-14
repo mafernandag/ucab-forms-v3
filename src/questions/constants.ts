@@ -28,6 +28,8 @@ export const compatibility = {
   [FILE]: [FILE],
 };
 
+export const dynamicLabelsQuestionTypes = [RADIO, CHECKBOX, SELECT];
+
 export const defaultQuestion = {
   title: "Pregunta sin título",
   type: TEXT,

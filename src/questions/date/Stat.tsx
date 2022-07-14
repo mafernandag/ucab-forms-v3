@@ -1,26 +1,23 @@
 import { useMemo } from "react";
-import { getSectionLabels } from "../utils";
 import { DateStatProps } from "./types";
 import { stringify } from "./utils";
 import { SimpleTable } from "../components";
 
-const Stat = ({ answers, section, question }: DateStatProps) => {
-  const sectionLabels = getSectionLabels(section);
-
+const Stat = ({ answers, question, labels }: DateStatProps) => {
   const rows = useMemo(() => {
     const filteredAnswers = answers.filter((answer) =>
-      sectionLabels.some((label) => answer[question.id]?.[label])
+      labels.some((label) => answer[question.id]?.[label])
     );
 
     return filteredAnswers.map((answer) =>
-      sectionLabels.reduce<Record<string, string>>((previous, current) => {
+      labels.reduce<Record<string, string>>((previous, current) => {
         previous[current] = stringify(answer[question.id][current]) || "-";
         return previous;
       }, {})
     );
-  }, [answers, question.id, sectionLabels]);
+  }, [answers, question.id, labels]);
 
-  return <SimpleTable labels={sectionLabels} rows={rows} />;
+  return <SimpleTable labels={labels} rows={rows} />;
 };
 
 export default Stat;

@@ -10,17 +10,19 @@ import {
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
-import { getFormOnce } from "../api/forms";
-import { submitResponse, checkUserHasResponses } from "../api/responses";
-import { useUser } from "../hooks/useUser";
-import { useAlert } from "../hooks/useAlert";
-import Header from "../components/Header";
-import Card from "../components/Card";
-import Question from "../components/Question";
-import AnswerPageText from "../components/AnswerPageText";
+import { getFormOnce } from "../../api/forms";
+import { submitResponse, checkUserHasResponses } from "../../api/responses";
+import { useUser } from "../../hooks/useUser";
+import { useAlert } from "../../hooks/useAlert";
+import Header from "../Header";
+import Card from "../Card";
+import Question from "../Question";
+import AnswerPageText from "../AnswerPageText";
 import { useMemo } from "react";
-import { questionConfig } from "../questions";
-import { DEFAULT_LABEL } from "../questions/constants";
+import { questionConfig } from "../../questions";
+import { DEFAULT_LABEL } from "../../questions/constants";
+import { getSectionLabels } from "./utils";
+import { cloneDeep, last } from "lodash";
 
 const AnswerForm = () => {
   const { id: formId } = useParams();
@@ -29,7 +31,7 @@ const AnswerForm = () => {
   const [currentLabel, setCurrentLabel] = useState();
   const [response, setResponse] = useState({});
   const [errors, setErrors] = useState({});
-  const [answers, setAnswers] = useState();
+  const [answers, setAnswers] = useState({});
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [userHasResponses, setUserHasResponses] = useState(false);
@@ -58,28 +60,38 @@ const AnswerForm = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentSectionId, currentLabel]);
 
-  const initializeAnswers = useCallback((sections, questions) => {
-    const answers = {};
+  const initializeSectionAnswers = useCallback((section, questions) => {
+    setAnswers((answers) => {
+      const newAnswers = cloneDeep(answers);
 
-    questions.forEach((question) => {
-      answers[question.id] = {};
-
-      const section = sections.find(
-        (section) => section.id === question.sectionId
+      const sectionQuestions = questions.filter(
+        (question) => question.sectionId === section.id
       );
 
-      if (section) {
-        const labels = section.labels.length ? section.labels : [DEFAULT_LABEL];
+      sectionQuestions.forEach((question) => {
+        newAnswers[question.id] = newAnswers[question.id] || {};
+
+        const labels = getSectionLabels(section, answers);
 
         labels.forEach((label) => {
           const type = question.type;
-          answers[question.id][label] =
-            questionConfig[type].getInitializedAnswer(question);
-        });
-      }
-    });
+          const getInitializedAnswer =
+            questionConfig[type].getInitializedAnswer;
 
-    setAnswers(answers);
+          if (newAnswers[question.id][label] === undefined) {
+            newAnswers[question.id][label] = getInitializedAnswer(question);
+          }
+        });
+
+        for (const label in newAnswers[question.id]) {
+          if (!labels.includes(label)) {
+            delete newAnswers[question.id][label];
+          }
+        }
+      });
+
+      return newAnswers;
+    });
   }, []);
 
   const resetForm = () => {
@@ -89,7 +101,7 @@ const AnswerForm = () => {
       fullWidth: false,
       action: () => {
         setErrors({});
-        initializeAnswers(form.sections, form.questions);
+        initializeSectionAnswers(form.sections[0], form.questions);
         setCurrentSectionId(form.sections[0].id);
       },
     });
@@ -125,9 +137,12 @@ const AnswerForm = () => {
         }
 
         setForm(form);
-        setCurrentSectionId(form.sections[0]?.id);
-        setCurrentLabel(form.sections[0]?.labels[0] || DEFAULT_LABEL);
-        initializeAnswers(form.sections, form.questions);
+
+        if (form.sections.length) {
+          setCurrentSectionId(form.sections[0].id);
+          setCurrentLabel(form.sections[0].labels[0] || DEFAULT_LABEL);
+          initializeSectionAnswers(form.sections[0], form.questions);
+        }
 
         navigator.geolocation.getCurrentPosition((position) => {
           const { latitude, longitude } = position.coords;
@@ -141,9 +156,56 @@ const AnswerForm = () => {
     };
 
     getForm();
-  }, [formId, initializeAnswers, user]);
+  }, [formId, initializeSectionAnswers, user]);
 
-  const submit = async (e) => {
+  const getPreviousSection = (currentSectionPosition) => {
+    if (currentSectionPosition === 1) {
+      return form.sections[0];
+    }
+
+    const previousSection = form.sections[currentSectionPosition - 1];
+
+    if (getSectionLabels(previousSection, answers).length) {
+      return previousSection;
+    }
+
+    return getPreviousSection(currentSectionPosition - 1);
+  };
+
+  const handleBack = (e) => {
+    e.preventDefault();
+
+    const sectionLabels = getSectionLabels(currentSection, answers);
+
+    if (currentLabel !== sectionLabels[0]) {
+      const currentLabelIndex = sectionLabels.indexOf(currentLabel);
+
+      return setCurrentLabel(sectionLabels[currentLabelIndex - 1]);
+    }
+
+    const previousSection = getPreviousSection(currentSectionPosition);
+    const previousSectionLabels = getSectionLabels(previousSection, answers);
+
+    setCurrentLabel(last(previousSectionLabels));
+
+    setCurrentSectionId(previousSection.id);
+  };
+
+  const getNextSection = (currentSectionPosition) => {
+    const nextSection = form.sections[currentSectionPosition + 1];
+
+    if (!nextSection) {
+      return null;
+    }
+
+    if (getSectionLabels(nextSection, answers).length) {
+      return nextSection;
+    }
+
+    return getNextSection(currentSectionPosition + 1);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     let shouldReturn = false;
@@ -180,17 +242,19 @@ const AnswerForm = () => {
       });
     }
 
-    const currentLabelIndex = currentSection.labels.indexOf(currentLabel);
+    const sectionLabels = getSectionLabels(currentSection, answers);
+    const currentLabelIndex = sectionLabels.indexOf(currentLabel);
 
-    if (currentLabelIndex !== currentSection.labels.length - 1) {
-      return setCurrentLabel(
-        currentSection.labels[currentLabelIndex + 1] || DEFAULT_LABEL
-      );
+    if (currentLabelIndex !== sectionLabels.length - 1) {
+      return setCurrentLabel(sectionLabels[currentLabelIndex + 1]);
     }
 
-    if (currentSectionPosition !== form.sections.length - 1) {
-      const nextSection = form.sections[currentSectionPosition + 1];
-      setCurrentLabel(nextSection.labels[0] || DEFAULT_LABEL);
+    const nextSection = getNextSection(currentSectionPosition);
+
+    if (nextSection) {
+      const nextSectionLabels = getSectionLabels(nextSection, answers);
+      setCurrentLabel(nextSectionLabels[0]);
+      initializeSectionAnswers(nextSection, form.questions);
       return setCurrentSectionId(nextSection.id);
     }
 
@@ -273,7 +337,7 @@ const AnswerForm = () => {
     <Box>
       <Header />
       <Container sx={{ p: 3 }} maxWidth="md">
-        <form onSubmit={submit}>
+        <form onSubmit={handleSubmit}>
           <Stack spacing={2}>
             <Card>
               <Typography variant="h5" mb={2}>
@@ -363,45 +427,14 @@ const AnswerForm = () => {
               </Button>
               {(currentSectionPosition !== 0 ||
                 currentLabel !==
-                  (currentSection.labels[0] || DEFAULT_LABEL)) && (
-                <Button
-                  variant="outlined"
-                  sx={{ px: 3 }}
-                  onClick={(e) => {
-                    e.preventDefault();
-
-                    if (
-                      currentLabel !==
-                      (currentSection.labels[0] || DEFAULT_LABEL)
-                    ) {
-                      const currentLabelIndex =
-                        currentSection.labels.indexOf(currentLabel);
-
-                      return setCurrentLabel(
-                        currentSection.labels[currentLabelIndex - 1] ||
-                          DEFAULT_LABEL
-                      );
-                    }
-
-                    const previousSection =
-                      form.sections[currentSectionPosition - 1];
-
-                    setCurrentLabel(
-                      previousSection.labels[
-                        previousSection.labels.length - 1
-                      ] || DEFAULT_LABEL
-                    );
-
-                    setCurrentSectionId(previousSection.id);
-                  }}
-                >
+                  getSectionLabels(currentSection, answers)[0]) && (
+                <Button variant="outlined" sx={{ px: 3 }} onClick={handleBack}>
                   Atrás
                 </Button>
               )}
-              {currentSectionPosition === form.sections.length - 1 &&
+              {!getNextSection(currentSectionPosition) &&
               currentLabel ===
-                (currentSection.labels[currentSection.labels.length - 1] ||
-                  DEFAULT_LABEL) ? (
+                last(getSectionLabels(currentSection, answers)) ? (
                 <Button
                   type="submit"
                   disabled={submitting}

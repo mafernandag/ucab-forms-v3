@@ -26,13 +26,14 @@ const ResponsesByQuestion = () => {
 
   const currentSection = useMemo(() => {
     const section = sections.find((section) => section.id === currentSectionId);
+    const sectionLabels = getSectionLabels(section, sections, questions);
 
     if (section) {
-      setCurrentLabel(getSectionLabels(section)[0]);
+      setCurrentLabel(sectionLabels[0]);
     }
 
     return section;
-  }, [currentSectionId, sections]);
+  }, [currentSectionId, questions, sections]);
 
   const sectionQuestions = useMemo(() => {
     return questions.filter(
@@ -57,7 +58,12 @@ const ResponsesByQuestion = () => {
   const question = sectionQuestions[page - 1];
   const answers = responses.map((r) => r.answers);
 
-  const sectionLabels = currentSection ? getSectionLabels(currentSection) : [];
+  const sectionLabels = useMemo(() => {
+    if (currentSection) {
+      return getSectionLabels(currentSection, sections, questions);
+    }
+    return [];
+  }, [currentSection, questions, sections]);
 
   const getAnswersWithStats = useCallback(() => {
     const responseCount = {};

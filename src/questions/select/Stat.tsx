@@ -1,11 +1,8 @@
 import { SelectStatProps } from "./types";
-import { getSectionLabels } from "../utils";
 import { CircularDiagram } from "../components";
 
-const Stat = ({ answers, section, question }: SelectStatProps) => {
-  const sectionLabels = getSectionLabels(section);
-
-  const datasets = sectionLabels.map((label) => {
+const Stat = ({ answers, question, labels }: SelectStatProps) => {
+  const datasets = labels.map((label) => {
     return {
       label,
       data: question.options.map((option) => {

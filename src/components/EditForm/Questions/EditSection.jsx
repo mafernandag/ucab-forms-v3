@@ -26,6 +26,7 @@ import { useForm } from "../../../hooks/useForm";
 import { useAlert } from "../../../hooks/useAlert";
 import { calculateNewIndex } from "../../../utils/forms";
 import Labels from "./Labels";
+import DynamicLabels from "./DynamicLabels";
 
 const EditSection = ({ setOpenDrawer }) => {
   const {
@@ -194,8 +195,18 @@ const EditSection = ({ setOpenDrawer }) => {
         value={section.description}
         onChange={handleChange("description")}
       />
-      <Labels updateSection={updateSection} />
+      {section.dynamicLabels ? (
+        <DynamicLabels updateSection={updateSection} />
+      ) : (
+        <Labels updateSection={updateSection} />
+      )}
       <Box>
+        <FormControlLabel
+          control={<Checkbox />}
+          checked={section.dynamicLabels}
+          onChange={handleChangeChecked("dynamicLabels")}
+          label="Generar etiquetas a partir de respuesta"
+        />
         <FormControlLabel
           control={<Checkbox />}
           checked={section.hideCard}

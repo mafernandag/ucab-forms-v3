@@ -1,11 +1,8 @@
 import { CheckboxStatProps } from "./types";
 import { BarDiagram } from "../components";
-import { getSectionLabels } from "../utils";
 
-const Stat = ({ answers, section, question }: CheckboxStatProps) => {
-  const sectionLabels = getSectionLabels(section);
-
-  const datasets = sectionLabels.map((label) => {
+const Stat = ({ answers, question, labels }: CheckboxStatProps) => {
+  const datasets = labels.map((label) => {
     return {
       label,
       data: question.options.map((option) => {

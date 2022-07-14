@@ -6,6 +6,7 @@ import { getSectionLabels, isEmpty } from "../../../../questions/utils";
 import { Section } from "../../../../types";
 import Card from "../../../Card";
 import { DEFAULT_LABEL } from "../../../../questions/constants";
+import { useForm } from "../../../../hooks/useForm";
 
 interface Props {
   answer?: Record<string, any>;
@@ -14,9 +15,10 @@ interface Props {
 }
 
 const AnswerCard = ({ answer, section, question }: Props) => {
+  const { sections, questions } = useForm();
   const type = question.type;
   const ResponseByPerson = questionTypesConfig[type].ResponseByPerson;
-  const sectionLabels = getSectionLabels(section);
+  const sectionLabels = getSectionLabels(section, sections, questions);
 
   const isEmptyAnswer = useMemo(() => {
     return sectionLabels.every((label) => isEmpty(answer?.[label]));
