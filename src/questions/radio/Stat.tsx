@@ -1,9 +1,10 @@
 import { RadioStatProps } from "./types";
 import { CircularDiagram } from "../components";
+import { isEmpty } from "../utils";
 
 const Stat = ({ answers, question, labels }: RadioStatProps) => {
   const datasets = labels.map((label) => {
-    return {
+    const dataset = {
       label,
       data: question.options.map((option) => {
         return answers.filter(
@@ -11,9 +12,26 @@ const Stat = ({ answers, question, labels }: RadioStatProps) => {
         ).length;
       }),
     };
+
+    if (question.other) {
+      dataset.data.push(
+        answers.filter((answer) => {
+          const value = answer[question.id]?.[label];
+          return !question.options.includes(value) && !isEmpty(value);
+        }).length
+      );
+    }
+
+    return dataset;
   });
 
-  return <CircularDiagram labels={question.options} datasets={datasets} />;
+  const chartLabels = [...question.options];
+
+  if (question.other) {
+    chartLabels.push("Otro");
+  }
+
+  return <CircularDiagram labels={chartLabels} datasets={datasets} />;
 };
 
 export default Stat;

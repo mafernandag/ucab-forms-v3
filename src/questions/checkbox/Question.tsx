@@ -19,9 +19,10 @@ const Question = ({
 
   const getNewAnswer = (answer: CheckboxAnswer, option: string) => {
     const selectedOptions = [...answer, option];
-    return sortBy(selectedOptions, (option) =>
-      question.options.indexOf(option)
-    );
+    return sortBy(selectedOptions, (option) => {
+      const index = question.options.indexOf(option);
+      return index === -1 ? Infinity : index;
+    });
   };
 
   const handleChangeCheckbox =
@@ -46,7 +47,7 @@ const Question = ({
       updateAnswer(newAnswer);
     }
 
-    setOther(e.target.value);
+    setOther(value);
   };
 
   return (
@@ -68,7 +69,7 @@ const Question = ({
           onChange={handleChangeCheckbox(other)}
           label={
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <Typography>Otros: </Typography>
+              <Typography>Otro: </Typography>
               <TextField
                 variant="standard"
                 value={other}

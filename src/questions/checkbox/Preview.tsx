@@ -16,9 +16,9 @@ const Preview = ({ question }: CheckboxPreviewProps) => {
       {question.other && (
         <FormControlLabel
           disabled
-          value="otros"
+          value="otro"
           control={<Checkbox />}
-          label="Otros"
+          label="Otro"
         />
       )}
     </FormGroup>

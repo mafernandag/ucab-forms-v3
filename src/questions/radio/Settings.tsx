@@ -85,8 +85,8 @@ const Settings = ({ question, updateQuestion }: RadioSettingsProps) => {
               <FormControlLabel
                 disabled
                 control={<Radio />}
-                value="otros"
-                label="Otros"
+                value="otro"
+                label="Otro"
               />
               <Tooltip title="Eliminar">
                 <IconButton onClick={removeOther}>
@@ -101,7 +101,7 @@ const Settings = ({ question, updateQuestion }: RadioSettingsProps) => {
         </Button>
         {!question.other && (
           <Button size="small" onClick={addOther}>
-            Agregar "Otros"
+            Agregar "Otro"
           </Button>
         )}
       </FormControl>

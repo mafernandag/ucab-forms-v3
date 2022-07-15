@@ -85,8 +85,8 @@ const Settings = ({ question, updateQuestion }: CheckboxSettingsProps) => {
               <FormControlLabel
                 disabled
                 control={<Checkbox />}
-                value="otros"
-                label="Otros"
+                value="otro"
+                label="Otro"
               />
               <Tooltip title="Eliminar" arrow>
                 <IconButton onClick={removeOther}>
@@ -101,7 +101,7 @@ const Settings = ({ question, updateQuestion }: CheckboxSettingsProps) => {
         </Button>
         {!question.other && (
           <Button size="small" onClick={addOther}>
-            Agregar "Otros"
+            Agregar "Otro"
           </Button>
         )}
       </FormControl>

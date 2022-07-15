@@ -16,9 +16,9 @@ const Preview = ({ question }: RadioPreviewProps) => {
       {question.other && (
         <FormControlLabel
           disabled
-          value="otros"
+          value="otro"
           control={<Radio />}
-          label="Otros"
+          label="Otro"
         />
       )}
     </RadioGroup>
