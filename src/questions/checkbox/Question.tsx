@@ -7,6 +7,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { sortBy } from "lodash";
 import { CheckboxAnswer, CheckboxQuestionProps } from "./types";
 
 const Question = ({
@@ -16,12 +17,19 @@ const Question = ({
 }: CheckboxQuestionProps) => {
   const [other, setOther] = useState("");
 
+  const getNewAnswer = (answer: CheckboxAnswer, option: string) => {
+    const selectedOptions = [...answer, option];
+    return sortBy(selectedOptions, (option) =>
+      question.options.indexOf(option)
+    );
+  };
+
   const handleChangeCheckbox =
     (option: string) => (e: React.SyntheticEvent, checked: boolean) => {
       let newAnswer: CheckboxAnswer;
 
       if (checked) {
-        newAnswer = [...answer, option];
+        newAnswer = getNewAnswer(answer, option);
       } else {
         newAnswer = answer.filter((o) => o !== option);
       }
@@ -33,8 +41,8 @@ const Question = ({
     const value = e.target.value;
 
     if (answer.includes(other)) {
-      const newAnswer = answer.filter((o) => o !== other);
-      newAnswer.push(value);
+      const filteredAnswer = answer.filter((o) => o !== other);
+      const newAnswer = getNewAnswer(filteredAnswer, value);
       updateAnswer(newAnswer);
     }
 

@@ -12,11 +12,12 @@ import { createFilterOptions } from "@mui/material/Autocomplete";
 import { Clear as ClearIcon } from "@mui/icons-material";
 import { uniq } from "lodash";
 import { useForm } from "../../../hooks/useForm";
+import { saveSection } from "../../../api/sections";
 
 const filter = createFilterOptions();
 
 const Labels = ({ updateSection }) => {
-  const { sections, section, currentSectionId } = useForm();
+  const { form, sections, section, setSections, currentSectionId } = useForm();
   const [inputValue, setInputValue] = useState("");
 
   useEffect(() => {
@@ -59,6 +60,17 @@ const Labels = ({ updateSection }) => {
   };
 
   const handleDelete = (label) => () => {
+    setSections((sections) => {
+      return sections.map((section) => {
+        if (section.dynamicLabelsSectionLabel === label) {
+          const newSection = { ...section, dynamicLabelsSectionLabel: null };
+          saveSection(form.id, newSection);
+          return newSection;
+        }
+        return section;
+      });
+    });
+
     const newSection = { ...section };
     newSection.labels = section.labels.filter((l) => l !== label);
     updateSection(newSection);

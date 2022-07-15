@@ -26,7 +26,7 @@ const ResponsesTable = () => {
         (section) => section.id === question.sectionId
       );
 
-      const sectionLabels = getSectionLabels(section, sections, questions);
+      const sectionLabels = getSectionLabels(section, questions);
 
       return sectionLabels.map((label) => ({
         ...question,

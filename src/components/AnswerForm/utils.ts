@@ -9,7 +9,7 @@ export const getSectionLabels = (
 ) => {
   if (section.dynamicLabels) {
     const label = section.dynamicLabelsSectionLabel || DEFAULT_LABEL;
-    const answer = answers[section.dynamicLabelsQuestion]?.[label];
+    const answer = answers[section.dynamicLabelsQuestion as string]?.[label];
 
     if (isEmpty(answer)) {
       return [];

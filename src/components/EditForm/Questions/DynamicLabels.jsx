@@ -25,9 +25,7 @@ const DynamicLabels = ({ updateSection }) => {
 
   const dynamicLabelsSection = useMemo(() => {
     return sections.find(
-      (section) =>
-        section.id === currentSection.dynamicLabelsSection &&
-        section.index < currentSection.index
+      (section) => section.id === currentSection.dynamicLabelsSection
     );
   }, [currentSection, sections]);
 
@@ -37,17 +35,25 @@ const DynamicLabels = ({ updateSection }) => {
     );
   }, [currentSection.dynamicLabelsSection, questions]);
 
-  const dynamicLabelsQuestion = useMemo(() => {
-    return dynamicLabelsSectionQuestions.find(
-      (question) => question.id === currentSection.dynamicLabelsQuestion
-    );
-  }, [currentSection.dynamicLabelsQuestion, dynamicLabelsSectionQuestions]);
+  const possibleLabels = useMemo(() => {
+    if (!dynamicLabelsSection) {
+      return [];
+    }
 
-  const getDynamicLabelsSectionLabel = (dynamicLabelsSection) => {
-    return dynamicLabelsSection.labels.find(
-      (label) => label === currentSection.dynamicLabelsSectionLabel
-    );
-  };
+    if (dynamicLabelsSection.dynamicLabels) {
+      const question = questions.find(
+        (question) => question.id === dynamicLabelsSection.dynamicLabelsQuestion
+      );
+
+      if (!question) {
+        return [];
+      }
+
+      return question.options;
+    }
+
+    return dynamicLabelsSection.labels;
+  }, [dynamicLabelsSection, questions]);
 
   const allowsDynamicLabels = (questionType) => {
     return dynamicLabelsQuestionTypes.includes(questionType);
@@ -62,7 +68,7 @@ const DynamicLabels = ({ updateSection }) => {
         variant="standard"
         select
         label="Sección"
-        value={dynamicLabelsSection?.id || ""}
+        value={currentSection.dynamicLabelsSection || ""}
         onChange={handleChangeSection}
       >
         {sections.map((section) => (
@@ -75,16 +81,15 @@ const DynamicLabels = ({ updateSection }) => {
           </MenuItem>
         ))}
       </TextField>
-      {dynamicLabelsSection?.labels.length > 0 && (
-        // TODO: Consider dynamic labels here
+      {possibleLabels.length > 0 && (
         <TextField
           variant="standard"
           select
           label="Etiqueta"
-          value={getDynamicLabelsSectionLabel(dynamicLabelsSection) || ""}
+          value={currentSection.dynamicLabelsSectionLabel || ""}
           onChange={handleChange("dynamicLabelsSectionLabel")}
         >
-          {dynamicLabelsSection.labels.map((label) => (
+          {possibleLabels.map((label) => (
             <MenuItem key={label} value={label}>
               {label}
             </MenuItem>
@@ -95,7 +100,7 @@ const DynamicLabels = ({ updateSection }) => {
         variant="standard"
         select
         label="Pregunta"
-        value={dynamicLabelsQuestion?.id || ""}
+        value={currentSection.dynamicLabelsQuestion || ""}
         onChange={handleChange("dynamicLabelsQuestion")}
       >
         {dynamicLabelsSectionQuestions.map((question) => (

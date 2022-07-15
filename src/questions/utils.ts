@@ -18,42 +18,12 @@ export const getBaseQuestion = (question: BaseQuestion) => {
 
 export const getSectionLabels = (
   section: Section,
-  sections: Section[],
   questions: BaseQuestion[]
 ) => {
   if (section.dynamicLabels) {
-    const label = section.dynamicLabelsSectionLabel;
-    const sectionId = section.dynamicLabelsSection;
     const questionId = section.dynamicLabelsQuestion;
-
-    const dynamicLabelsSection = sections.find(
-      (section) => section.id === sectionId
-    );
-
-    if (!dynamicLabelsSection) {
-      return [DEFAULT_LABEL];
-    }
-
-    const validLabel =
-      dynamicLabelsSection.labels.includes(label) ||
-      (!label && dynamicLabelsSection.labels.length === 0);
-
-    if (!validLabel) {
-      return [DEFAULT_LABEL];
-    }
-
-    const dynamicLabelsQuestion = questions.find(
-      (question) => question.id === questionId
-    );
-
-    if (
-      !dynamicLabelsQuestion ||
-      dynamicLabelsQuestion.sectionId !== sectionId
-    ) {
-      return [DEFAULT_LABEL];
-    }
-
-    const labels = (dynamicLabelsQuestion as QuestionWithOptions).options;
+    const question = questions.find((question) => question.id === questionId);
+    const labels = (question as QuestionWithOptions).options;
     return labels;
   }
 

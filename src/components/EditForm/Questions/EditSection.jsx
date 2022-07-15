@@ -84,6 +84,20 @@ const EditSection = ({ setOpenDrawer }) => {
       title: "Eliminar sección",
       message: "¿Estás seguro de eliminar esta sección y todas sus preguntas?",
       action: () => {
+        setSections((sections) => {
+          return sections.map((section) => {
+            if (section.dynamicLabelsSection === currentSectionId) {
+              const newSection = { ...section };
+              newSection.dynamicLabelsSection = null;
+              newSection.dynamicLabelsSectionLabel = null;
+              newSection.dynamicLabelsQuestion = null;
+              saveSection(form.id, newSection);
+              return newSection;
+            }
+            return section;
+          });
+        });
+
         const deletedSectionPosition = sections.findIndex(
           (section) => section.id === currentSectionId
         );
@@ -115,6 +129,29 @@ const EditSection = ({ setOpenDrawer }) => {
     }
 
     const newSection = { ...section, index: newIndex };
+
+    if (
+      direction === "left" &&
+      section.dynamicLabels &&
+      section.dynamicLabelsSection === sections[i - 1].id
+    ) {
+      newSection.dynamicLabelsSection = null;
+      newSection.dynamicLabelsSectionLabel = null;
+      newSection.dynamicLabelsQuestion = null;
+    }
+
+    sections.forEach((section) => {
+      if (
+        section.dynamicLabelsSection === newSection.id &&
+        section.index >= newIndex
+      ) {
+        const sectionToUpdate = { ...section };
+        sectionToUpdate.dynamicLabelsSection = null;
+        sectionToUpdate.dynamicLabelsSectionLabel = null;
+        sectionToUpdate.dynamicLabelsQuestion = null;
+        saveSection(form.id, sectionToUpdate);
+      }
+    });
 
     saveSection(form.id, newSection);
 

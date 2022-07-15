@@ -15,10 +15,10 @@ interface Props {
 }
 
 const AnswerCard = ({ answer, section, question }: Props) => {
-  const { sections, questions } = useForm();
+  const { questions } = useForm();
   const type = question.type;
   const ResponseByPerson = questionTypesConfig[type].ResponseByPerson;
-  const sectionLabels = getSectionLabels(section, sections, questions);
+  const sectionLabels = getSectionLabels(section, questions);
 
   const isEmptyAnswer = useMemo(() => {
     return sectionLabels.every((label) => isEmpty(answer?.[label]));

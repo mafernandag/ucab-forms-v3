@@ -101,6 +101,7 @@ const AnswerForm = () => {
       fullWidth: false,
       action: () => {
         setErrors({});
+        setAnswers({});
         initializeSectionAnswers(form.sections[0], form.questions);
         setCurrentSectionId(form.sections[0].id);
       },

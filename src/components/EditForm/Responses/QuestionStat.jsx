@@ -41,11 +41,11 @@ ChartJS.register(
 );
 
 const QuestionStat = ({ question, section, answers }) => {
-  const { sections, questions } = useForm();
+  const { questions } = useForm();
 
   const sectionLabels = useMemo(() => {
-    return getSectionLabels(section, sections, questions);
-  }, [questions, section, sections]);
+    return getSectionLabels(section, questions);
+  }, [questions, section]);
 
   const responseCount = useMemo(() => {
     const filteredAnswers = answers.filter((answer) =>
@@ -71,12 +71,7 @@ const QuestionStat = ({ question, section, answers }) => {
         {responseCountText}
       </Typography>
       {responseCount > 0 && (
-        <Stat
-          question={question}
-          section={section} // TODO: Consider removing the section
-          answers={answers}
-          labels={sectionLabels}
-        />
+        <Stat question={question} answers={answers} labels={sectionLabels} />
       )}
     </>
   );

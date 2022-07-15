@@ -5,7 +5,7 @@ export interface Section {
   labels: string[];
   hideCard: boolean;
   dynamicLabels: boolean;
-  dynamicLabelsSection: string;
-  dynamicLabelsSectionLabel: string;
-  dynamicLabelsQuestion: string;
+  dynamicLabelsSection: string | null;
+  dynamicLabelsSectionLabel: string | null;
+  dynamicLabelsQuestion: string | null;
 }
