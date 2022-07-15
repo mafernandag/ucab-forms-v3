@@ -49,7 +49,7 @@ const Question = ({ answer, question, updateAnswer }: RadioQuestionProps) => {
             control={<Radio />}
             label={
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                <Typography>Otros: </Typography>
+                <Typography>Otro: </Typography>
                 <TextField
                   variant="standard"
                   value={other}
