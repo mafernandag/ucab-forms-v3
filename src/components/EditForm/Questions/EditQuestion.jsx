@@ -15,12 +15,16 @@ import {
   Delete as DeleteIcon,
 } from "@mui/icons-material";
 import { debounce } from "lodash";
-import { compatibility } from "../../../questions/constants";
+import {
+  compatibility,
+  dynamicLabelsQuestionTypes,
+} from "../../../questions/constants";
 import {
   deleteQuestion,
   insertQuestion,
   saveQuestion,
 } from "../../../api/questions";
+import { saveSection } from "../../../api/sections";
 import { useForm } from "../../../hooks/useForm";
 import { useAlert } from "../../../hooks/useAlert";
 import EditOptions from "./EditOptions";
@@ -35,6 +39,7 @@ const EditQuestion = ({ setOpenDrawer }) => {
     sectionQuestions,
     currentQuestionId,
     setCurrentQuestionId,
+    setSections,
     responses,
   } = useForm();
   const openAlert = useAlert();
@@ -61,6 +66,19 @@ const EditQuestion = ({ setOpenDrawer }) => {
   const handleChangeType = (e) => {
     const type = e.target.value;
 
+    if (!dynamicLabelsQuestionTypes.includes(type)) {
+      setSections((sections) => {
+        return sections.map((section) => {
+          if (section.dynamicLabelsQuestion === question.id) {
+            const newSection = { ...section, dynamicLabelsQuestion: null };
+            saveSection(form.id, newSection);
+            return newSection;
+          }
+          return section;
+        });
+      });
+    }
+
     const newQuestion = questionConfig[type].getInitializedFields(
       question,
       type
@@ -78,6 +96,17 @@ const EditQuestion = ({ setOpenDrawer }) => {
       title: "Eliminar pregunta",
       message: "¿Estás seguro de eliminar esta pregunta?",
       action: () => {
+        setSections((sections) => {
+          return sections.map((section) => {
+            if (section.dynamicLabelsQuestion === currentQuestionId) {
+              const newSection = { ...section, dynamicLabelsQuestion: null };
+              saveSection(form.id, newSection);
+              return newSection;
+            }
+            return section;
+          });
+        });
+
         const deletedQuestionPosition = sectionQuestions.findIndex(
           (question) => question.id === currentQuestionId
         );

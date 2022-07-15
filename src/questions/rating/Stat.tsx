@@ -1,14 +1,12 @@
 import { RatingStatProps } from "./types";
 import { ratingLabels } from "./constants";
-import { getSectionLabels } from "../utils";
 import { BarDiagram } from "../components";
 
-const Stat = ({ answers, section, question }: RatingStatProps) => {
-  const sectionLabels = getSectionLabels(section);
+const Stat = ({ answers, question, labels }: RatingStatProps) => {
   const diagramLabels = ratingLabels.slice(1);
   const values = [1, 2, 3, 4, 5];
 
-  const datasets = sectionLabels.map((label) => {
+  const datasets = labels.map((label) => {
     return {
       label,
       data: values.map((value) => {

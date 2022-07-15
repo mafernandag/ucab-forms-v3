@@ -26,6 +26,7 @@ import { useForm } from "../../../hooks/useForm";
 import { useAlert } from "../../../hooks/useAlert";
 import { calculateNewIndex } from "../../../utils/forms";
 import Labels from "./Labels";
+import DynamicLabels from "./DynamicLabels";
 
 const EditSection = ({ setOpenDrawer }) => {
   const {
@@ -65,6 +66,16 @@ const EditSection = ({ setOpenDrawer }) => {
   const handleChangeChecked = (field) => (e, checked) => {
     const newSection = { ...section, [field]: checked };
 
+    if (field === "dynamicLabels") {
+      if (checked) {
+        newSection.labels = [];
+      } else {
+        newSection.dynamicLabelsSection = null;
+        newSection.dynamicLabelsSectionLabel = null;
+        newSection.dynamicLabelsQuestion = null;
+      }
+    }
+
     updateSection(newSection);
   };
 
@@ -73,6 +84,20 @@ const EditSection = ({ setOpenDrawer }) => {
       title: "Eliminar sección",
       message: "¿Estás seguro de eliminar esta sección y todas sus preguntas?",
       action: () => {
+        setSections((sections) => {
+          return sections.map((section) => {
+            if (section.dynamicLabelsSection === currentSectionId) {
+              const newSection = { ...section };
+              newSection.dynamicLabelsSection = null;
+              newSection.dynamicLabelsSectionLabel = null;
+              newSection.dynamicLabelsQuestion = null;
+              saveSection(form.id, newSection);
+              return newSection;
+            }
+            return section;
+          });
+        });
+
         const deletedSectionPosition = sections.findIndex(
           (section) => section.id === currentSectionId
         );
@@ -104,6 +129,29 @@ const EditSection = ({ setOpenDrawer }) => {
     }
 
     const newSection = { ...section, index: newIndex };
+
+    if (
+      direction === "left" &&
+      section.dynamicLabels &&
+      section.dynamicLabelsSection === sections[i - 1].id
+    ) {
+      newSection.dynamicLabelsSection = null;
+      newSection.dynamicLabelsSectionLabel = null;
+      newSection.dynamicLabelsQuestion = null;
+    }
+
+    sections.forEach((section) => {
+      if (
+        section.dynamicLabelsSection === newSection.id &&
+        section.index >= newIndex
+      ) {
+        const sectionToUpdate = { ...section };
+        sectionToUpdate.dynamicLabelsSection = null;
+        sectionToUpdate.dynamicLabelsSectionLabel = null;
+        sectionToUpdate.dynamicLabelsQuestion = null;
+        saveSection(form.id, sectionToUpdate);
+      }
+    });
 
     saveSection(form.id, newSection);
 
@@ -194,8 +242,18 @@ const EditSection = ({ setOpenDrawer }) => {
         value={section.description}
         onChange={handleChange("description")}
       />
-      <Labels updateSection={updateSection} />
+      {section.dynamicLabels ? (
+        <DynamicLabels updateSection={updateSection} />
+      ) : (
+        <Labels updateSection={updateSection} />
+      )}
       <Box>
+        <FormControlLabel
+          control={<Checkbox />}
+          checked={section.dynamicLabels}
+          onChange={handleChangeChecked("dynamicLabels")}
+          label="Generar etiquetas a partir de respuesta"
+        />
         <FormControlLabel
           control={<Checkbox />}
           checked={section.hideCard}

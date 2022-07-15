@@ -1,5 +1,3 @@
-import { Section } from "../types";
-
 export interface BaseQuestion {
   id: string;
   title: string;
@@ -35,8 +33,8 @@ export interface QuestionProps<T, K> {
 
 export interface StatProps<T, K> {
   question: T;
-  section: Section;
   answers: Record<string, Record<string, K>>[];
+  labels: string[];
 }
 
 export interface ResponseByQuestionProps<T, K> {

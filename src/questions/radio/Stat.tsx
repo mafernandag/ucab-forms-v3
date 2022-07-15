@@ -1,11 +1,8 @@
 import { RadioStatProps } from "./types";
-import { getSectionLabels } from "../utils";
 import { CircularDiagram } from "../components";
 
-const Stat = ({ answers, section, question }: RadioStatProps) => {
-  const sectionLabels = getSectionLabels(section);
-
-  const datasets = sectionLabels.map((label) => {
+const Stat = ({ answers, question, labels }: RadioStatProps) => {
+  const datasets = labels.map((label) => {
     return {
       label,
       data: question.options.map((option) => {

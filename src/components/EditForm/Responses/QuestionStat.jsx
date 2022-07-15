@@ -14,6 +14,7 @@ import { getResponseCountText } from "../../../utils/stats";
 import { questionTypesConfig } from "../../../questions/config";
 import { useMemo } from "react";
 import { getSectionLabels, isEmpty } from "../../../questions/utils";
+import { useForm } from "../../../hooks/useForm";
 
 const legendMarginPlugin = {
   id: "legendMargin",
@@ -40,15 +41,19 @@ ChartJS.register(
 );
 
 const QuestionStat = ({ question, section, answers }) => {
-  const responseCount = useMemo(() => {
-    const sectionLabels = getSectionLabels(section);
+  const { questions } = useForm();
 
+  const sectionLabels = useMemo(() => {
+    return getSectionLabels(section, questions);
+  }, [questions, section]);
+
+  const responseCount = useMemo(() => {
     const filteredAnswers = answers.filter((answer) =>
       sectionLabels.some((label) => !isEmpty(answer[question.id]?.[label]))
     );
 
     return filteredAnswers.length;
-  }, [section, answers, question.id]);
+  }, [answers, sectionLabels, question.id]);
 
   const responseCountText = getResponseCountText(responseCount);
 
@@ -66,7 +71,7 @@ const QuestionStat = ({ question, section, answers }) => {
         {responseCountText}
       </Typography>
       {responseCount > 0 && (
-        <Stat question={question} section={section} answers={answers} />
+        <Stat question={question} answers={answers} labels={sectionLabels} />
       )}
     </>
   );
