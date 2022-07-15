@@ -5,8 +5,11 @@ import {
   DialogActions,
   DialogTitle,
   TextField,
+  Container,
+  Box,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
+import { QRCodeSVG } from "qrcode.react";
 
 const SendDialog = ({ open, setOpen }) => {
   const { enqueueSnackbar } = useSnackbar();
@@ -30,6 +33,16 @@ const SendDialog = ({ open, setOpen }) => {
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
       <DialogTitle>Enviar Encuesta</DialogTitle>
       <DialogContent>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            mb: 2,
+          }}
+        >
+          <QRCodeSVG value={formUrl} />
+        </Box>
         <TextField
           variant="standard"
           fullWidth
