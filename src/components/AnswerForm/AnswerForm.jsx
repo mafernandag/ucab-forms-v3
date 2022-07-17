@@ -96,8 +96,9 @@ const AnswerForm = () => {
 
   const resetForm = () => {
     openAlert({
-      title: "Borrar respuestas",
-      message: "¿Estás seguro de borrar todas tus respuestas de esta encuesta?",
+      title: "Limpiar encuesta",
+      message:
+        "¿Estás seguro de querer borrar todas tus respuestas de esta encuesta?",
       fullWidth: false,
       action: () => {
         setErrors({});
@@ -424,7 +425,7 @@ const AnswerForm = () => {
                 disabled={submitting}
                 onClick={resetForm}
               >
-                Borrar respuestas
+                Limpiar encuesta
               </Button>
               {(currentSectionPosition !== 0 ||
                 currentLabel !==
