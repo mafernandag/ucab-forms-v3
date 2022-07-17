@@ -20,7 +20,7 @@ export const getInitializedAnswer = (question: RadioQuestion) => {
 };
 
 export const checkRequired = (value: RadioAnswer) => {
-  return true;
+  return !!value;
 };
 
 export const checkFormat = (value: RadioAnswer) => {

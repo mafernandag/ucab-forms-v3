@@ -20,7 +20,7 @@ export const getInitializedAnswer = (question: CheckboxQuestion) => {
 };
 
 export const checkRequired = (value: CheckboxAnswer) => {
-  return !!value.length;
+  return !!value.length && value.every(Boolean);
 };
 
 export const checkFormat = (value: CheckboxAnswer) => {

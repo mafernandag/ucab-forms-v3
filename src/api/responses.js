@@ -10,12 +10,12 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
+import { cloneDeep } from "lodash";
 import { db } from "./firebaseConfig";
 import { uploadFiles } from "./storage";
 import { FILE } from "../questions/constants";
 import { sendNotification } from "./notifications";
-import { getSectionLabels } from "../questions/utils";
-import { cloneDeep } from "lodash";
+import { getLabels } from "../components/AnswerForm/utils";
 
 export const submitResponse = async (form, responseData) => {
   try {
@@ -29,9 +29,9 @@ export const submitResponse = async (form, responseData) => {
           (section) => section.id === question.sectionId
         );
 
-        const sectionLabels = getSectionLabels(
+        const sectionLabels = getLabels(
           section,
-          form.sections,
+          response.answers,
           form.questions
         );
 
