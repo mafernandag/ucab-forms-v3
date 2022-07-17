@@ -20,7 +20,7 @@ export const config: QuestionTypeConfig<
   CheckboxAnswer,
   CheckboxDbAnswer
 > = {
-  label: "Casillas de verificación",
+  label: "Respuesta multiple",
   Preview,
   Settings,
   Question,
