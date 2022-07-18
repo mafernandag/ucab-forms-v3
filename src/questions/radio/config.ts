@@ -20,7 +20,7 @@ export const config: QuestionTypeConfig<
   RadioAnswer,
   RadioDbAnswer
 > = {
-  label: "Opción múltiple",
+  label: "Respuesta única",
   Preview,
   Settings,
   Question,

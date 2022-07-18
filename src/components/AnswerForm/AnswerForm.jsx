@@ -21,7 +21,7 @@ import AnswerPageText from "../AnswerPageText";
 import { useMemo } from "react";
 import { questionConfig } from "../../questions";
 import { DEFAULT_LABEL } from "../../questions/constants";
-import { getSectionLabels } from "./utils";
+import { getLabels } from "./utils";
 import { cloneDeep, last } from "lodash";
 
 const AnswerForm = () => {
@@ -71,7 +71,7 @@ const AnswerForm = () => {
       sectionQuestions.forEach((question) => {
         newAnswers[question.id] = newAnswers[question.id] || {};
 
-        const labels = getSectionLabels(section, answers);
+        const labels = getLabels(section, answers, questions);
 
         labels.forEach((label) => {
           const type = question.type;
@@ -96,8 +96,9 @@ const AnswerForm = () => {
 
   const resetForm = () => {
     openAlert({
-      title: "Borrar respuestas",
-      message: "¿Estás seguro de borrar todas tus respuestas de esta encuesta?",
+      title: "Limpiar encuesta",
+      message:
+        "¿Estás seguro de querer borrar todas tus respuestas de esta encuesta?",
       fullWidth: false,
       action: () => {
         setErrors({});
@@ -166,7 +167,7 @@ const AnswerForm = () => {
 
     const previousSection = form.sections[currentSectionPosition - 1];
 
-    if (getSectionLabels(previousSection, answers).length) {
+    if (getLabels(previousSection, answers, form.questions).length) {
       return previousSection;
     }
 
@@ -176,7 +177,7 @@ const AnswerForm = () => {
   const handleBack = (e) => {
     e.preventDefault();
 
-    const sectionLabels = getSectionLabels(currentSection, answers);
+    const sectionLabels = getLabels(currentSection, answers, form.questions);
 
     if (currentLabel !== sectionLabels[0]) {
       const currentLabelIndex = sectionLabels.indexOf(currentLabel);
@@ -185,7 +186,11 @@ const AnswerForm = () => {
     }
 
     const previousSection = getPreviousSection(currentSectionPosition);
-    const previousSectionLabels = getSectionLabels(previousSection, answers);
+    const previousSectionLabels = getLabels(
+      previousSection,
+      answers,
+      form.questions
+    );
 
     setCurrentLabel(last(previousSectionLabels));
 
@@ -199,7 +204,7 @@ const AnswerForm = () => {
       return null;
     }
 
-    if (getSectionLabels(nextSection, answers).length) {
+    if (getLabels(nextSection, answers, form.questions).length) {
       return nextSection;
     }
 
@@ -243,7 +248,7 @@ const AnswerForm = () => {
       });
     }
 
-    const sectionLabels = getSectionLabels(currentSection, answers);
+    const sectionLabels = getLabels(currentSection, answers, form.questions);
     const currentLabelIndex = sectionLabels.indexOf(currentLabel);
 
     if (currentLabelIndex !== sectionLabels.length - 1) {
@@ -253,7 +258,7 @@ const AnswerForm = () => {
     const nextSection = getNextSection(currentSectionPosition);
 
     if (nextSection) {
-      const nextSectionLabels = getSectionLabels(nextSection, answers);
+      const nextSectionLabels = getLabels(nextSection, answers, form.questions);
       setCurrentLabel(nextSectionLabels[0]);
       initializeSectionAnswers(nextSection, form.questions);
       return setCurrentSectionId(nextSection.id);
@@ -424,18 +429,18 @@ const AnswerForm = () => {
                 disabled={submitting}
                 onClick={resetForm}
               >
-                Borrar respuestas
+                Limpiar encuesta
               </Button>
               {(currentSectionPosition !== 0 ||
                 currentLabel !==
-                  getSectionLabels(currentSection, answers)[0]) && (
+                  getLabels(currentSection, answers, form.questions)[0]) && (
                 <Button variant="outlined" sx={{ px: 3 }} onClick={handleBack}>
                   Atrás
                 </Button>
               )}
               {!getNextSection(currentSectionPosition) &&
               currentLabel ===
-                last(getSectionLabels(currentSection, answers)) ? (
+                last(getLabels(currentSection, answers, form.questions)) ? (
                 <Button
                   type="submit"
                   disabled={submitting}

@@ -13,6 +13,7 @@ const AuthLayout = () => {
     <ThemeProvider theme={theme}>
       <Box
         sx={{
+          color: "text.primary",
           backgroundImage: `url(${background})`,
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",

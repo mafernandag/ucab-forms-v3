@@ -80,16 +80,30 @@ export const duplicateForm = async (form, user) => {
     const sections = await getSectionsOnce(form.id);
     const questions = await getQuestionsOnce(form.id);
 
+    const sectionIdMap = {};
+    const questionIdMap = {};
+
     sections.forEach((section) => {
       const { id: oldSectionId, ...sectionData } = section;
+
+      sectionData.dynamicLabelsSection =
+        sectionIdMap[sectionData.dynamicLabelsSection] || null;
+
+      sectionData.dynamicLabelsQuestion =
+        questionIdMap[sectionData.dynamicLabelsQuestion] || null;
+
       const newSectionId = createSection(newFormRef.id, sectionData);
+
+      sectionIdMap[oldSectionId] = newSectionId;
 
       questions
         .filter((question) => question.sectionId === oldSectionId)
         .forEach((question) => {
-          const { id, ...questionData } = question;
+          const { id: oldQuestionId, ...questionData } = question;
           questionData.sectionId = newSectionId;
-          insertQuestion(newFormRef.id, questionData);
+          const newQuestionId = insertQuestion(newFormRef.id, questionData);
+
+          questionIdMap[oldQuestionId] = newQuestionId;
         });
     });
 
