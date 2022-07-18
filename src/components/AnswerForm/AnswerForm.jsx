@@ -310,10 +310,13 @@ const AnswerForm = () => {
       responseData.user = { ...user };
     }
 
+    debouncedSave.cancel();
+
     const { error } = await submitResponse(form, user, responseData);
 
     if (error) {
       enqueueSnackbar(error.message, { variant: "error" });
+      debouncedSave(answers);
       return setSubmitting(false);
     }
 
