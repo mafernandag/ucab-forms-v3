@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Alert,
   Box,
@@ -10,7 +10,9 @@ import {
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
+import { cloneDeep, debounce, last } from "lodash";
 import { getFormOnce } from "../../api/forms";
+import { getSavedResponse, saveResponse } from "../../api/savedResponses";
 import { submitResponse, checkUserHasResponses } from "../../api/responses";
 import { useUser } from "../../hooks/useUser";
 import { useAlert } from "../../hooks/useAlert";
@@ -18,11 +20,10 @@ import Header from "../Header";
 import Card from "../Card";
 import Question from "../Question";
 import AnswerPageText from "../AnswerPageText";
-import { useMemo } from "react";
 import { questionConfig } from "../../questions";
 import { DEFAULT_LABEL } from "../../questions/constants";
 import { getLabels } from "./utils";
-import { cloneDeep, last } from "lodash";
+import { isEmpty } from "../../questions/utils";
 
 const AnswerForm = () => {
   const { id: formId } = useParams();
@@ -39,6 +40,18 @@ const AnswerForm = () => {
   const { enqueueSnackbar } = useSnackbar();
   const user = useUser();
   const openAlert = useAlert();
+
+  const debouncedSave = useMemo(() => {
+    return debounce((answers) => {
+      if (user) {
+        saveResponse(formId, user.id, answers);
+      }
+    }, 1500);
+  }, [formId, user]);
+
+  useEffect(() => {
+    debouncedSave(answers);
+  }, [answers, debouncedSave]);
 
   const sectionQuestions = useMemo(() => {
     return form?.questions.filter(
@@ -60,39 +73,42 @@ const AnswerForm = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentSectionId, currentLabel]);
 
-  const initializeSectionAnswers = useCallback((section, questions) => {
-    setAnswers((answers) => {
-      const newAnswers = cloneDeep(answers);
+  const initializeSectionAnswers = useCallback(
+    (section, questions, savedAnswers) => {
+      setAnswers((answers) => {
+        const newAnswers = savedAnswers ?? cloneDeep(answers);
 
-      const sectionQuestions = questions.filter(
-        (question) => question.sectionId === section.id
-      );
+        const sectionQuestions = questions.filter(
+          (question) => question.sectionId === section.id
+        );
 
-      sectionQuestions.forEach((question) => {
-        newAnswers[question.id] = newAnswers[question.id] || {};
+        sectionQuestions.forEach((question) => {
+          newAnswers[question.id] = newAnswers[question.id] || {};
 
-        const labels = getLabels(section, answers, questions);
+          const labels = getLabels(section, answers, questions);
 
-        labels.forEach((label) => {
-          const type = question.type;
-          const getInitializedAnswer =
-            questionConfig[type].getInitializedAnswer;
+          labels.forEach((label) => {
+            const type = question.type;
+            const getInitializedAnswer =
+              questionConfig[type].getInitializedAnswer;
 
-          if (newAnswers[question.id][label] === undefined) {
-            newAnswers[question.id][label] = getInitializedAnswer(question);
+            if (newAnswers[question.id][label] === undefined) {
+              newAnswers[question.id][label] = getInitializedAnswer(question);
+            }
+          });
+
+          for (const label in newAnswers[question.id]) {
+            if (!labels.includes(label)) {
+              delete newAnswers[question.id][label];
+            }
           }
         });
 
-        for (const label in newAnswers[question.id]) {
-          if (!labels.includes(label)) {
-            delete newAnswers[question.id][label];
-          }
-        }
+        return newAnswers;
       });
-
-      return newAnswers;
-    });
-  }, []);
+    },
+    []
+  );
 
   const resetForm = () => {
     openAlert({
@@ -143,7 +159,26 @@ const AnswerForm = () => {
         if (form.sections.length) {
           setCurrentSectionId(form.sections[0].id);
           setCurrentLabel(form.sections[0].labels[0] || DEFAULT_LABEL);
-          initializeSectionAnswers(form.sections[0], form.questions);
+
+          let answers = {};
+
+          if (user) {
+            answers = await getSavedResponse(form.id, user.id);
+
+            const emptyAnswers = Object.keys(answers).every((questionId) =>
+              Object.keys(answers[questionId]).every((label) =>
+                isEmpty(answers[questionId][label])
+              )
+            );
+
+            if (!emptyAnswers) {
+              enqueueSnackbar("Se recuperaron tus respuestas", {
+                variant: "success",
+              });
+            }
+          }
+
+          initializeSectionAnswers(form.sections[0], form.questions, answers);
         }
 
         navigator.geolocation.getCurrentPosition((position) => {
@@ -158,7 +193,7 @@ const AnswerForm = () => {
     };
 
     getForm();
-  }, [formId, initializeSectionAnswers, user]);
+  }, [enqueueSnackbar, formId, initializeSectionAnswers, user]);
 
   const getPreviousSection = (currentSectionPosition) => {
     if (currentSectionPosition === 1) {
@@ -275,7 +310,7 @@ const AnswerForm = () => {
       responseData.user = { ...user };
     }
 
-    const { error } = await submitResponse(form, responseData);
+    const { error } = await submitResponse(form, user, responseData);
 
     if (error) {
       enqueueSnackbar(error.message, { variant: "error" });
