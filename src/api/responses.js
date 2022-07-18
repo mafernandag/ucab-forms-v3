@@ -16,8 +16,9 @@ import { uploadFiles } from "./storage";
 import { FILE } from "../questions/constants";
 import { sendNotification } from "./notifications";
 import { getLabels } from "../components/AnswerForm/utils";
+import { deleteSavedResponse } from "./savedResponses";
 
-export const submitResponse = async (form, responseData) => {
+export const submitResponse = async (form, user, responseData) => {
   try {
     const response = cloneDeep(responseData);
     response.comments = {};
@@ -47,6 +48,10 @@ export const submitResponse = async (form, responseData) => {
     const responseRef = doc(responsesRef);
 
     setDoc(responseRef, response);
+
+    if (user) {
+      deleteSavedResponse(form.id, user.id);
+    }
 
     const formRef = doc(db, "forms", form.id);
     updateDoc(formRef, {
