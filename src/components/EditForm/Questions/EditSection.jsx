@@ -70,6 +70,7 @@ const EditSection = ({ setOpenDrawer }) => {
       if (checked) {
         newSection.labels = [];
       } else {
+        newSection.iterable = false;
         newSection.dynamicLabelsSection = null;
         newSection.dynamicLabelsSectionLabel = null;
         newSection.dynamicLabelsQuestion = null;
@@ -254,6 +255,14 @@ const EditSection = ({ setOpenDrawer }) => {
           onChange={handleChangeChecked("dynamicLabels")}
           label="Generar etiquetas a partir de respuesta"
         />
+        {(section.labels.length > 0 || section.dynamicLabels) && (
+          <FormControlLabel
+            control={<Checkbox />}
+            checked={section.iterable}
+            onChange={handleChangeChecked("iterable")}
+            label="Iterar sobre las etiquetas"
+          />
+        )}
         <FormControlLabel
           control={<Checkbox />}
           checked={section.hideCard}
