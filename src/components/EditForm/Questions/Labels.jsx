@@ -73,6 +73,11 @@ const Labels = ({ updateSection }) => {
 
     const newSection = { ...section };
     newSection.labels = section.labels.filter((l) => l !== label);
+
+    if (newSection.labels.length === 0) {
+      newSection.iterable = false;
+    }
+
     updateSection(newSection);
   };
 

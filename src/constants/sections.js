@@ -7,4 +7,5 @@ export const defaultSection = {
   dynamicLabelsSection: null,
   dynamicLabelsSectionLabel: null,
   dynamicLabelsQuestion: null,
+  iterable: false,
 };
