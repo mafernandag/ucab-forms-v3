@@ -14,6 +14,7 @@ export interface Section {
 }
 
 export interface Form {
+  id: string;
   author: {
     id: string;
     email: string;
