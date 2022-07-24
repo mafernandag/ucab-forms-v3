@@ -5,6 +5,7 @@ import {
   Button,
   Container,
   Stack,
+  TextField,
   Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
@@ -18,10 +19,16 @@ import Header from "../Header";
 import Card from "../Card";
 import Question from "../Question";
 import { questionConfig } from "../../questions";
-import { DEFAULT_LABEL } from "../../questions/constants";
-import { getAnswers, getPages } from "./utils";
+import { getPagesData } from "./utils";
 
-const AnswerZone = ({ form, answers, setAnswers, response }) => {
+const AnswerZone = ({
+  form,
+  answers,
+  setAnswers,
+  numberMap,
+  setNumberMap,
+  response,
+}) => {
   const [pageIndex, setPageIndex] = useState(0);
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
@@ -30,24 +37,24 @@ const AnswerZone = ({ form, answers, setAnswers, response }) => {
   const openAlert = useAlert();
   const user = useUser();
 
-  const pages = useMemo(() => getPages(form, answers), [answers, form]);
+  const { pages } = useMemo(() => {
+    return getPagesData(form, answers, numberMap);
+  }, [answers, form, numberMap]);
 
   const page = pages[pageIndex];
-  const section = page.section;
-  const label = page.label;
-  const questions = page.questions;
+  const { section, label, questions, number, title, subtitle } = page;
 
   const debouncedSave = useMemo(() => {
-    return debounce((answers) => {
+    return debounce((answers, numberMap) => {
       if (user) {
-        saveResponse(form.id, user.id, answers);
+        saveResponse(form.id, user.id, { answers, numberMap });
       }
     }, 1500);
   }, [form.id, user]);
 
   useEffect(() => {
-    debouncedSave(answers);
-  }, [answers, debouncedSave]);
+    debouncedSave(answers, numberMap);
+  }, [answers, debouncedSave, numberMap]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -61,8 +68,9 @@ const AnswerZone = ({ form, answers, setAnswers, response }) => {
         "¿Estás seguro de querer borrar todas tus respuestas de esta encuesta?",
       fullWidth: false,
       action: () => {
-        const answers = getAnswers(pages, {});
-        setAnswers(answers);
+        const { newAnswers, newNumberMap } = getPagesData(form, {}, {});
+        setAnswers(newAnswers);
+        setNumberMap(newNumberMap);
         setErrors({});
         setPageIndex(0);
       },
@@ -84,19 +92,17 @@ const AnswerZone = ({ form, answers, setAnswers, response }) => {
     questions.forEach((question) => {
       newErrors[question.id] = "";
 
+      const answer = answers[question.id][label][number - 1];
+
       if (
         question.required &&
-        !questionConfig[question.type].checkRequired(
-          answers[question.id][label]
-        )
+        !questionConfig[question.type].checkRequired(answer)
       ) {
         newErrors[question.id] = "Esta pregunta es obligatoria";
         shouldReturn = true;
       }
 
-      if (
-        !questionConfig[question.type].checkFormat(answers[question.id][label])
-      ) {
+      if (!questionConfig[question.type].checkFormat(answer)) {
         newErrors[question.id] = "El formato es inválido";
         shouldReturn = true;
       }
@@ -110,9 +116,11 @@ const AnswerZone = ({ form, answers, setAnswers, response }) => {
       });
     }
 
+    const { newAnswers, newNumberMap } = getPagesData(form, answers, numberMap);
+
     if (pageIndex < pages.length - 1) {
-      const newAnswers = getAnswers(pages, answers);
       setAnswers(newAnswers);
+      setNumberMap(newNumberMap);
       return setPageIndex(pageIndex + 1);
     }
 
@@ -120,7 +128,7 @@ const AnswerZone = ({ form, answers, setAnswers, response }) => {
 
     const responseData = {
       ...response,
-      answers,
+      answers: newAnswers,
     };
 
     if (form.settings.onlyOneResponse) {
@@ -133,7 +141,7 @@ const AnswerZone = ({ form, answers, setAnswers, response }) => {
 
     if (error) {
       enqueueSnackbar(error.message, { variant: "error" });
-      debouncedSave(answers);
+      debouncedSave(newAnswers);
       return setSubmitting(false);
     }
 
@@ -163,42 +171,64 @@ const AnswerZone = ({ form, answers, setAnswers, response }) => {
                 }}
               >
                 <Typography variant="h6" mb={1}>
-                  {section.title}
+                  {title}
                 </Typography>
                 <Typography>{section.description}</Typography>
               </Card>
             )}
-            {label !== DEFAULT_LABEL && (
+            {subtitle && (
               <Card>
-                <Typography variant="h6">{label}</Typography>
+                <Typography variant="h6">{subtitle}</Typography>
               </Card>
             )}
-            {questions.map((question) => (
-              <Card
-                key={question.id}
-                sx={{
-                  ...(errors[question.id] && {
-                    borderColor: (theme) => theme.palette.error.light,
-                  }),
-                }}
-              >
-                <Question
-                  label={label}
-                  question={question}
-                  answers={answers}
-                  setAnswers={setAnswers}
+            {number === 0 ? (
+              <Card>
+                <Typography mb={2}>Cantidad</Typography>
+                <TextField
+                  variant="standard"
+                  value={numberMap[`${section.id}-${label}`]}
+                  type="number"
+                  inputProps={{
+                    min: 0,
+                  }}
+                  onChange={(e) => {
+                    const newNumberMap = { ...numberMap };
+                    newNumberMap[`${section.id}-${label}`] = Number(
+                      e.target.value
+                    );
+                    setNumberMap(newNumberMap);
+                  }}
                 />
-                {errors[question.id] && (
-                  <Alert
-                    variant="outlined"
-                    severity="error"
-                    sx={{ mt: 3, border: "none", p: 0 }}
-                  >
-                    {errors[question.id]}
-                  </Alert>
-                )}
               </Card>
-            ))}
+            ) : (
+              questions.map((question) => (
+                <Card
+                  key={question.id}
+                  sx={{
+                    ...(errors[question.id] && {
+                      borderColor: (theme) => theme.palette.error.light,
+                    }),
+                  }}
+                >
+                  <Question
+                    label={label}
+                    question={question}
+                    answers={answers}
+                    setAnswers={setAnswers}
+                    number={number}
+                  />
+                  {errors[question.id] && (
+                    <Alert
+                      variant="outlined"
+                      severity="error"
+                      sx={{ mt: 3, border: "none", p: 0 }}
+                    >
+                      {errors[question.id]}
+                    </Alert>
+                  )}
+                </Card>
+              ))
+            )}
           </Stack>
           <Box
             sx={{

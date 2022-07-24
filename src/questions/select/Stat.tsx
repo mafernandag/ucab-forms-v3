@@ -1,16 +1,13 @@
 import { SelectStatProps } from "./types";
 import { CircularDiagram } from "../components";
+import { getDatasets } from "../utils";
 
 const Stat = ({ answers, question, labels }: SelectStatProps) => {
-  const datasets = labels.map((label) => {
-    return {
-      label,
-      data: question.options.map((option) => {
-        return answers.filter(
-          (answer) => answer[question.id]?.[label] === option
-        ).length;
-      }),
-    };
+  const datasets = getDatasets({
+    labels,
+    answers,
+    questionId: question.id,
+    values: question.options,
   });
 
   return <CircularDiagram labels={question.options} datasets={datasets} />;

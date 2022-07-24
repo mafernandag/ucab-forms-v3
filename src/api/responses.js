@@ -15,8 +15,8 @@ import { db } from "./firebaseConfig";
 import { uploadFiles } from "./storage";
 import { FILE } from "../questions/constants";
 import { sendNotification } from "./notifications";
-import { getLabels } from "../components/AnswerForm/utils";
 import { deleteSavedResponse } from "./savedResponses";
+import { convertAnswersAfterGet, convertAnswersBeforeSet } from "./utils";
 
 export const submitResponse = async (form, user, responseData) => {
   try {
@@ -24,22 +24,19 @@ export const submitResponse = async (form, user, responseData) => {
     response.comments = {};
     response.submittedAt = new Date();
 
+    convertAnswersBeforeSet(response.answers);
+
     for (const question of form.questions) {
       if (question.type === FILE) {
-        const section = form.sections.find(
-          (section) => section.id === question.sectionId
-        );
+        for (const label in response.answers[question.id]) {
+          const length = response.answers[question.id][label].length;
 
-        const sectionLabels = getLabels(
-          section,
-          response.answers,
-          form.questions
-        );
+          for (let i = 0; i < length; i++) {
+            const file = response.answers[question.id][label][i];
+            const fileData = await uploadFiles(file);
 
-        for (const label of sectionLabels) {
-          response.answers[question.id][label] = await uploadFiles(
-            response.answers[question.id][label]
-          );
+            response.answers[question.id][label][i] = fileData;
+          }
         }
       }
     }
@@ -92,6 +89,10 @@ export const getResponses = (formId, callback) => {
       response.submittedAt = response.submittedAt.toDate();
       return response;
     });
+
+    for (const response of responses) {
+      convertAnswersAfterGet(response.answers);
+    }
 
     callback(responses);
   });

@@ -9,7 +9,7 @@ import { DEFAULT_LABEL } from "../../../../questions/constants";
 import { useForm } from "../../../../hooks/useForm";
 
 interface Props {
-  answer?: Record<string, any>;
+  answer?: Record<string, any[]>;
   section: Section;
   question: BaseQuestion;
 }
@@ -21,7 +21,13 @@ const AnswerCard = ({ answer, section, question }: Props) => {
   const sectionLabels = getSectionLabels(section, questions);
 
   const isEmptyAnswer = useMemo(() => {
-    return sectionLabels.every((label) => isEmpty(answer?.[label]));
+    return (
+      !answer ||
+      sectionLabels.every(
+        (label) => !answer[label] || answer[label].every(isEmpty)
+      )
+      // Object.keys(answer).every((label) => answer[label].every(isEmpty))
+    );
   }, [answer, sectionLabels]);
 
   return (
@@ -43,8 +49,23 @@ const AnswerCard = ({ answer, section, question }: Props) => {
                   {label}
                 </Typography>
               )}
-              {!isEmpty(answer?.[label]) ? (
-                <ResponseByPerson question={question} value={answer![label]} />
+              {answer?.[label]?.length &&
+              answer[label].every((value) => !isEmpty(value)) ? (
+                answer[label].map((value, i) => (
+                  <Box
+                    key={i}
+                    sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                  >
+                    {section.iterable && (
+                      <Typography variant="caption" sx={{ fontWeight: 500 }}>
+                        {section.prefix} {i + 1}:
+                      </Typography>
+                    )}
+                    <Box flexGrow={1}>
+                      <ResponseByPerson question={question} value={value} />
+                    </Box>
+                  </Box>
+                ))
               ) : (
                 <Typography>-</Typography>
               )}

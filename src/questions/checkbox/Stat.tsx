@@ -1,28 +1,14 @@
 import { CheckboxStatProps } from "./types";
 import { BarDiagram } from "../components";
+import { getDatasets } from "../utils";
 
 const Stat = ({ answers, question, labels }: CheckboxStatProps) => {
-  const datasets = labels.map((label) => {
-    const dataset = {
-      label,
-      data: question.options.map((option) => {
-        return answers.filter((answer) =>
-          answer[question.id]?.[label]?.includes(option)
-        ).length;
-      }),
-    };
-
-    if (question.other) {
-      const value = answers.filter((answer) => {
-        return answer[question.id]?.[label]?.some(
-          (option) => !question.options.includes(option)
-        );
-      }).length;
-
-      dataset.data.push(value);
-    }
-
-    return dataset;
+  const datasets = getDatasets({
+    labels,
+    answers,
+    questionId: question.id,
+    values: question.options,
+    other: question.other,
   });
 
   const chartLabels = [...question.options];

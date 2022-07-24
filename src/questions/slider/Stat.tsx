@@ -1,5 +1,6 @@
 import { SliderStatProps } from "./types";
 import { BarDiagram } from "../components";
+import { getDatasets } from "../utils";
 
 const Stat = ({ answers, question, labels }: SliderStatProps) => {
   const values: number[] = [];
@@ -8,18 +9,14 @@ const Stat = ({ answers, question, labels }: SliderStatProps) => {
     values.push(i);
   }
 
-  const diagramLabels = values.map((value) => value.toString());
-
-  const datasets = labels.map((label) => {
-    return {
-      label,
-      data: values.map((value) => {
-        return answers.filter(
-          (answer) => answer[question.id]?.[label] === value
-        ).length;
-      }),
-    };
+  const datasets = getDatasets({
+    labels,
+    answers,
+    questionId: question.id,
+    values,
   });
+
+  const diagramLabels = values.map((value) => value.toString());
 
   return <BarDiagram labels={diagramLabels} datasets={datasets} />;
 };

@@ -66,28 +66,30 @@ const ResponsesByQuestion = () => {
   }, [currentSection, questions]);
 
   const getAnswersWithStats = useCallback(() => {
-    const responseCount = {};
+    const answerCount = {};
 
-    answers.forEach((response) => {
+    answers.forEach((answer) => {
       const getSerializableValue =
         questionTypesConfig[question.type].getSerializableValue;
 
-      const value = getSerializableValue(response[question.id]?.[currentLabel]);
+      answer[question.id]?.[currentLabel]?.forEach((answerValue) => {
+        const value = getSerializableValue(answerValue);
 
-      const strigifiedValue = JSON.stringify(value);
+        const strigifiedValue = JSON.stringify(value);
 
-      if (responseCount[strigifiedValue]) {
-        responseCount[strigifiedValue]++;
-      } else {
-        responseCount[strigifiedValue] = 1;
-      }
+        if (answerCount[strigifiedValue]) {
+          answerCount[strigifiedValue]++;
+        } else {
+          answerCount[strigifiedValue] = 1;
+        }
+      });
     });
 
-    const sortedResponseCount = Object.entries(responseCount).sort(
+    const sortedAnswerCount = Object.entries(answerCount).sort(
       ([valueA, countA], [valueB, countB]) => countB - countA
     );
 
-    return sortedResponseCount.map(([value, count]) => ({
+    return sortedAnswerCount.map(([value, count]) => ({
       value: JSON.parse(value),
       count,
     }));

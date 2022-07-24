@@ -33,7 +33,7 @@ export interface QuestionProps<T, K> {
 
 export interface StatProps<T, K> {
   question: T;
-  answers: Record<string, Record<string, K>>[];
+  answers: Record<string, Record<string, K[]>>[];
   labels: string[];
 }
 

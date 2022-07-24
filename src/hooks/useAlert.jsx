@@ -46,6 +46,7 @@ const AlertProvider = ({ children }) => {
         keepMounted={false}
         fullWidth={fullWidth}
         maxWidth="sm"
+        onClose={handleClose}
       >
         <DialogTitle>{title}</DialogTitle>
         <DialogContent>
