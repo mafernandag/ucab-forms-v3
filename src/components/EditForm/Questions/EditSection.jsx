@@ -231,6 +231,7 @@ const EditSection = ({ setOpenDrawer }) => {
 
     sectionData.index = newIndex;
     sectionData.title = `${sectionData.title} - Copia`;
+    sectionData.comments = [];
 
     const newSectionId = createSection(form.id, sectionData);
 

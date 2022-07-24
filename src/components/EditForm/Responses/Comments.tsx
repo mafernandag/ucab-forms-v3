@@ -12,23 +12,26 @@ import {
   Stack,
 } from "@mui/material";
 import { ExpandMore as ExpandMoreIcon } from "@mui/icons-material";
-import { format } from "date-fns";
-import { useForm } from "../../../hooks/useForm";
+import { Comment } from "../../../types";
 import { useUser } from "../../../hooks/useUser";
-import { addComment } from "../../../api/responses";
+import { formatDateTime } from "../../../utils/dates";
 
-const Comments = ({ response, question }) => {
-  const { form } = useForm();
-  const [myComment, setMyComment] = useState("");
-  const [commenting, setCommenting] = useState(false);
+interface Props {
+  comments: Comment[];
+  type: string;
+  addComment: (comment: Comment) => void;
+}
+
+const Comments = ({ comments, type, addComment }: Props) => {
   const user = useUser();
+  const [myComment, setMyComment] = useState("");
 
-  const comments = response.comments[question.id] || [];
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMyComment(e.target.value);
+  };
 
-  const handleAddComment = (e) => {
+  const handleAddComment = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    setCommenting(true);
 
     const comment = {
       text: myComment,
@@ -36,15 +39,8 @@ const Comments = ({ response, question }) => {
       commentedAt: new Date(),
     };
 
-    const newComments = {
-      ...response.comments,
-      [question.id]: [...comments, comment],
-    };
-
-    addComment(form.id, response.id, newComments);
-
+    addComment(comment);
     setMyComment("");
-    setCommenting(false);
   };
 
   return (
@@ -56,7 +52,7 @@ const Comments = ({ response, question }) => {
         <AccordionDetails sx={{ px: 3 }}>
           <Stack spacing={2}>
             {!comments.length && (
-              <Typography>No hay comentarios para esta respuesta</Typography>
+              <Typography>No hay comentarios para esta {type}</Typography>
             )}
             {comments.map((comment, i) => (
               <Box key={i}>
@@ -66,8 +62,7 @@ const Comments = ({ response, question }) => {
                   variant="caption"
                   color="text.secondary"
                 >
-                  {comment.author} -{" "}
-                  {format(comment.commentedAt.toDate(), "dd/MM/yyyy, hh:mm a")}
+                  {comment.author} - {formatDateTime(comment.commentedAt)}
                 </Typography>
               </Box>
             ))}
@@ -91,11 +86,11 @@ const Comments = ({ response, question }) => {
                   fullWidth
                   multiline
                   value={myComment}
-                  onChange={(e) => setMyComment(e.target.value)}
+                  onChange={handleChange}
                 />
                 <Button
                   type="submit"
-                  disabled={!myComment || commenting}
+                  disabled={!myComment}
                   sx={{ alignSelf: "flex-end" }}
                   variant="contained"
                 >

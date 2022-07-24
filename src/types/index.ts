@@ -1,3 +1,4 @@
+import { Timestamp } from "firebase/firestore";
 import { BaseQuestion } from "../questions/types";
 
 export interface Section {
@@ -17,6 +18,7 @@ export interface Section {
   conditionedValue: any | null;
   iterable: boolean;
   prefix: string | null;
+  comments: Comment[];
 }
 
 export interface Form {
@@ -48,4 +50,10 @@ export interface Form {
 export interface FormToRespond extends Form {
   sections: Section[];
   questions: BaseQuestion[];
+}
+
+export interface Comment {
+  text: string;
+  author: string;
+  commentedAt: Date | Timestamp;
 }

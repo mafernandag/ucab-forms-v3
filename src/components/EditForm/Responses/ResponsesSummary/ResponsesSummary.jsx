@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { Box, Typography, Stack, Tab } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { useForm } from "../../../hooks/useForm";
+import { useForm } from "../../../../hooks/useForm";
 import QuestionStat from "./QuestionStat";
-import Card from "../../Card";
+import Card from "../../../Card";
+import SectionComments from "./SectionComments";
 
 const ResponsesSummary = () => {
   const { questions, sections, responses } = useForm();
@@ -58,6 +59,7 @@ const ResponsesSummary = () => {
             {sections.map((section) => (
               <TabPanel key={section.id} sx={{ p: 0 }} value={section.id}>
                 <Stack spacing={2}>
+                  <SectionComments section={section} />
                   {sectionQuestions.map((question) => (
                     <Card key={question.id}>
                       <Typography>{question.title}</Typography>

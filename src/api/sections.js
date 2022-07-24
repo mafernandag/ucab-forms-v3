@@ -1,4 +1,5 @@
 import {
+  arrayUnion,
   collection,
   deleteDoc,
   doc,
@@ -77,4 +78,9 @@ export const saveSection = (formId, section) => {
 export const deleteSection = (formId, sectionId) => {
   const sectionRef = doc(db, "forms", formId, "sections", sectionId);
   deleteDoc(sectionRef);
+};
+
+export const addCommentToSection = (formId, sectionId, comment) => {
+  const sectionRef = doc(db, "forms", formId, "sections", sectionId);
+  updateDoc(sectionRef, { comments: arrayUnion(comment) });
 };

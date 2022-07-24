@@ -10,11 +10,11 @@ import {
   BarElement,
 } from "chart.js";
 import zoomPlugin from "chartjs-plugin-zoom";
-import { getResponseCountText } from "../../../utils/stats";
-import { questionTypesConfig } from "../../../questions/config";
+import { getResponseCountText } from "../../../../utils/stats";
+import { questionTypesConfig } from "../../../../questions/config";
 import { useMemo } from "react";
-import { getSectionLabels, isEmpty } from "../../../questions/utils";
-import { useForm } from "../../../hooks/useForm";
+import { getSectionLabels, isEmpty } from "../../../../questions/utils";
+import { useForm } from "../../../../hooks/useForm";
 
 const legendMarginPlugin = {
   id: "legendMargin",
