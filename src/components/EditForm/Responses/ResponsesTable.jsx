@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Link } from "@mui/material";
+import { Link, Typography } from "@mui/material";
 import { ExportCsv, ExportPdf } from "@material-table/exporters";
 import { flatMap, sortBy } from "lodash";
 import Table from "../../Table";
@@ -43,12 +43,19 @@ const ResponsesTable = () => {
 
   const columns = useMemo(() => {
     return [
-      { title: "Fecha de respuesta", field: "submittedAt" },
+      { title: "Fecha de respuesta", field: "submittedAt", align: "center" },
       ...labeledQuestions.map((question) => ({
         title: question.title,
         field: question.id,
         emptyValue: "-",
         align: "center",
+        render: (rowData) => (
+          <>
+            {rowData[question.id].map((answer, i) => (
+              <Typography key={i}>{answer}</Typography>
+            ))}
+          </>
+        ),
         ...(question.type === FILE && {
           render: (rowData) => (
             <>

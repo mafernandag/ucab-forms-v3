@@ -1,4 +1,6 @@
-export const defaultSection = {
+import { Section } from "../types";
+
+export const defaultSection: Omit<Section, "id"> = {
   title: "Sección sin título",
   description: "Sin descripción",
   labels: [],
@@ -8,4 +10,5 @@ export const defaultSection = {
   dynamicLabelsSectionLabel: null,
   dynamicLabelsQuestion: null,
   iterable: false,
+  prefix: "",
 };

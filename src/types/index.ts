@@ -11,6 +11,7 @@ export interface Section {
   dynamicLabelsSectionLabel: string | null;
   dynamicLabelsQuestion: string | null;
   iterable: boolean;
+  prefix: string | null;
 }
 
 export interface Form {

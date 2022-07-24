@@ -70,10 +70,17 @@ const EditSection = ({ setOpenDrawer }) => {
       if (checked) {
         newSection.labels = [];
       } else {
-        newSection.iterable = false;
         newSection.dynamicLabelsSection = null;
         newSection.dynamicLabelsSectionLabel = null;
         newSection.dynamicLabelsQuestion = null;
+      }
+    }
+
+    if (field === "iterable") {
+      if (checked) {
+        newSection.prefix = "";
+      } else {
+        newSection.prefix = null;
       }
     }
 
@@ -243,6 +250,14 @@ const EditSection = ({ setOpenDrawer }) => {
         value={section.description}
         onChange={handleChange("description")}
       />
+      {section.iterable && (
+        <TextField
+          variant="standard"
+          label="Prefijo de numeración"
+          value={section.prefix}
+          onChange={handleChange("prefix")}
+        />
+      )}
       {section.dynamicLabels ? (
         <DynamicLabels updateSection={updateSection} />
       ) : (
@@ -255,14 +270,12 @@ const EditSection = ({ setOpenDrawer }) => {
           onChange={handleChangeChecked("dynamicLabels")}
           label="Generar etiquetas a partir de respuesta"
         />
-        {(section.labels.length > 0 || section.dynamicLabels) && (
-          <FormControlLabel
-            control={<Checkbox />}
-            checked={section.iterable}
-            onChange={handleChangeChecked("iterable")}
-            label="Iterar sobre las etiquetas"
-          />
-        )}
+        <FormControlLabel
+          control={<Checkbox />}
+          checked={section.iterable}
+          onChange={handleChangeChecked("iterable")}
+          label="Repetir un número determinado de veces"
+        />
         <FormControlLabel
           control={<Checkbox />}
           checked={section.hideCard}

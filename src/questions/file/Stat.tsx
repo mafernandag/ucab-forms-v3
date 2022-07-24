@@ -1,4 +1,5 @@
 import { Stack, Typography } from "@mui/material";
+import { flatten } from "lodash";
 import { FilesResponse } from "./components";
 import { FileStatProps } from "./types";
 
@@ -12,8 +13,11 @@ const Stat = ({ answers, question, labels }: FileStatProps) => {
           </Typography>
           {answers.map(
             (answer, i) =>
-              answer[question.id]?.[label]?.length > 0 && (
-                <FilesResponse key={i} files={answer[question.id][label]} />
+              flatten(answer[question.id]?.[label]).length > 0 && (
+                <FilesResponse
+                  key={i}
+                  files={flatten(answer[question.id][label])}
+                />
               )
           )}
         </Stack>

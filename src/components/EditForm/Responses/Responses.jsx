@@ -51,7 +51,7 @@ const Responses = () => {
             Persona
           </ToggleButton>
         </ToggleButtonGroup>
-        <Typography fontSize="h6.fontSize">
+        <Typography align="center" fontSize="h6.fontSize">
           {getResponseCountText(responses.length)}
         </Typography>
       </Box>

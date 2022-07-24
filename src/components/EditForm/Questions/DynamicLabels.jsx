@@ -75,7 +75,7 @@ const DynamicLabels = ({ updateSection }) => {
           <MenuItem
             key={section.id}
             value={section.id}
-            disabled={currentSection.index <= section.index}
+            disabled={currentSection.index <= section.index || section.iterable}
           >
             {section.title}
           </MenuItem>

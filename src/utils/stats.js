@@ -26,8 +26,8 @@ export const stringifyAnswers = (answers, questions) => {
 
     for (const label in answer) {
       const stringify = questionConfig[question.type].stringify;
-      const value = stringify(answer[label]);
-      newAnswers[`${questionId}-${label}`] = value !== "" ? value : null;
+      const value = answer[label].map((v) => stringify(v));
+      newAnswers[`${questionId}-${label}`] = value.some(Boolean) ? value : null;
     }
   }
 

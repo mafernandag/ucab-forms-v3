@@ -8,7 +8,7 @@ import { checkUserHasResponses } from "../../api/responses";
 import { useUser } from "../../hooks/useUser";
 import Header from "../Header";
 import AnswerPageText from "../AnswerPageText";
-import { getAnswers, getPages } from "./utils";
+import { getPagesData } from "./utils";
 import { isEmpty } from "../../questions/utils";
 import AnswerZone from "./AnswerZone";
 
@@ -17,6 +17,7 @@ const AnswerForm = () => {
   const [form, setForm] = useState(null);
   const [response, setResponse] = useState({});
   const [answers, setAnswers] = useState({});
+  const [numberMap, setNumberMap] = useState({});
   const [loading, setLoading] = useState(true);
   const [userHasResponses, setUserHasResponses] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
@@ -55,26 +56,36 @@ const AnswerForm = () => {
 
         if (form.sections.length) {
           let answers = {};
+          let numberMap = {};
 
           if (user) {
-            answers = await getSavedResponse(form.id, user.id);
+            ({ answers, numberMap } = await getSavedResponse(form.id, user.id));
 
             const emptyAnswers = Object.keys(answers).every((questionId) =>
               Object.keys(answers[questionId]).every((label) =>
-                isEmpty(answers[questionId][label])
+                answers[questionId][label].every(isEmpty)
               )
             );
 
-            if (!emptyAnswers) {
+            const emptyNumberMap = Object.keys(numberMap).every(
+              (key) => numberMap[key] === 0
+            );
+
+            if (!emptyAnswers || !emptyNumberMap) {
               enqueueSnackbar("Se recuperaron tus respuestas", {
                 variant: "success",
               });
             }
           }
 
-          const pages = getPages(form, answers);
-          const newAnswers = getAnswers(pages, answers);
+          const { newAnswers, newNumberMap } = getPagesData(
+            form,
+            answers,
+            numberMap
+          );
+
           setAnswers(newAnswers);
+          setNumberMap(newNumberMap);
         }
 
         navigator.geolocation.getCurrentPosition((position) => {
@@ -150,6 +161,8 @@ const AnswerForm = () => {
       form={form}
       answers={answers}
       setAnswers={setAnswers}
+      numberMap={numberMap}
+      setNumberMap={setNumberMap}
       response={response}
     />
   );
