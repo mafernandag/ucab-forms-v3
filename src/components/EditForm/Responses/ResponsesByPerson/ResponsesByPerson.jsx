@@ -11,7 +11,7 @@ import {
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { formatDateTime } from "../../../../utils/dates";
 import { useForm } from "../../../../hooks/useForm";
-import Comments from "./Comments";
+import ResponseComments from "./ResponseComments";
 import Card from "../../../Card";
 import AnswerCard from "./AnswerCard";
 
@@ -142,7 +142,10 @@ const Response = () => {
                         section={section}
                         question={question}
                       />
-                      <Comments response={response} question={question} />
+                      <ResponseComments
+                        response={response}
+                        question={question}
+                      />
                     </Stack>
                   ))}
                 </Stack>

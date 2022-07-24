@@ -111,7 +111,7 @@ export const checkUserHasResponses = async (formId, userId) => {
   }
 };
 
-export const addComment = (formId, responseId, comments) => {
+export const addCommentToResponse = (formId, responseId, comments) => {
   const responseRef = doc(db, "forms", formId, "responses", responseId);
   updateDoc(responseRef, { comments });
 };

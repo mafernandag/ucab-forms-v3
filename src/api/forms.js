@@ -86,6 +86,8 @@ export const duplicateForm = async (form, user) => {
     sections.forEach((section) => {
       const { id: oldSectionId, ...sectionData } = section;
 
+      sectionData.comments = [];
+
       sectionData.dynamicLabelsSection =
         sectionIdMap[sectionData.dynamicLabelsSection] || null;
 

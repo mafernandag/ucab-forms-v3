@@ -16,4 +16,5 @@ export const defaultSection: Omit<Section, "id"> = {
   conditionedValue: null,
   iterable: false,
   prefix: "",
+  comments: [],
 };
