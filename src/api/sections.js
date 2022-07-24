@@ -19,6 +19,15 @@ export const createSection = (formId, section) => {
   return sectionRef.id;
 };
 
+const convertSectionDoc = (sectionDoc) => {
+  const section = sectionDoc.data();
+  section.id = sectionDoc.id;
+  section.conditionedValue =
+    section.conditionedValue?.toDate?.() ?? section.conditionedValue;
+
+  return section;
+};
+
 export const getSectionsOnce = async (formId) => {
   const sectionsRef = collection(db, "forms", formId, "sections");
 
@@ -26,12 +35,7 @@ export const getSectionsOnce = async (formId) => {
 
   const snapshot = await getDocs(q);
 
-  const sections = snapshot.docs.map((doc) => {
-    const section = doc.data();
-    section.id = doc.id;
-
-    return section;
-  });
+  const sections = snapshot.docs.map(convertSectionDoc);
 
   return sections;
 };
@@ -42,12 +46,7 @@ export const getSections = (formId, callback) => {
   const q = query(sectionsRef, orderBy("index"));
 
   return onSnapshot(q, (snapshot) => {
-    const sections = snapshot.docs.map((doc) => {
-      const section = doc.data();
-      section.id = doc.id;
-      return section;
-    });
-
+    const sections = snapshot.docs.map(convertSectionDoc);
     callback(sections);
   });
 };
@@ -62,7 +61,7 @@ export const getSectionsChanges = (formId, callback) => {
       type: change.type,
       oldIndex: change.oldIndex,
       newIndex: change.newIndex,
-      section: { ...change.doc.data(), id: change.doc.id },
+      section: convertSectionDoc(change.doc),
     }));
 
     callback(changes);

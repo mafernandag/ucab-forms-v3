@@ -1,5 +1,6 @@
-import { castArray, range } from "lodash";
+import { castArray, isNil, range } from "lodash";
 import { questionConfig } from "../../questions";
+import { questionTypesConfig } from "../../questions/config";
 import { DEFAULT_LABEL } from "../../questions/constants";
 import { BaseQuestion, QuestionWithOptions } from "../../questions/types";
 import { isEmpty } from "../../questions/utils";
@@ -65,10 +66,42 @@ export const getPagesData = (
   previousNumberMap: Record<string, number>
 ) => {
   const pages: Page[] = [];
-  const newAnswers: Record<string, any> = {};
+  const newAnswers: Record<string, Record<string, any[]>> = {};
   const newNumberMap: Record<string, number> = {};
 
   form.sections.forEach((section) => {
+    if (section.conditioned) {
+      const questionId = section.conditionedQuestion as string;
+      const label = section.conditionedSectionLabel || DEFAULT_LABEL;
+
+      const answer = newAnswers[questionId]?.[label]?.[0];
+
+      if (isNil(answer)) {
+        return;
+      }
+
+      const question = form.questions.find(
+        (question) => question.id === questionId
+      );
+
+      if (!question) {
+        return;
+      }
+
+      const getSerializableValue =
+        questionTypesConfig[question.type].getSerializableValue;
+
+      const expectedValue = getSerializableValue(answer);
+      const strigifiedExpectedValue = JSON.stringify(expectedValue);
+
+      const value = getSerializableValue(section.conditionedValue);
+      const strigifiedValue = JSON.stringify(value);
+
+      if (strigifiedExpectedValue !== strigifiedValue) {
+        return;
+      }
+    }
+
     const sectionLabels = getLabels(section, newAnswers, form.questions);
     const sectionQuestions = form.questions.filter(
       (question) => question.sectionId === section.id
@@ -119,55 +152,3 @@ export const getPagesData = (
 
   return { pages, newAnswers, newNumberMap };
 };
-
-// export const getAnswers = (
-//   pages: Page[],
-//   answers: Record<string, any>,
-//   numberMap: Record<string, number>
-// ) => {
-//   const newAnswers: Record<string, any> = {};
-
-//   pages.forEach((page) => {
-//     if (page.section.iterable && page.number === 0) {
-//       return;
-//     }
-
-//     page.questions.forEach((question) => {
-//       const type = question.type;
-//       const getInitializedAnswer = questionConfig[type].getInitializedAnswer;
-
-//       const key = `${page.section.id}-${page.label}`;
-//       const number = numberMap[key];
-
-//       const newAnswer: Record<string, any>[] = [];
-
-//       range(number).forEach((i) => {
-//         const answer = answers[question.id]?.[page.label]?.[i];
-//         newAnswer[i] = answer ?? getInitializedAnswer(question);
-//       });
-
-//       newAnswers[question.id] = {
-//         ...newAnswers[question.id],
-//         [page.label]: newAnswer,
-//       };
-//     });
-//   });
-
-//   return newAnswers;
-// };
-
-// export const getNumberMap = (
-//   pages: Page[],
-//   numberMap: Record<string, number>
-// ) => {
-//   const newNumberMap: Record<string, number> = {};
-
-//   pages.forEach((page) => {
-//     const key = `${page.section.id}-${page.label}`;
-//     const number = numberMap[key] ?? 0;
-
-//     newNumberMap[key] = number;
-//   });
-
-//   return newNumberMap;
-// };

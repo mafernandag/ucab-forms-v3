@@ -10,6 +10,11 @@ export interface Section {
   dynamicLabelsSection: string | null;
   dynamicLabelsSectionLabel: string | null;
   dynamicLabelsQuestion: string | null;
+  conditioned: boolean;
+  conditionedSection: string | null;
+  conditionedSectionLabel: string | null;
+  conditionedQuestion: string | null;
+  conditionedValue: any | null;
   iterable: boolean;
   prefix: string | null;
 }

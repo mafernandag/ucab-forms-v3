@@ -62,8 +62,17 @@ const Labels = ({ updateSection }) => {
   const handleDelete = (label) => () => {
     setSections((sections) => {
       return sections.map((section) => {
-        if (section.dynamicLabelsSectionLabel === label) {
-          const newSection = { ...section, dynamicLabelsSectionLabel: null };
+        if (
+          section.dynamicLabelsSectionLabel === label ||
+          section.conditionedSectionLabel === label
+        ) {
+          const newSection = { ...section };
+          if (section.dynamicLabelsSectionLabel === label) {
+            newSection.dynamicLabelsSectionLabel = null;
+          }
+          if (section.conditionedSectionLabel === label) {
+            newSection.conditionedSectionLabel = null;
+          }
           saveSection(form.id, newSection);
           return newSection;
         }
