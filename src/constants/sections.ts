@@ -9,6 +9,11 @@ export const defaultSection: Omit<Section, "id"> = {
   dynamicLabelsSection: null,
   dynamicLabelsSectionLabel: null,
   dynamicLabelsQuestion: null,
+  conditioned: false,
+  conditionedSection: null,
+  conditionedSectionLabel: null,
+  conditionedQuestion: null,
+  conditionedValue: null,
   iterable: false,
   prefix: "",
 };

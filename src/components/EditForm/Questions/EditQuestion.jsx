@@ -39,6 +39,7 @@ const EditQuestion = ({ setOpenDrawer }) => {
     sectionQuestions,
     currentQuestionId,
     setCurrentQuestionId,
+    sections,
     setSections,
     responses,
   } = useForm();
@@ -79,6 +80,17 @@ const EditQuestion = ({ setOpenDrawer }) => {
       });
     }
 
+    sections.forEach((section) => {
+      if (
+        section.conditionedQuestion === question.id &&
+        !compatibility[question.type].includes(type)
+      ) {
+        const value = questionConfig[type].getInitializedAnswer(question);
+        const newSection = { ...section, conditionedValue: value };
+        saveSection(form.id, newSection);
+      }
+    });
+
     const newQuestion = questionConfig[type].getInitializedFields(
       question,
       type
@@ -98,8 +110,18 @@ const EditQuestion = ({ setOpenDrawer }) => {
       action: () => {
         setSections((sections) => {
           return sections.map((section) => {
-            if (section.dynamicLabelsQuestion === currentQuestionId) {
-              const newSection = { ...section, dynamicLabelsQuestion: null };
+            if (
+              section.dynamicLabelsQuestion === currentQuestionId ||
+              section.conditionedQuestion === currentQuestionId
+            ) {
+              const newSection = { ...section };
+              if (section.dynamicLabelsQuestion === currentQuestionId) {
+                newSection.dynamicLabelsQuestion = null;
+              }
+              if (section.conditionedQuestion === currentQuestionId) {
+                newSection.conditionedQuestion = null;
+                newSection.conditionedValue = null;
+              }
               saveSection(form.id, newSection);
               return newSection;
             }

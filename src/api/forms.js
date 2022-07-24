@@ -92,6 +92,12 @@ export const duplicateForm = async (form, user) => {
       sectionData.dynamicLabelsQuestion =
         questionIdMap[sectionData.dynamicLabelsQuestion] || null;
 
+      sectionData.conditionedSection =
+        sectionIdMap[sectionData.conditionedSection] || null;
+
+      sectionData.conditionedQuestion =
+        questionIdMap[sectionData.conditionedQuestion] || null;
+
       const newSectionId = createSection(newFormRef.id, sectionData);
 
       sectionIdMap[oldSectionId] = newSectionId;

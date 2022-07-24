@@ -1,6 +1,7 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   Box,
+  Button,
   Checkbox,
   FormControlLabel,
   IconButton,
@@ -27,6 +28,7 @@ import { useAlert } from "../../../hooks/useAlert";
 import { calculateNewIndex } from "../../../utils/forms";
 import Labels from "./Labels";
 import DynamicLabels from "./DynamicLabels";
+import ConditioningDialog from "./ConditioningDialog";
 
 const EditSection = ({ setOpenDrawer }) => {
   const {
@@ -40,12 +42,18 @@ const EditSection = ({ setOpenDrawer }) => {
   } = useForm();
   const openAlert = useAlert();
 
+  const [openDialog, setOpenDialog] = useState(false);
+
   const debouncedSave = useMemo(() => {
     return debounce((newSection) => {
       saveSection(form.id, newSection);
     }, 1500);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.id, currentSectionId]);
+
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+  };
 
   const updateSection = (newSection) => {
     debouncedSave(newSection);
@@ -76,6 +84,17 @@ const EditSection = ({ setOpenDrawer }) => {
       }
     }
 
+    if (field === "conditioned") {
+      if (checked) {
+        setOpenDialog(true);
+      } else {
+        newSection.conditionedSection = null;
+        newSection.conditionedSectionLabel = null;
+        newSection.conditionedQuestion = null;
+        newSection.conditionedValue = null;
+      }
+    }
+
     if (field === "iterable") {
       if (checked) {
         newSection.prefix = "";
@@ -94,11 +113,24 @@ const EditSection = ({ setOpenDrawer }) => {
       action: () => {
         setSections((sections) => {
           return sections.map((section) => {
-            if (section.dynamicLabelsSection === currentSectionId) {
+            if (
+              section.dynamicLabelsSection === currentSectionId ||
+              section.conditionedSection === currentSectionId
+            ) {
               const newSection = { ...section };
-              newSection.dynamicLabelsSection = null;
-              newSection.dynamicLabelsSectionLabel = null;
-              newSection.dynamicLabelsQuestion = null;
+              if (section.dynamicLabelsSection === currentSectionId) {
+                newSection.dynamicLabels = false;
+                newSection.dynamicLabelsSection = null;
+                newSection.dynamicLabelsSectionLabel = null;
+                newSection.dynamicLabelsQuestion = null;
+              }
+              if (section.conditionedSection === currentSectionId) {
+                newSection.conditioned = false;
+                newSection.conditionedSection = null;
+                newSection.conditionedSectionLabel = null;
+                newSection.conditionedQuestion = null;
+                newSection.conditionedValue = null;
+              }
               saveSection(form.id, newSection);
               return newSection;
             }
@@ -143,20 +175,44 @@ const EditSection = ({ setOpenDrawer }) => {
       section.dynamicLabels &&
       section.dynamicLabelsSection === sections[i - 1].id
     ) {
+      newSection.dynamicLabels = false;
       newSection.dynamicLabelsSection = null;
       newSection.dynamicLabelsSectionLabel = null;
       newSection.dynamicLabelsQuestion = null;
     }
 
+    if (
+      direction === "left" &&
+      section.conditioned &&
+      section.conditionedSection === sections[i - 1].id
+    ) {
+      newSection.conditioned = false;
+      newSection.conditionedSection = null;
+      newSection.conditionedSectionLabel = null;
+      newSection.conditionedQuestion = null;
+      newSection.conditionedValue = null;
+    }
+
     sections.forEach((section) => {
       if (
-        section.dynamicLabelsSection === newSection.id &&
+        (section.dynamicLabelsSection === newSection.id ||
+          section.conditionedSection === newSection.id) &&
         section.index >= newIndex
       ) {
         const sectionToUpdate = { ...section };
-        sectionToUpdate.dynamicLabelsSection = null;
-        sectionToUpdate.dynamicLabelsSectionLabel = null;
-        sectionToUpdate.dynamicLabelsQuestion = null;
+        if (section.dynamicLabelsSection === newSection.id) {
+          sectionToUpdate.dynamicLabels = false;
+          sectionToUpdate.dynamicLabelsSection = null;
+          sectionToUpdate.dynamicLabelsSectionLabel = null;
+          sectionToUpdate.dynamicLabelsQuestion = null;
+        }
+        if (section.conditionedSection === newSection.id) {
+          sectionToUpdate.conditioned = false;
+          sectionToUpdate.conditionedSection = null;
+          sectionToUpdate.conditionedSectionLabel = null;
+          sectionToUpdate.conditionedQuestion = null;
+          sectionToUpdate.conditionedValue = null;
+        }
         saveSection(form.id, sectionToUpdate);
       }
     });
@@ -278,9 +334,25 @@ const EditSection = ({ setOpenDrawer }) => {
         />
         <FormControlLabel
           control={<Checkbox />}
+          checked={section.conditioned}
+          onChange={handleChangeChecked("conditioned")}
+          label="Condicionar sección"
+        />
+        <FormControlLabel
+          control={<Checkbox />}
           checked={section.hideCard}
           onChange={handleChangeChecked("hideCard")}
           label="Ocultar tarjeta de sección"
+        />
+        {section.conditioned && (
+          <Button fullWidth onClick={handleOpenDialog} sx={{ my: 1 }}>
+            Configurar condicionamiento
+          </Button>
+        )}
+        <ConditioningDialog
+          open={openDialog}
+          setOpen={setOpenDialog}
+          updateSection={updateSection}
         />
         <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
           <Tooltip title="Duplicar sección" arrow>
