@@ -8,7 +8,7 @@ import {
 import { useForm } from "../../../hooks/useForm";
 import { getResponseCountText } from "../../../utils/stats";
 import ResponsesSummary from "./ResponsesSummary";
-import ResponsesByPerson from "./ResponsesByPerson/ResponsesByPerson";
+import ResponsesByPerson from "./ResponsesByPerson";
 import ResponsesByQuestion from "./ResponsesByQuestion";
 import ResponsesTable from "./ResponsesTable";
 

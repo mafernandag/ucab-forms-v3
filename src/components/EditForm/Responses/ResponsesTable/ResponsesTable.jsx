@@ -2,12 +2,12 @@ import { useMemo } from "react";
 import { Link, Typography } from "@mui/material";
 import { ExportCsv, ExportPdf } from "@material-table/exporters";
 import { flatMap, sortBy } from "lodash";
-import Table from "../../Table";
-import { useForm } from "../../../hooks/useForm";
-import { stringifyAnswers } from "../../../utils/stats";
-import { DEFAULT_LABEL, FILE } from "../../../questions/constants";
-import { formatDateTime } from "../../../utils/dates";
-import { getSectionLabels } from "../../../questions/utils";
+import Table from "../../../Table";
+import { useForm } from "../../../../hooks/useForm";
+import { stringifyAnswers } from "../../../../utils/stats";
+import { DEFAULT_LABEL, FILE } from "../../../../questions/constants";
+import { formatDateTime } from "../../../../utils/dates";
+import { getSectionLabels } from "../../../../questions/utils";
 
 const ResponsesTable = () => {
   const { responses, sections, questions } = useForm();

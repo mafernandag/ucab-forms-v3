@@ -11,12 +11,12 @@ import {
   TextField,
 } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { useForm } from "../../../hooks/useForm";
-import { getResponseCountText } from "../../../utils/stats";
-import Card from "../../Card";
-import { questionTypesConfig } from "../../../questions/config";
-import { getSectionLabels, isEmpty } from "../../../questions/utils";
-import { DEFAULT_LABEL } from "../../../questions/constants";
+import { useForm } from "../../../../hooks/useForm";
+import { getResponseCountText } from "../../../../utils/stats";
+import Card from "../../../Card";
+import { questionTypesConfig } from "../../../../questions/config";
+import { getSectionLabels, isEmpty } from "../../../../questions/utils";
+import { DEFAULT_LABEL } from "../../../../questions/constants";
 
 const ResponsesByQuestion = () => {
   const { responses, sections, questions } = useForm();

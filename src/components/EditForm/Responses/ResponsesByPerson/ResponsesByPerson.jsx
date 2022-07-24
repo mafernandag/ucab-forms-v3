@@ -11,7 +11,7 @@ import {
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { formatDateTime } from "../../../../utils/dates";
 import { useForm } from "../../../../hooks/useForm";
-import Comments from "../Comments";
+import Comments from "./Comments";
 import Card from "../../../Card";
 import AnswerCard from "./AnswerCard";
 
