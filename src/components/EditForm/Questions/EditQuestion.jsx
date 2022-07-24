@@ -18,6 +18,7 @@ import { debounce } from "lodash";
 import {
   compatibility,
   dynamicLabelsQuestionTypes,
+  FILE,
 } from "../../../questions/constants";
 import {
   deleteQuestion,
@@ -85,8 +86,16 @@ const EditQuestion = ({ setOpenDrawer }) => {
         section.conditionedQuestion === question.id &&
         !compatibility[question.type].includes(type)
       ) {
-        const value = questionConfig[type].getInitializedAnswer(question);
-        const newSection = { ...section, conditionedValue: value };
+        const newSection = { ...section };
+
+        if (type === FILE) {
+          newSection.conditionedQuestion = null;
+          newSection.conditionedValue = null;
+        } else {
+          const value = questionConfig[type].getInitializedAnswer(question);
+          newSection.conditionedValue = value;
+        }
+
         saveSection(form.id, newSection);
       }
     });
