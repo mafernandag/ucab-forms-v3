@@ -18,6 +18,7 @@ import { useTheme } from "@mui/material/styles";
 import { useForm } from "../../../hooks/useForm";
 import { questionTypesConfig } from "../../../questions/config";
 import { Box } from "@mui/system";
+import { FILE } from "../../../questions/constants";
 
 const ConditioningDialogBody = ({ closeDialog, updateSection }) => {
   const { section: currentSection, sections, questions } = useForm();
@@ -158,7 +159,11 @@ const ConditioningDialogBody = ({ closeDialog, updateSection }) => {
             onChange={handleChange("conditionedQuestion")}
           >
             {conditionedSectionQuestions.map((question) => (
-              <MenuItem key={question.id} value={question.id}>
+              <MenuItem
+                key={question.id}
+                value={question.id}
+                disabled={question.type === FILE}
+              >
                 {question.title}
               </MenuItem>
             ))}
