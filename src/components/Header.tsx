@@ -9,7 +9,6 @@ import {
   ListItemIcon,
   Toolbar,
   Tooltip,
-  Badge,
 } from "@mui/material";
 import {
   AccountCircle,

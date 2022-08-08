@@ -4,6 +4,7 @@ import {
   DATETIME,
   EMOJI,
   FILE,
+  NUMERIC,
   RADIO,
   RATING,
   SELECT,
@@ -27,6 +28,7 @@ import { timeConfig } from "./time";
 import { dateTimeConfig } from "./datetime";
 import { fileConfig } from "./file";
 import { emojiConfig } from "./emoji";
+import { numericConfig } from "./numeric";
 
 // TODO: See if 'string' can be replaced with 'QuestionType' or something
 export const questionTypesConfig: Record<
@@ -35,6 +37,7 @@ export const questionTypesConfig: Record<
 > = {
   [TEXT]: textConfig,
   [TEXTAREA]: textareaConfig,
+  [NUMERIC]: numericConfig,
   [RADIO]: radioConfig,
   [CHECKBOX]: checkboxConfig,
   [SELECT]: selectConfig,

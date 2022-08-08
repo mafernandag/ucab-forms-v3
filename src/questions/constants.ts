@@ -1,5 +1,6 @@
 export const TEXT = "text";
 export const TEXTAREA = "textarea";
+export const NUMERIC = "numeric";
 export const RADIO = "radio";
 export const CHECKBOX = "checkbox";
 export const SELECT = "select";
@@ -15,6 +16,7 @@ export const FILE = "file";
 export const compatibility = {
   [TEXT]: [TEXT, TEXTAREA, RADIO, SELECT],
   [TEXTAREA]: [TEXT, TEXTAREA, RADIO, SELECT],
+  [NUMERIC]: [TEXT, TEXTAREA, NUMERIC],
   [RADIO]: [TEXT, TEXTAREA, RADIO, SELECT],
   [CHECKBOX]: [CHECKBOX],
   [SELECT]: [TEXT, TEXTAREA, RADIO, SELECT],
