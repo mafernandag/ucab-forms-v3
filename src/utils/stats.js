@@ -8,6 +8,14 @@ export const getResponseCountText = (count) => {
   return `${count} respuestas`;
 };
 
+export const getAnswersCountText = (count) => {
+  if (count === 1) {
+    return "1 persona";
+  }
+
+  return `${count} personas`;
+};
+
 export const stringifyAnswers = (answers, questions) => {
   const newAnswers = {};
 
