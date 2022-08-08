@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Container, Theme, useMediaQuery } from "@mui/material";
+import { Theme, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { Chart as ChartJS, ChartData, ChartOptions } from "chart.js";
 import { Bar } from "react-chartjs-2";
@@ -95,11 +95,7 @@ const BarDiagram = ({ labels, datasets, variant = "vertical" }: Props) => {
     };
   }, [fontColor, max, upMd, variant]);
 
-  return (
-    <Container maxWidth="sm">
-      <Bar data={data} plugins={[ChartDataLabels]} options={options} />
-    </Container>
-  );
+  return <Bar data={data} plugins={[ChartDataLabels]} options={options} />;
 };
 
 export default BarDiagram;

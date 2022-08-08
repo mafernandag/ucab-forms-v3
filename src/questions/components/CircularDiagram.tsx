@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import { Container } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { ChartData, ChartOptions } from "chart.js";
 import { Doughnut, Pie } from "react-chartjs-2";
@@ -66,22 +65,18 @@ const CircularDiagram = ({ labels, datasets, variant = "pie" }: Props) => {
     };
   }, [fontColor, labels]);
 
-  return (
-    <Container maxWidth="sm">
-      {variant === "pie" ? (
-        <Pie
-          data={data as ChartData<"pie", number[], string>}
-          plugins={[ChartDataLabels]}
-          options={options}
-        />
-      ) : (
-        <Doughnut
-          data={data as ChartData<"doughnut", number[], string>}
-          plugins={[ChartDataLabels]}
-          options={options}
-        />
-      )}
-    </Container>
+  return variant === "pie" ? (
+    <Pie
+      data={data as ChartData<"pie", number[], string>}
+      plugins={[ChartDataLabels]}
+      options={options}
+    />
+  ) : (
+    <Doughnut
+      data={data as ChartData<"doughnut", number[], string>}
+      plugins={[ChartDataLabels]}
+      options={options}
+    />
   );
 };
 

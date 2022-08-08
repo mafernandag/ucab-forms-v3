@@ -1,5 +1,5 @@
 import { RadioStatProps } from "./types";
-import { CircularDiagram } from "../components";
+import { Chart } from "../components";
 import { getDatasets } from "../utils";
 
 const Stat = ({ answers, question, labels }: RadioStatProps) => {
@@ -17,7 +17,7 @@ const Stat = ({ answers, question, labels }: RadioStatProps) => {
     chartLabels.push("Otro");
   }
 
-  return <CircularDiagram labels={chartLabels} datasets={datasets} />;
+  return <Chart labels={chartLabels} datasets={datasets} />;
 };
 
 export default Stat;

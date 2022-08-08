@@ -1,5 +1,5 @@
 import { SelectStatProps } from "./types";
-import { CircularDiagram } from "../components";
+import { Chart } from "../components";
 import { getDatasets } from "../utils";
 
 const Stat = ({ answers, question, labels }: SelectStatProps) => {
@@ -10,7 +10,7 @@ const Stat = ({ answers, question, labels }: SelectStatProps) => {
     values: question.options,
   });
 
-  return <CircularDiagram labels={question.options} datasets={datasets} />;
+  return <Chart labels={question.options} datasets={datasets} />;
 };
 
 export default Stat;

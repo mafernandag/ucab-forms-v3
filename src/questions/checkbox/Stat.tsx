@@ -1,5 +1,5 @@
 import { CheckboxStatProps } from "./types";
-import { BarDiagram } from "../components";
+import { Chart } from "../components";
 import { getDatasets } from "../utils";
 
 const Stat = ({ answers, question, labels }: CheckboxStatProps) => {
@@ -17,7 +17,7 @@ const Stat = ({ answers, question, labels }: CheckboxStatProps) => {
     chartLabels.push("Otro");
   }
 
-  return <BarDiagram labels={chartLabels} datasets={datasets} />;
+  return <Chart labels={chartLabels} datasets={datasets} />;
 };
 
 export default Stat;

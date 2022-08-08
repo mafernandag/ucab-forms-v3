@@ -1,5 +1,5 @@
 import { SliderStatProps } from "./types";
-import { BarDiagram } from "../components";
+import { Chart } from "../components";
 import { getDatasets } from "../utils";
 
 const Stat = ({ answers, question, labels }: SliderStatProps) => {
@@ -18,7 +18,7 @@ const Stat = ({ answers, question, labels }: SliderStatProps) => {
 
   const diagramLabels = values.map((value) => value.toString());
 
-  return <BarDiagram labels={diagramLabels} datasets={datasets} />;
+  return <Chart labels={diagramLabels} datasets={datasets} />;
 };
 
 export default Stat;
