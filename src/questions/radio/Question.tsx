@@ -11,7 +11,11 @@ import {
 import { RadioQuestionProps } from "./types";
 
 const Question = ({ answer, question, updateAnswer }: RadioQuestionProps) => {
-  const [other, setOther] = useState("");
+  const getInitialState = () => {
+    return !question.options.includes(answer) ? answer : "";
+  };
+
+  const [other, setOther] = useState(getInitialState);
 
   const handleChangeRadio = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;

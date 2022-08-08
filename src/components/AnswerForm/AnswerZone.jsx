@@ -211,6 +211,7 @@ const AnswerZone = ({
                   }}
                 >
                   <Question
+                    key={`${section.id}-${label}-${number}-${question.id}`}
                     label={label}
                     question={question}
                     answers={answers}
