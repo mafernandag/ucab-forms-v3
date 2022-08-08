@@ -15,7 +15,15 @@ const Question = ({
   question,
   updateAnswer,
 }: CheckboxQuestionProps) => {
-  const [other, setOther] = useState("");
+  const getInitialState = () => {
+    if (answer.every((value) => question.options.includes(value))) {
+      return "";
+    }
+
+    return answer.find((value) => !question.options.includes(value)) || "";
+  };
+
+  const [other, setOther] = useState(getInitialState);
 
   const getNewAnswer = (answer: CheckboxAnswer, option: string) => {
     const selectedOptions = [...answer, option];
