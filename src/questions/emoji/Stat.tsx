@@ -1,6 +1,6 @@
 import { EmojiStatProps } from "./types";
 import { emojiLabels } from "./constants";
-import { BarDiagram } from "../components";
+import { Chart } from "../components";
 import { getDatasets } from "../utils";
 
 const Stat = ({ answers, question, labels }: EmojiStatProps) => {
@@ -14,7 +14,7 @@ const Stat = ({ answers, question, labels }: EmojiStatProps) => {
     values,
   });
 
-  return <BarDiagram labels={diagramLabels} datasets={datasets} />;
+  return <Chart labels={diagramLabels} datasets={datasets} />;
 };
 
 export default Stat;

@@ -1,6 +1,6 @@
 import { RatingStatProps } from "./types";
 import { ratingLabels } from "./constants";
-import { BarDiagram } from "../components";
+import { Chart } from "../components";
 import { flatMap } from "lodash";
 
 const Stat = ({ answers, question, labels }: RatingStatProps) => {
@@ -20,7 +20,7 @@ const Stat = ({ answers, question, labels }: RatingStatProps) => {
     };
   });
 
-  return <BarDiagram labels={diagramLabels} datasets={datasets} />;
+  return <Chart labels={diagramLabels} datasets={datasets} />;
 };
 
 export default Stat;
