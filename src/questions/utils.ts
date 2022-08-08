@@ -100,7 +100,10 @@ export const getRows = ({ labels, question, answers }: GetRowsOptions) => {
   const rows = range(maxLength).map((i) => {
     const row: Record<string, string> = {};
     labels.forEach((label) => {
-      row[label] = stringify(columns[label][i]) || "-";
+      if (columns[label][i]) {
+        row[label] = stringify(columns[label][i]);
+      }
+      row[label] = row[label] || "";
     });
     return row;
   });
