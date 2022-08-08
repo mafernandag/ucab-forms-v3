@@ -9,6 +9,7 @@ import {
   ListItemIcon,
   Toolbar,
   Tooltip,
+  Badge,
 } from "@mui/material";
 import {
   AccountCircle,
@@ -28,6 +29,7 @@ import { useColorMode } from "../hooks/useColorMode";
 import { signOut } from "../api/auth";
 import HeaderLogo from "./HeaderLogo";
 import Notifications from "./Notifications";
+import UserIcon from "./UserIcon";
 
 interface Props {
   leftIcons?: JSX.Element;
@@ -72,7 +74,7 @@ const Header = ({ leftIcons, rightIcons, moreMenu }: Props) => {
                     edge="end"
                     {...bindTrigger(popupStateUser)}
                   >
-                    <AccountCircle />
+                    <UserIcon />
                   </IconButton>
                 </Tooltip>
                 <Menu {...bindMenu(popupStateUser)}>
