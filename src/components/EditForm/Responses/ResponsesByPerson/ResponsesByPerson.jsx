@@ -78,7 +78,10 @@ const Response = () => {
           renderItem={renderItem}
         />
         <Typography align="right" variant="caption" color="text.secondary">
-          Respondido el {formatDateTime(response.submittedAt)}
+          Respondido{" "}
+          {response.user &&
+            ` por ${response.user.name} (${response.user.email}) `}
+          el {formatDateTime(response.submittedAt)}
         </Typography>
         {response.location && (
           <Card>
