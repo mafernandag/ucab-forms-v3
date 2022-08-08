@@ -7,6 +7,7 @@ import { Section } from "../../../../types";
 import Card from "../../../Card";
 import { DEFAULT_LABEL } from "../../../../questions/constants";
 import { useForm } from "../../../../hooks/useForm";
+import { isEmptyAnswer } from "../utils";
 
 interface Props {
   answer?: Record<string, any[]>;
@@ -20,15 +21,10 @@ const AnswerCard = ({ answer, section, question }: Props) => {
   const ResponseByPerson = questionTypesConfig[type].ResponseByPerson;
   const sectionLabels = getSectionLabels(section, questions);
 
-  const isEmptyAnswer = useMemo(() => {
-    return (
-      !answer ||
-      sectionLabels.every(
-        (label) => !answer[label] || answer[label].every(isEmpty)
-      )
-      // Object.keys(answer).every((label) => answer[label].every(isEmpty))
-    );
-  }, [answer, sectionLabels]);
+  const isWholeAnswerEmpty = useMemo(
+    () => isEmptyAnswer(answer, sectionLabels),
+    [answer, sectionLabels]
+  );
 
   return (
     <Card>
@@ -37,7 +33,7 @@ const AnswerCard = ({ answer, section, question }: Props) => {
         <Typography variant="caption" color="text.secondary">
           Respuesta
         </Typography>
-        {isEmptyAnswer ? (
+        {isWholeAnswerEmpty ? (
           <Typography variant="body2" fontStyle="italic">
             Respuesta vacía
           </Typography>

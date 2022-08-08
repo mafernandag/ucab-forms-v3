@@ -10,11 +10,12 @@ import {
   BarElement,
 } from "chart.js";
 import zoomPlugin from "chartjs-plugin-zoom";
-import { getResponseCountText } from "../../../../utils/stats";
+import { getAnswersCountText } from "../../../../utils/stats";
 import { questionTypesConfig } from "../../../../questions/config";
 import { useMemo } from "react";
-import { getSectionLabels, isEmpty } from "../../../../questions/utils";
+import { getSectionLabels } from "../../../../questions/utils";
 import { useForm } from "../../../../hooks/useForm";
+import { isEmptyAnswer } from "../utils";
 
 const legendMarginPlugin = {
   id: "legendMargin",
@@ -48,14 +49,14 @@ const QuestionStat = ({ question, section, answers }) => {
   }, [questions, section]);
 
   const responseCount = useMemo(() => {
-    const filteredAnswers = answers.filter((answer) =>
-      sectionLabels.some((label) => !isEmpty(answer[question.id]?.[label]))
+    const filteredAnswers = answers.filter(
+      (answer) => !isEmptyAnswer(answer[question.id], sectionLabels)
     );
 
     return filteredAnswers.length;
-  }, [answers, sectionLabels, question.id]);
+  }, [answers, question.id, sectionLabels]);
 
-  const responseCountText = getResponseCountText(responseCount);
+  const responseCountText = getAnswersCountText(responseCount);
 
   const type = question.type;
   const Stat = questionTypesConfig[type].Stat;
