@@ -46,10 +46,18 @@ const AnswerForm = () => {
           form.questions.sort(() => Math.random() - 0.5);
         }
 
-        if (form.settings.onlyOneResponse) {
-          const hasResponses = await checkUserHasResponses(form.id, user.id);
+        let hasResponses = false;
 
+        if (form.settings.onlyOneResponse) {
+          hasResponses = await checkUserHasResponses(form.id, user.id);
           setUserHasResponses(hasResponses);
+        }
+
+        if (
+          (form.settings.onlyOneResponse && !hasResponses) ||
+          (form.settings.saveUserData && user)
+        ) {
+          enqueueSnackbar("Esta encuesta no es anónima");
         }
 
         setForm(form);

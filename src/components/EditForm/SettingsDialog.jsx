@@ -125,12 +125,23 @@ const SettingsDialogBody = ({ closeDialog, discardDialog, setChanges }) => {
           <ListItem>
             <ListItemText
               primary="Restringir a una respuesta por persona"
-              secondary="Esto requiere usuarios registrados"
+              secondary="Requiere usuarios registrados"
             />
             <Switch
               edge="end"
               checked={settings.onlyOneResponse}
               onChange={handleChangeChecked("onlyOneResponse")}
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemText
+              primary="Asociar datos del usuario"
+              secondary="Solo guarda datos de usuarios registrados"
+            />
+            <Switch
+              edge="end"
+              checked={settings.saveUserData}
+              onChange={handleChangeChecked("saveUserData")}
             />
           </ListItem>
           <ListItem>

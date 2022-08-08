@@ -131,7 +131,7 @@ const AnswerZone = ({
       answers: newAnswers,
     };
 
-    if (form.settings.onlyOneResponse) {
+    if (form.settings.onlyOneResponse || (user && form.settings.saveUserData)) {
       responseData.user = { ...user };
     }
 
