@@ -321,24 +321,28 @@ const EditSection = ({ setOpenDrawer }) => {
         <Labels updateSection={updateSection} />
       )}
       <Box>
-        <FormControlLabel
-          control={<Checkbox />}
-          checked={section.dynamicLabels}
-          onChange={handleChangeChecked("dynamicLabels")}
-          label="Generar etiquetas a partir de respuesta"
-        />
+        {(section.dynamicLabels || sections[0] !== section) && (
+          <FormControlLabel
+            control={<Checkbox />}
+            checked={section.dynamicLabels}
+            onChange={handleChangeChecked("dynamicLabels")}
+            label="Generar etiquetas a partir de respuesta"
+          />
+        )}
         <FormControlLabel
           control={<Checkbox />}
           checked={section.iterable}
           onChange={handleChangeChecked("iterable")}
           label="Repetir un número determinado de veces"
         />
-        <FormControlLabel
-          control={<Checkbox />}
-          checked={section.conditioned}
-          onChange={handleChangeChecked("conditioned")}
-          label="Condicionar sección"
-        />
+        {(section.conditioned || sections[0] !== section) && (
+          <FormControlLabel
+            control={<Checkbox />}
+            checked={section.conditioned}
+            onChange={handleChangeChecked("conditioned")}
+            label="Condicionar sección"
+          />
+        )}
         <FormControlLabel
           control={<Checkbox />}
           checked={section.hideCard}

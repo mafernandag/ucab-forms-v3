@@ -42,6 +42,7 @@ export const createForm = (user) => {
       startDate: null,
       endDate: null,
       randomOrder: false,
+      saveUserData: false,
     },
   });
 
