@@ -3,8 +3,27 @@ import {
   signInWithEmailAndPassword,
   signOut as firebaseSignOut,
 } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
-import { auth, db } from "./firebaseConfig";
+import { doc, setDoc, updateDoc } from "firebase/firestore";
+import { getToken } from "firebase/messaging";
+import { auth, db, messaging } from "./firebaseConfig";
+
+const saveNotificationToken = (userId) => {
+  getToken(messaging, {
+    vapidKey: process.env.REACT_APP_VAPID_KEY,
+  })
+    .then(async (currentToken) => {
+      if (currentToken) {
+        console.log(currentToken);
+        const userDoc = doc(db, "users", userId);
+        await updateDoc(userDoc, {
+          token: currentToken,
+        });
+      }
+    })
+    .catch((err) => {
+      console.log("An error occurred while retrieving token. ", err);
+    });
+};
 
 export const signUp = async ({ name, email, password }) => {
   try {
@@ -18,6 +37,8 @@ export const signUp = async ({ name, email, password }) => {
       name,
       email,
     });
+
+    saveNotificationToken(user.uid);
 
     return { ok: true };
   } catch (err) {
@@ -35,7 +56,9 @@ export const signUp = async ({ name, email, password }) => {
 
 export const logIn = async ({ email, password }) => {
   try {
-    await signInWithEmailAndPassword(auth, email, password);
+    const { user } = await signInWithEmailAndPassword(auth, email, password);
+
+    saveNotificationToken(user.uid);
 
     return { ok: true };
   } catch (err) {

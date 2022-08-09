@@ -57,6 +57,7 @@ export const submitResponse = async (form, user, responseData) => {
 
     sendNotification({
       userId: form.author.id,
+      title: "Nueva respuesta",
       message: `Alguien ha respondido tu encuesta "${form.title}"`,
       goto: `/forms/edit/${form.id}`,
     });
@@ -64,6 +65,7 @@ export const submitResponse = async (form, user, responseData) => {
     form.collaborators.forEach((collaborator) => {
       sendNotification({
         userId: collaborator.id,
+        title: "Nueva respuesta",
         message: `Alguien ha respondido la encuesta "${form.title}"`,
         goto: `/forms/edit/${form.id}`,
       });

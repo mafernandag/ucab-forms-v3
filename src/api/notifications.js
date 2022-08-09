@@ -9,9 +9,21 @@ import {
 } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 
-export const sendNotification = async ({ userId, message, goto }) => {
+export const sendNotification = async ({ userId, title, message, goto }) => {
   try {
     const notificationsRef = collection(db, "users", userId, "notifications");
+
+    fetch(process.env.REACT_APP_API_URL + "/notifications", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title,
+        message,
+        userId,
+      }),
+    });
 
     const notificationRef = await addDoc(notificationsRef, {
       message,
