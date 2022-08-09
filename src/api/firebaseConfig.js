@@ -6,6 +6,7 @@ import {
   CACHE_SIZE_UNLIMITED,
   enableMultiTabIndexedDbPersistence,
 } from "firebase/firestore";
+import { getMessaging } from "firebase/messaging";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -26,4 +27,6 @@ const storage = getStorage(app);
 const db = initializeFirestore(app, { cacheSizeBytes: CACHE_SIZE_UNLIMITED });
 enableMultiTabIndexedDbPersistence(db);
 
-export { auth, db, storage };
+const messaging = getMessaging(app);
+
+export { auth, db, storage, messaging };

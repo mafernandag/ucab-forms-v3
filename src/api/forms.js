@@ -259,6 +259,7 @@ export const addCollaborator = async (form, collaboratorEmail) => {
 
     sendNotification({
       userId: user.id,
+      title: "Nuevo colaborador",
       message: `Te han agregado como colaborador en la encuesta "${form.title}"`,
       goto: `/forms/edit/${form.id}`,
     });
@@ -278,6 +279,7 @@ export const deleteCollaborator = (form, collaborator) => {
 
   sendNotification({
     userId: collaborator.id,
+    title: "Colaborador eliminado",
     message: `Te han eliminado como colaborador de la encuesta "${form.title}"`,
     goto: `/forms/edit/${form.id}`,
   });
