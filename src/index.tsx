@@ -5,6 +5,8 @@ import "@fontsource/poppins/700.css";
 
 import React from "react";
 import ReactDOM from "react-dom";
+import * as Sentry from "@sentry/react";
+import { BrowserTracing } from "@sentry/tracing";
 import { CssBaseline } from "@mui/material";
 import { LocalizationProvider } from "@mui/lab";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
@@ -16,6 +18,12 @@ import { ColorModeProvider } from "./hooks/useColorMode";
 import App from "./App";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import reportWebVitals from "./reportWebVitals";
+
+Sentry.init({
+  dsn: "https://53c1e13a02514315ae57cd05986f8ad7@o1353504.ingest.sentry.io/6636090",
+  integrations: [new BrowserTracing()],
+  tracesSampleRate: 1.0,
+});
 
 ReactDOM.render(
   <React.StrictMode>
