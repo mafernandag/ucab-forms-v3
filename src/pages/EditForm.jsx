@@ -10,6 +10,7 @@ import EditFormHeader from "../components/EditForm/Header";
 import DrawerLayout from "../components/EditForm/DrawerLayout";
 import Tabs from "../components/EditForm/Tabs";
 import AnswerPageText from "../components/AnswerPageText";
+import CustomThemeProvider from "../components/CustomThemeProvider";
 
 const EditForm = () => {
   const user = useUser();
@@ -55,32 +56,34 @@ const EditForm = () => {
   }
 
   return (
-    <Box>
-      <EditFormHeader setOpenDrawer={setOpenDrawer} />
-      <DrawerLayout open={openDrawer} setOpen={setOpenDrawer}>
-        <Stack spacing={2}>
-          <Card>
-            <Stack spacing={2}>
-              <TextField
-                variant="standard"
-                multiline
-                label="Título"
-                value={form.title}
-                onChange={handleChange("title")}
-              />
-              <TextField
-                variant="standard"
-                multiline
-                label="Descripción"
-                value={form.description}
-                onChange={handleChange("description")}
-              />
-            </Stack>
-          </Card>
-          <Tabs setOpenDrawer={setOpenDrawer} />
-        </Stack>
-      </DrawerLayout>
-    </Box>
+    <CustomThemeProvider form={form}>
+      <Box>
+        <EditFormHeader setOpenDrawer={setOpenDrawer} />
+        <DrawerLayout open={openDrawer} setOpen={setOpenDrawer}>
+          <Stack spacing={2}>
+            <Card>
+              <Stack spacing={2}>
+                <TextField
+                  variant="standard"
+                  multiline
+                  label="Título"
+                  value={form.title}
+                  onChange={handleChange("title")}
+                />
+                <TextField
+                  variant="standard"
+                  multiline
+                  label="Descripción"
+                  value={form.description}
+                  onChange={handleChange("description")}
+                />
+              </Stack>
+            </Card>
+            <Tabs setOpenDrawer={setOpenDrawer} />
+          </Stack>
+        </DrawerLayout>
+      </Box>
+    </CustomThemeProvider>
   );
 };
 
