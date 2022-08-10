@@ -15,6 +15,9 @@ const Question = ({ answer, question, updateAnswer }: NumericQuestionProps) => {
       value={answer}
       onChange={handleChange}
       type="number"
+      inputProps={{
+        step: "0.01",
+      }}
     />
   );
 };

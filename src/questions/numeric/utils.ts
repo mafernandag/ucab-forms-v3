@@ -1,4 +1,4 @@
-import { countBy, flatMapDeep, mean, sum } from "lodash";
+import { countBy, flatMapDeep, mean, range, sum } from "lodash";
 import { BaseQuestion } from "../types";
 import { getBaseQuestion } from "../utils";
 import {
@@ -118,7 +118,9 @@ export const getStatistics = ({
     return getStatisticsFromValues(numbers);
   });
 
-  statistics.push(getTotalStatistics({ answers, question, labels }));
+  if (labels.length > 1) {
+    statistics.push(getTotalStatistics({ answers, question, labels }));
+  }
 
   return [
     {
@@ -172,4 +174,43 @@ export const getStatistics = ({
       ),
     },
   ];
+};
+
+interface HistogramDataProps {
+  answers: Record<string, Record<string, string[]>>[];
+  question: NumericQuestion;
+  label: string;
+}
+
+export const getHistogramData = ({
+  answers,
+  question,
+  label,
+}: HistogramDataProps) => {
+  const flattened = flatMapDeep(answers, (answer) => {
+    return answer[question.id]?.[label];
+  });
+
+  const numbers = flattened.filter(Boolean).map(Number);
+
+  const min = Math.min(...numbers);
+  const max = Math.max(...numbers);
+  const n = 1 + 3.3 * Math.log(numbers.length);
+  const step = Math.ceil((max - min) / n);
+
+  const bins = range(min, max + step, step);
+
+  const histogram: Record<string, number> = {};
+
+  bins.forEach((bin) => {
+    histogram[bin] = 0;
+
+    numbers.forEach((number) => {
+      if (number >= bin && number < bin + step) {
+        histogram[bin]++;
+      }
+    });
+  });
+
+  return { x: bins, y: Object.values(histogram) };
 };
