@@ -24,6 +24,11 @@ export const getSectionLabels = (
   if (section.dynamicLabels) {
     const questionId = section.dynamicLabelsQuestion;
     const question = questions.find((question) => question.id === questionId);
+
+    if (!question) {
+      return [DEFAULT_LABEL];
+    }
+
     const labels = (question as QuestionWithOptions).options;
     return labels;
   }
