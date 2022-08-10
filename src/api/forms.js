@@ -44,6 +44,10 @@ export const createForm = (user) => {
       randomOrder: false,
       saveUserData: false,
     },
+    fontIndex: 0,
+    headerColorIndex: 0,
+    mainColorIndex: 0,
+    backgroundColorIndex: 0,
   });
 
   const sectionId = createSection(formRef.id, {

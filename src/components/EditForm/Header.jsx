@@ -20,6 +20,7 @@ import {
   Delete as DeleteIcon,
   Menu as MenuIcon,
   MoreVert,
+  PaletteRounded as PaletteIcon,
   People as PeopleIcon,
   Send as SendIcon,
   Settings as SettingsIcon,
@@ -35,6 +36,7 @@ import SettingsDialog from "./SettingsDialog";
 import SendDialog from "./SendDialog";
 import CollaboratorsDialog from "./CollaboratorsDialog";
 import Header from "../Header";
+import CustomizationDialog from "./CustomizationDialog";
 
 const EditFormHeader = ({ setOpenDrawer }) => {
   const { form } = useForm();
@@ -47,6 +49,7 @@ const EditFormHeader = ({ setOpenDrawer }) => {
   const [openSettings, setOpenSettings] = useState(false);
   const [openSend, setOpenSend] = useState(false);
   const [openCollaborators, setOpenCollaborators] = useState(false);
+  const [openCustomize, setOpenCustomize] = useState(false);
   const [duplicating, setDuplicating] = useState(false);
 
   const popupStateMore = usePopupState({
@@ -67,6 +70,11 @@ const EditFormHeader = ({ setOpenDrawer }) => {
   const handleClickOpenCollaborators = () => {
     popupStateMore.close();
     setOpenCollaborators(true);
+  };
+
+  const handleClickOpenCustomize = () => {
+    popupStateMore.close();
+    setOpenCustomize(true);
   };
 
   const toggleDrawer = () => {
@@ -175,6 +183,12 @@ const EditFormHeader = ({ setOpenDrawer }) => {
                 </ListItemIcon>
                 Colaboradores
               </MenuItem>
+              <MenuItem onClick={handleClickOpenCustomize}>
+                <ListItemIcon>
+                  <PaletteIcon fontSize="small" />
+                </ListItemIcon>
+                Personalizar encuesta
+              </MenuItem>
               <MenuItem onClick={handleDuplicateForm}>
                 <ListItemIcon>
                   <ContentCopy fontSize="small" />
@@ -197,6 +211,7 @@ const EditFormHeader = ({ setOpenDrawer }) => {
         open={openCollaborators}
         setOpen={setOpenCollaborators}
       />
+      <CustomizationDialog open={openCustomize} setOpen={setOpenCustomize} />
       <Backdrop
         sx={{ zIndex: (theme) => theme.zIndex.drawer + 2 }}
         open={duplicating}

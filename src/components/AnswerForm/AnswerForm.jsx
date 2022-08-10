@@ -11,6 +11,7 @@ import AnswerPageText from "../AnswerPageText";
 import { getPagesData } from "./utils";
 import { isEmpty } from "../../questions/utils";
 import AnswerZone from "./AnswerZone";
+import CustomThemeProvider from "../CustomThemeProvider";
 
 const AnswerForm = () => {
   const { id: formId } = useParams();
@@ -165,14 +166,16 @@ const AnswerForm = () => {
   }
 
   return (
-    <AnswerZone
-      form={form}
-      answers={answers}
-      setAnswers={setAnswers}
-      numberMap={numberMap}
-      setNumberMap={setNumberMap}
-      response={response}
-    />
+    <CustomThemeProvider form={form}>
+      <AnswerZone
+        form={form}
+        answers={answers}
+        setAnswers={setAnswers}
+        numberMap={numberMap}
+        setNumberMap={setNumberMap}
+        response={response}
+      />
+    </CustomThemeProvider>
   );
 };
 
