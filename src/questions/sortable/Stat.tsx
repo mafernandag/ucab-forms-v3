@@ -45,8 +45,9 @@ const Stat = ({ answers, question, labels }: SortableStatProps) => {
                 {question.options.map((o, j) => (
                   <TableCell align="center" key={j}>
                     {
-                      flattenedAnswers.filter((answer) => answer[j] === option)
-                        .length
+                      flattenedAnswers.filter(
+                        (answer) => answer?.[j] === option
+                      ).length
                     }
                   </TableCell>
                 ))}

@@ -1,12 +1,12 @@
 importScripts(
   "https://www.gstatic.com/firebasejs/9.9.0/firebase-app-compat.js"
 );
-importScripts(
-  "https://www.gstatic.com/firebasejs/9.9.0/firebase-auth-compat.js"
-);
-importScripts(
-  "https://www.gstatic.com/firebasejs/9.9.0/firebase-firestore-compat.js"
-);
+// importScripts(
+//   "https://www.gstatic.com/firebasejs/9.9.0/firebase-auth-compat.js"
+// );
+// importScripts(
+//   "https://www.gstatic.com/firebasejs/9.9.0/firebase-firestore-compat.js"
+// );
 importScripts(
   "https://www.gstatic.com/firebasejs/9.9.0/firebase-messaging-compat.js"
 );
@@ -22,17 +22,17 @@ firebase.initializeApp({
 });
 
 const messaging = firebase.messaging();
-const auth = firebase.auth();
-const firestore = firebase.firestore();
+// const auth = firebase.auth();
+// const firestore = firebase.firestore();
 
 messaging.onBackgroundMessage((payload) => {
-  if (auth.currentUser?.uid !== payload.data.userId) {
-    firestore.collection("users").doc(payload.data.userId).update({
-      token: null,
-    });
+  // if (auth.currentUser?.uid !== payload.data.userId) {
+  //   firestore.collection("users").doc(payload.data.userId).update({
+  //     token: null,
+  //   });
 
-    return;
-  }
+  //   return;
+  // }
 
   const notificationTitle = payload.data.title;
   const notificationOptions = {

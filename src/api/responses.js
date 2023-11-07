@@ -24,8 +24,6 @@ export const submitResponse = async (form, user, responseData) => {
     response.comments = {};
     response.submittedAt = new Date();
 
-    convertAnswersBeforeSet(response.answers);
-
     for (const question of form.questions) {
       if (question.type === FILE) {
         for (const label in response.answers[question.id]) {
@@ -40,6 +38,8 @@ export const submitResponse = async (form, user, responseData) => {
         }
       }
     }
+
+    convertAnswersBeforeSet(response.answers);
 
     const responsesRef = collection(db, "forms", form.id, "responses");
     const responseRef = doc(responsesRef);

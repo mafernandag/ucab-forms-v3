@@ -6,7 +6,12 @@ export const useNetworkStatus = () => {
   useEffect(() => {
     const getStatus = async () => {
       try {
-        const response = await fetch("/favicon.ico");
+        const response = await fetch("/favicon.ico", {
+          headers: {
+            pragma: "no-cache",
+            "Cache-Control": "no-cache",
+          },
+        });
         return response.status >= 200 && response.status < 300;
       } catch (error) {
         return false;

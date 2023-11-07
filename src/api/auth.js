@@ -11,11 +11,11 @@ const saveNotificationToken = (userId) => {
   getToken(messaging, {
     vapidKey: process.env.REACT_APP_VAPID_KEY,
   })
-    .then(async (currentToken) => {
+    .then((currentToken) => {
       if (currentToken) {
         console.log(currentToken);
         const userDoc = doc(db, "users", userId);
-        await updateDoc(userDoc, {
+        return updateDoc(userDoc, {
           token: currentToken,
         });
       }
