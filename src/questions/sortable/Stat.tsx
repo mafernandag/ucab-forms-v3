@@ -6,12 +6,12 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { flatMapDeep } from "lodash";
+import { flatMap } from "lodash";
 import { SortableStatProps } from "./types";
 
 const Stat = ({ answers, question, labels }: SortableStatProps) => {
   const tables = labels.map((label) => {
-    const flattenedAnswers = flatMapDeep(answers, (answer) => {
+    const flattenedAnswers = flatMap(answers, (answer) => {
       return answer[question.id]?.[label];
     });
 
