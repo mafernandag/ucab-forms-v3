@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Link, Typography } from "@mui/material";
+import { Divider, Link, Typography } from "@mui/material";
 import { ExportCsv, ExportPdf } from "@material-table/exporters";
 import { flatMap, sortBy } from "lodash";
 import Table from "../../../Table";
@@ -8,6 +8,7 @@ import { stringifyAnswers } from "../../../../utils/stats";
 import { DEFAULT_LABEL, FILE } from "../../../../questions/constants";
 import { formatDateTime } from "../../../../utils/dates";
 import { getSectionLabels } from "../../../../questions/utils";
+import { stringifyRows } from "./utils";
 
 const ResponsesTable = () => {
   const { responses, sections, questions } = useForm();
@@ -59,17 +60,30 @@ const ResponsesTable = () => {
         ...(question.type === FILE && {
           render: (rowData) => (
             <>
-              {rowData[question.id].split(", ").map((url) => (
-                <Link
-                  key={url}
-                  href={url}
-                  noWrap
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  sx={{ display: "block", maxWidth: "15ch" }}
-                >
-                  {url}
-                </Link>
+              {rowData[question.id].map((answer, i) => (
+                <>
+                  {answer.split(", ").map((url) => (
+                    <Link
+                      key={url}
+                      href={url}
+                      noWrap
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      sx={{ display: "block", maxWidth: "15ch" }}
+                    >
+                      {url}
+                    </Link>
+                  ))}
+                  {i !== rowData[question.id].length - 1 && (
+                    <Divider
+                      key={`divider-${i}`}
+                      sx={{
+                        my: 1,
+                        width: "15ch",
+                      }}
+                    />
+                  )}
+                </>
               ))}
             </>
           ),
@@ -95,11 +109,13 @@ const ResponsesTable = () => {
         exportMenu: [
           {
             label: "Exportar PDF",
-            exportFunc: (cols, datas) => ExportPdf(cols, datas, "Respuestas"),
+            exportFunc: (cols, datas) =>
+              ExportPdf(cols, stringifyRows(datas), "Respuestas"),
           },
           {
             label: "Exportar CSV",
-            exportFunc: (cols, datas) => ExportCsv(cols, datas, "Respuestas"),
+            exportFunc: (cols, datas) =>
+              ExportCsv(cols, stringifyRows(datas), "Respuestas"),
           },
         ],
       }}
