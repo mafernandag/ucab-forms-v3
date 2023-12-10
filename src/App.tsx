@@ -13,6 +13,7 @@ import Dashboard from "./pages/Dashboard";
 import EditForm from "./pages/EditForm";
 import AnswerForm from "./components/AnswerForm";
 import Sent from "./pages/Sent";
+import Report from "./pages/Report";
 
 const App = () => {
   return (
@@ -63,6 +64,7 @@ const App = () => {
               <AnswerPageText>No se encontró esta página</AnswerPageText>
             }
           />
+          <Route path="/report" element={<Report />} />
         </Routes>
       </AlertProvider>
     </UserProvider>

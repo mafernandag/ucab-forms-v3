@@ -12,13 +12,13 @@ importScripts(
 );
 
 firebase.initializeApp({
-  apiKey: "AIzaSyDtlUu106nYVnNnCI50MSSthYmuLKcwJGY",
-  authDomain: "ucab-forms-dev.firebaseapp.com",
-  projectId: "ucab-forms-dev",
-  storageBucket: "ucab-forms-dev.appspot.com",
-  messagingSenderId: "1035957176372",
-  appId: "1:1035957176372:web:ef699d5a52f4e02f622261",
-  measurementId: "G-MSKK09SJ8P",
+  apiKey: "AIzaSyAiTuFRUFOrQ6tyLHtDyj5eXT96wpT19s0",
+  authDomain: "ucab-forms-v3.firebaseapp.com",
+  projectId: "ucab-forms-v3",
+  storageBucket: "ucab-forms-v3.appspot.com",
+  messagingSenderId: "191442641046",
+  appId: "1:191442641046:web:d23278aa9142c1fe0ee2b7",
+  measurementId: "G-PDQVCRS5R6",
 });
 
 const messaging = firebase.messaging();
