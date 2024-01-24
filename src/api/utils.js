@@ -3,7 +3,7 @@ export const convertAnswersAfterGet = (answers) => {
     for (const label in answers[questionId]) {
       const answer = [];
       for (const index in answers[questionId][label]) {
-        answer[index] = answers[questionId][label][index];
+        answer.push(answers[questionId][label][index]);
       }
 
       answers[questionId][label] = answer;

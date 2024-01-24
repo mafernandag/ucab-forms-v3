@@ -64,7 +64,14 @@ const App = () => {
               <AnswerPageText>No se encontró esta página</AnswerPageText>
             }
           />
-          <Route path="/report" element={<Report />} />
+          <Route
+            path="/report/edit/:id"
+            element={
+              <FormProvider>
+                <Report />
+              </FormProvider>
+            }
+          />
         </Routes>
       </AlertProvider>
     </UserProvider>

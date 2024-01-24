@@ -5,6 +5,7 @@ import {
   ContentCopy,
   Edit as EditIcon,
   Delete as DeleteIcon,
+  Addchart as ReportIcon,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import {
@@ -14,6 +15,7 @@ import {
   getUserForms,
   getCollaborationForms,
 } from "../api/forms";
+import { createReport, deleteReport } from "../api/reports";
 import { useUser } from "../hooks/useUser";
 import { useAlert } from "../hooks/useAlert";
 import Table from "./Table";
@@ -85,6 +87,11 @@ const DashboardTable = () => {
     navigate("/forms/edit/" + formId);
   };
 
+  const createNewReport = async (rowData) => {
+    const reportId = await createReport(user, rowData.id);
+    navigate("/report/edit/" + reportId);
+  };
+
   const handleDuplicate = async (event, rowData) => {
     setDuplicating(true);
     const { tableData, ...form } = rowData;
@@ -107,7 +114,7 @@ const DashboardTable = () => {
       message: "¿Estás seguro de eliminar esta encuesta?",
       action: () => {
         deleteForm(rowData.id);
-
+        deleteReport(rowData.id);
         enqueueSnackbar("Encuesta eliminada", {
           variant: "success",
         });
@@ -147,6 +154,13 @@ const DashboardTable = () => {
           icon: () => <ContentCopy sx={{ color: getIconColor }} />,
           tooltip: "Duplicar",
           onClick: handleDuplicate,
+        },
+        {
+          icon: () => <ReportIcon sx={{ color: getIconColor }} />,
+          tooltip: "Ir a Reporte",
+          onClick: (event, rowData) => {
+            createNewReport(rowData);
+          },
         },
         {
           icon: () => <DeleteIcon sx={{ color: getIconColor }} />,
