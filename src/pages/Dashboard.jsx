@@ -1,12 +1,13 @@
 import { Container, Box } from "@mui/material";
 import DashboardTable from "../components/DashboardTable";
-import Table from "../components/Table";
+import ReportsTable from "../components/FormReport/DashboardTable";
+
 const Dashboard = () => {
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
       <DashboardTable />
       <Box mt={6} />
-      <Table title="Mis Reportes" />
+      <ReportsTable />
     </Container>
   );
 };

@@ -18,7 +18,7 @@ import {
   HelpOutline as HelpIcon,
 } from "@mui/icons-material";
 import React, { useState, useContext } from "react";
-import { ReportContext } from "../../../pages/Report";
+import { ReportContext } from "../../../pages/PrepareData";
 import TooltipTitle from "./TooltipTitle";
 
 const CleanData = ({ handleButtonClick }) => {
@@ -30,22 +30,18 @@ const CleanData = ({ handleButtonClick }) => {
     deletedRows,
     setLoadingProcessedData,
     loadingData,
+    reportTitle,
   } = useContext(ReportContext);
 
-  const [missingDataOption, setMissingDataOption] = useState(false);
-  const [removeDuplicateData, setRemoveDuplicateData] = useState(false);
+  const [missingDataOption, setMissingDataOption] = useState("delete");
+  const [removeDuplicateData, setRemoveDuplicateData] = useState(true);
   const [expandMultipleChoiceAnswers, setExpandMultipleChoiceAnswers] =
-    useState(false);
+    useState(true);
   const [numericFillValue, setNumericFillValue] = useState(0);
   const [textFillValue, setTextFillValue] = useState("Vacio");
 
   const handleRadioChange = (event) => {
     setMissingDataOption(event.target.value);
-  };
-  //const [objVariable, setObjVariable] = useState(null);
-
-  const handleReset = () => {
-    setMissingDataOption(false);
   };
 
   const handleProcessingButtonClick = async () => {
@@ -64,7 +60,12 @@ const CleanData = ({ handleButtonClick }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ settings, deletedColumns, deletedRows }),
+        body: JSON.stringify({
+          reportTitle,
+          settings,
+          deletedColumns,
+          deletedRows,
+        }),
       });
       const res = await response.json();
       console.log("res from /cleaningSettings:", res);
@@ -88,7 +89,7 @@ const CleanData = ({ handleButtonClick }) => {
         >
           <Typography variant="h6">Preparación de los datos</Typography>
           <Typography variant="body1" color="text.secondary">
-            Seleccione las preguntas (columnas) a incluir en el modelo
+            Seleccione las preguntas a incluir en el modelo
           </Typography>
           {/* <Typography variant="body1">
             Se recomienda escoger preguntas con respuestas categoricas
@@ -114,6 +115,10 @@ const CleanData = ({ handleButtonClick }) => {
               />
             ))}
           </FormGroup>
+          <Typography variant="body2" color="text.secondary">
+            Para eliminar respuestas, seleccione las filas desde la tabla de
+            datos
+          </Typography>
         </Stack>
         <Divider variant="middle" />
         <Stack spacing={2} sx={{ paddingX: "12px", paddingY: "20px" }}>
@@ -223,24 +228,31 @@ const CleanData = ({ handleButtonClick }) => {
                 </Typography>
               }
             />
-            <Button sx={{ alignSelf: "flex-end" }} onClick={handleReset}>
-              Borrar selección
-            </Button>
           </RadioGroup>
         </Stack>
-        <Button
-          onClick={handleProcessingButtonClick}
-          disabled={
-            loadingData ||
-            (missingDataOption === "fill" &&
-              (numericFillValue === null ||
-                numericFillValue === undefined ||
-                numericFillValue === "" ||
-                !textFillValue.trim()))
-          }
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
         >
-          Procesar
-        </Button>
+          <Button
+            sx={{ marginY: "8px" }}
+            variant="contained"
+            onClick={handleProcessingButtonClick}
+            disabled={
+              loadingData ||
+              (missingDataOption === "fill" &&
+                (numericFillValue === null ||
+                  numericFillValue === undefined ||
+                  numericFillValue === "" ||
+                  !textFillValue.trim()))
+            }
+          >
+            Procesar Datos
+          </Button>
+        </Box>
       </Box>
     </Stack>
   );

@@ -20,7 +20,7 @@ import {
 } from "@mui/icons-material";
 import ModelSection from "./ModelSection";
 import React, { useState, useContext } from "react";
-import { ReportContext } from "../../../pages/Report";
+import { ReportContext } from "../../../pages/PrepareData";
 import TooltipTitle from "./TooltipTitle";
 
 const SelectModel = ({ setTestAccuracy }) => {
@@ -42,7 +42,7 @@ const SelectModel = ({ setTestAccuracy }) => {
       ],
     },
     {
-      category: "Agrupamiento (Clustering)",
+      category: "Agrupamiento",
       tooltip: "",
       models: [
         { id: "3", label: "K-means" },
@@ -88,17 +88,11 @@ const SelectModel = ({ setTestAccuracy }) => {
   };
 
   return (
-    <Stack spacing={4}>
+    <Stack spacing={1}>
       {selectedModel == null ? (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <Typography sx={{ marginTop: "12px" }} variant="h6">
-            Selecciona un modelo
+        <Box>
+          <Typography variant="body1" color="text.secondary">
+            Seleccione un modelo de minería de datos
           </Typography>
         </Box>
       ) : (
@@ -198,16 +192,22 @@ const SelectModel = ({ setTestAccuracy }) => {
           </Stack>
         </Box>
       )}
-      {!selectedModel &&
-        sections.map((section, k) => (
-          <ModelSection
-            key={k} // Add key prop with a unique value
-            category={section.category}
-            tooltip={section.tooltip}
-            models={section.models}
-            setSelectedModel={setSelectedModel}
-          />
-        ))}
+      <Stack
+        direction={"row"}
+        width={"100%"}
+        sx={{ textAlign: "-webkit-center" }}
+      >
+        {!selectedModel &&
+          sections.map((section, k) => (
+            <ModelSection
+              key={k} // Add key prop with a unique value
+              category={section.category}
+              tooltip={section.tooltip}
+              models={section.models}
+              setSelectedModel={setSelectedModel}
+            />
+          ))}
+      </Stack>
     </Stack>
   );
 };

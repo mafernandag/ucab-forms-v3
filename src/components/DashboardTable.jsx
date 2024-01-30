@@ -89,7 +89,7 @@ const DashboardTable = () => {
 
   const createNewReport = async (rowData) => {
     const reportId = await createReport(user, rowData.id);
-    navigate("/report/edit/" + reportId);
+    navigate("/report/create/" + reportId);
   };
 
   const handleDuplicate = async (event, rowData) => {
@@ -114,7 +114,6 @@ const DashboardTable = () => {
       message: "¿Estás seguro de eliminar esta encuesta?",
       action: () => {
         deleteForm(rowData.id);
-        deleteReport(rowData.id);
         enqueueSnackbar("Encuesta eliminada", {
           variant: "success",
         });

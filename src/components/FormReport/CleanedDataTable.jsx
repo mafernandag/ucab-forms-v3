@@ -1,7 +1,7 @@
 import { useMemo, useContext } from "react";
 import Table from "../Table";
 import { useForm } from "../../hooks/useForm";
-import { ReportContext } from "../../pages/Report";
+import { ReportContext } from "../../pages/PrepareData";
 import { Divider, Link, Typography } from "@mui/material";
 
 const CleanedDataTable = ({ data }) => {
@@ -45,7 +45,9 @@ const CleanedDataTable = ({ data }) => {
   /* console.log(columns);
   console.log("data from cleaneddt", cleanedData); */
 
-  return <Table title="Datos" columns={columns} data={cleanedData} />;
+  return (
+    <Table title="Datos Procesados" columns={columns} data={cleanedData} />
+  );
 };
 
 export default CleanedDataTable;

@@ -1,4 +1,5 @@
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
+import { useState } from "react";
 import { UserProvider } from "./hooks/useUser";
 import { AlertProvider } from "./hooks/useAlert";
 import { FormProvider } from "./hooks/useForm";
@@ -13,7 +14,7 @@ import Dashboard from "./pages/Dashboard";
 import EditForm from "./pages/EditForm";
 import AnswerForm from "./components/AnswerForm";
 import Sent from "./pages/Sent";
-import Report from "./pages/Report";
+import PrepareData from "./pages/PrepareData";
 
 const App = () => {
   return (
@@ -65,13 +66,21 @@ const App = () => {
             }
           />
           <Route
-            path="/report/edit/:id"
+            path="/report/create/:id"
             element={
               <FormProvider>
-                <Report />
+                <PrepareData />
               </FormProvider>
             }
           />
+          {/*           <Route
+            path="/report/edit/:id/:reportId"
+            element={
+              <FormProvider>
+                <PrepareData />
+              </FormProvider>
+            }
+          /> */}
         </Routes>
       </AlertProvider>
     </UserProvider>

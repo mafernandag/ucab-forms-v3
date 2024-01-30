@@ -29,23 +29,20 @@ const ModelSection = ({ category, tooltip, models, setSelectedModel }) => {
   ); */
 
   return (
-    <Box sx={{ paddingX: "12px" }}>
-      <Stack spacing={1} direction={"row"} alignItems="center">
-        <Typography variant="body1">{category}</Typography>
-        <Tooltip title={tooltip}>
-          <HelpIcon fontSize="small" />
-        </Tooltip>
-      </Stack>
-      <Stack
-        direction={"row"}
-        spacing={3}
-        sx={{ paddingTop: "12px", justifyContent: "space-evenly" }}
-      >
+    <Box sx={{ paddingTop: "12px", width: "100%" }}>
+      <Stack spacing={2} sx={{ width: "75%" }}>
+        <Stack spacing={1} direction={"row"} alignItems="center">
+          <Typography variant="body1">{category}</Typography>
+          <Tooltip title={tooltip}>
+            <HelpIcon fontSize="small" />
+          </Tooltip>
+        </Stack>
+
         {models.map((model) => (
           <Button
             key={model.id} // Add a unique "key" prop
             onClick={() => setSelectedModel(model.id)} // Pass a function reference to onClick
-            sx={{ width: "50%", height: "80px" }}
+            sx={{ height: "60px" }}
             variant="outlined"
           >
             {model.label}

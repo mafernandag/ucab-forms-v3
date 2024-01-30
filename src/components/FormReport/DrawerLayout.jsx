@@ -2,12 +2,12 @@ import { Box, Container, Drawer, Toolbar, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useForm } from "../../hooks/useForm";
 import SelectModel from "./Sidebar/SelectModel";
-import PrepareData from "./Sidebar/PrepareData";
-import { useContext, useState } from "react";
-import { ReportContext } from "../../pages/Report";
+import CleanDataDescription from "./Sidebar/CleanDataDescription";
+import { useContext, useState, useEffect } from "react";
+import { ReportContext } from "../../pages/PrepareData";
 import ModelResults from "./Sidebar/ModelResults";
 
-const drawerWidth = 400;
+const drawerWidth = 550;
 
 const DrawerLayout = ({ open, setOpen, children }) => {
   const { cleanedData, modelProcessed } = useContext(ReportContext);
@@ -17,36 +17,38 @@ const DrawerLayout = ({ open, setOpen, children }) => {
 
   return (
     <Box sx={{ display: "flex" }}>
-      <Drawer
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          "& .MuiDrawer-paper": {
+      {cleanedData == null && (
+        <Drawer
+          sx={{
             width: drawerWidth,
-            boxSizing: "border-box",
-          },
-        }}
-        variant={upMd ? "permanent" : "temporary"}
-        open={upMd ? true : open}
-        onClose={() => setOpen(false)}
-        ModalProps={{
-          keepMounted: true,
-        }}
-      >
-        <Toolbar />
-        <Box sx={{ overflow: "auto", p: 2 }}>
-          {cleanedData == null && <PrepareData />}
-          {cleanedData != null && (
+            flexShrink: 0,
+            "& .MuiDrawer-paper": {
+              width: drawerWidth,
+              boxSizing: "border-box",
+            },
+          }}
+          variant={upMd ? "permanent" : "temporary"}
+          open={upMd ? true : open}
+          onClose={() => setOpen(false)}
+          ModalProps={{
+            keepMounted: true,
+          }}
+        >
+          <Toolbar />
+          <Box sx={{ overflow: "auto", p: 2 }}>
+            {cleanedData == null && <CleanDataDescription />}
+            {/*  {cleanedData != null && (
             <SelectModel setTestAccuracy={setTestAccuracy} />
-          )}
-          {/* {modelProcessed && (
+          )} */}
+            {/* {modelProcessed && (
             <ModelResults
               testAccuracy={testAccuracy}
               setTestAccuracy={setTestAccuracy}
             />
           )} */}
-        </Box>
-      </Drawer>
+          </Box>
+        </Drawer>
+      )}
       <Container sx={{ p: 3, overflowX: "hidden" }} maxWidth="md">
         {children}
       </Container>

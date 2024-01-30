@@ -9,7 +9,7 @@ import { DEFAULT_LABEL, FILE } from "../../questions/constants";
 import { formatDateTime } from "../../utils/dates";
 import { getSectionLabels } from "../../questions/utils";
 import { stringifyRows } from "../EditForm/Responses/ResponsesTable/utils";
-import { ReportContext } from "../../pages/Report";
+import { ReportContext } from "../../pages/PrepareData";
 import { Delete as DeleteIcon } from "@mui/icons-material";
 
 const DataTable = () => {

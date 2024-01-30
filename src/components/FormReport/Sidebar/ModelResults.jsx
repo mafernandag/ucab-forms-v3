@@ -5,7 +5,7 @@ import {
 } from "@mui/icons-material";
 import ModelSection from "./ModelSection";
 import React, { useState, useContext } from "react";
-import { ReportContext } from "../../../pages/Report";
+import { ReportContext } from "../../../pages/PrepareData";
 import TooltipTitle from "./TooltipTitle";
 
 const ModelResults = ({ testAccuracy }) => {

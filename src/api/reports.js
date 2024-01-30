@@ -11,13 +11,10 @@ import {
   setDoc,
   updateDoc,
   where,
+  collectionGroup,
 } from "firebase/firestore";
 import { db } from "./firebaseConfig";
-import { defaultQuestion } from "../questions/constants";
-import { defaultSection } from "../constants/sections";
-import { getQuestionsOnce, insertQuestion } from "./questions";
-import { sendNotification } from "./notifications";
-import { createSection, getSectionsOnce } from "./sections";
+import { getQuestionsOnce } from "./questions";
 
 export const createReport = async (user, formId) => {
   const formRef = doc(db, "forms", formId);
@@ -60,26 +57,7 @@ export const createReport = async (user, formId) => {
       createdAt: new Date(),
       questions: questionInfo,
       questionOrder: Object.keys(questionInfo),
-      /*     collaborators: [],
-      settings: {
-      
-      }, */
-      /*     fontIndex: 0,
-      headerColorIndex: 0,
-      mainColorIndex: 0,
-      backgroundColorIndex: 0, */
     });
-
-    /*   const sectionId = createSection(formRef.id, {
-      ...defaultSection,
-      index: 0,
-    });
-
-    insertQuestion(formRef.id, {
-      ...defaultQuestion,
-      index: 0,
-      sectionId,
-    }); */
   }
   return reportRef.id;
 };
@@ -102,11 +80,54 @@ export const getDataframe = async (reportId) => {
   }
 };
 
-export const deleteReport = async (reportId) => {
-  const reportRef = doc(db, "reports", reportId);
+export const deleteReport = async (reportId, formId) => {
+  const reportRef = doc(db, "reports", formId, "cleanData", reportId);
   const reportDoc = await getDoc(reportRef);
+
   if (reportDoc.exists()) {
-    deleteDoc(reportRef);
-    // TODO: Delete questions, sections, responses, etc.
+    await deleteDoc(reportRef);
   }
+};
+
+export const getUserReports = async (userId) => {
+  const reportsQuery = query(
+    collection(db, "reports"),
+    where("author.id", "==", userId)
+  );
+  const reportsSnapshot = await getDocs(reportsQuery);
+
+  const reportsPromises = reportsSnapshot.docs.map(async (doc) => {
+    const reportId = doc.id;
+    const cleanDataQuery = query(
+      collection(db, "reports", reportId, "cleanData")
+    );
+    const cleanDataSnapshot = await getDocs(cleanDataQuery);
+
+    return cleanDataSnapshot.docs.map((doc) => {
+      const report = doc.data();
+      report.id = doc.id;
+      report.createdAt = report.createdAt.toDate();
+      return report;
+    });
+  });
+
+  const reports = await Promise.all(reportsPromises);
+  console.log(reports.flat());
+  return reports.flat();
+};
+
+export const getReport = (formId, reportId, callback) => {
+  const reportRef = doc(db, "reports", formId, "cleanData", reportId);
+
+  return onSnapshot(reportRef, (doc) => {
+    if (!doc.exists()) {
+      return callback(null);
+    }
+
+    const report = doc.data();
+    report.id = doc.id;
+    report.createdAt = report.createdAt.toDate();
+
+    callback(report);
+  });
 };
