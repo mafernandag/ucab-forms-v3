@@ -11,11 +11,10 @@ import { getSectionLabels } from "../../questions/utils";
 import { stringifyRows } from "../EditForm/Responses/ResponsesTable/utils";
 import { ReportContext } from "../../pages/PrepareData";
 import { Delete as DeleteIcon } from "@mui/icons-material";
-
+import { useReport } from "../../hooks/useReport";
 const DataTable = () => {
   const { responses, questions } = useForm();
-  const { deletedColumns, labeledQuestions, setDeletedRows } =
-    useContext(ReportContext);
+  const { deletedColumns, labeledQuestions, setDeletedRows } = useReport();
 
   const columns = useMemo(() => {
     return [
@@ -103,6 +102,7 @@ const DataTable = () => {
       data={data}
       options={{
         selection: true,
+        padding: "dense",
       }}
       actions={[
         {

@@ -6,14 +6,15 @@ import CleanDataDescription from "./Sidebar/CleanDataDescription";
 import { useContext, useState, useEffect } from "react";
 import { ReportContext } from "../../pages/PrepareData";
 import ModelResults from "./Sidebar/ModelResults";
+import { useReport } from "../../hooks/useReport";
 
 const drawerWidth = 550;
 
 const DrawerLayout = ({ open, setOpen, children }) => {
-  const { cleanedData, modelProcessed } = useContext(ReportContext);
+  const { cleanedData, modelProcessed } = useReport();
   const theme = useTheme();
   const upMd = useMediaQuery(theme.breakpoints.up("md"));
-  const [testAccuracy, setTestAccuracy] = useState(null);
+  //const [testAccuracy, setTestAccuracy] = useState(null);
 
   return (
     <Box sx={{ display: "flex" }}>

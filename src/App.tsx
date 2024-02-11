@@ -15,6 +15,8 @@ import EditForm from "./pages/EditForm";
 import AnswerForm from "./components/AnswerForm";
 import Sent from "./pages/Sent";
 import PrepareData from "./pages/PrepareData";
+import { ReportProvider } from "./hooks/useReport";
+import Report from "./pages/Report";
 
 const App = () => {
   return (
@@ -69,18 +71,22 @@ const App = () => {
             path="/report/create/:id"
             element={
               <FormProvider>
-                <PrepareData />
+                <ReportProvider>
+                  <PrepareData />
+                </ReportProvider>
               </FormProvider>
             }
           />
-          {/*           <Route
+          <Route
             path="/report/edit/:id/:reportId"
             element={
               <FormProvider>
-                <PrepareData />
+                <ReportProvider>
+                  <Report />
+                </ReportProvider>
               </FormProvider>
             }
-          /> */}
+          />
         </Routes>
       </AlertProvider>
     </UserProvider>

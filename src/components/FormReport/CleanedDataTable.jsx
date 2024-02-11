@@ -3,9 +3,9 @@ import Table from "../Table";
 import { useForm } from "../../hooks/useForm";
 import { ReportContext } from "../../pages/PrepareData";
 import { Divider, Link, Typography } from "@mui/material";
-
+import { useReport } from "../../hooks/useReport";
 const CleanedDataTable = ({ data }) => {
-  const { labeledQuestions } = useContext(ReportContext);
+  const { labeledQuestions } = useReport();
 
   const columns = useMemo(() => {
     return data.length > 0

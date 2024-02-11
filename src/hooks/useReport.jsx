@@ -16,14 +16,14 @@ const ReportProvider = ({ children }) => {
   const { form, questions, sections } = useForm();
   const { id: formId, reportId } = useParams();
   const [report, setReport] = useState(null);
+  const [deletedRows, setDeletedRows] = useState([]);
   const [deletedColumns, setDeletedColumns] = useState({});
   const [cleanedData, setCleanedData] = useState(null);
-  const [deletedRows, setDeletedRows] = useState([]);
+  const [reportTitle, setReportTitle] = useState(null);
   const [loadingProcessedData, setLoadingProcessedData] = useState(false);
   const [loadingData, setLoadingData] = useState(true);
-  const [loadingReport, setLoadingReport] = useState(true);
+  const [loadingReport, setLoadingReport] = useState(false);
   const [modelProcessed, setModelProcessed] = useState(false);
-  const [reportTitle, setReportTitle] = useState(null);
 
   useEffect(() => {
     if (form) {
@@ -53,13 +53,16 @@ const ReportProvider = ({ children }) => {
   }, [formId]);
 
   useEffect(() => {
-    const unsubscribeReport = getReport(reportId, formId, (report) => {
-      setReport(report);
-      setLoadingReport(false);
-    });
-    return () => {
-      unsubscribeReport();
-    };
+    if (formId && reportId) {
+      setLoadingReport(true);
+      const unsubscribeReport = getReport(reportId, formId, (report) => {
+        setReport(report);
+        setLoadingReport(false);
+      });
+      return () => {
+        unsubscribeReport();
+      };
+    }
   }, [formId, reportId]);
 
   const labeledQuestions = useMemo(() => {
@@ -110,6 +113,7 @@ const ReportProvider = ({ children }) => {
   }, [loadingData, loadingProcessedData, loadingReport]);
 
   const value = {
+    report,
     loading,
     deletedColumns,
     setDeletedColumns,
@@ -119,11 +123,10 @@ const ReportProvider = ({ children }) => {
     deletedRows,
     setDeletedRows,
     setLoadingProcessedData,
-    //loadingData,
-    //setLoadingData,
     setModelProcessed,
     modelProcessed,
     reportTitle,
+    setReportTitle,
   };
 
   return (

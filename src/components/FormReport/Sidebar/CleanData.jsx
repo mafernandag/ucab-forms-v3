@@ -20,8 +20,11 @@ import {
 import React, { useState, useContext } from "react";
 import { ReportContext } from "../../../pages/PrepareData";
 import TooltipTitle from "./TooltipTitle";
+import { useReport } from "../../../hooks/useReport";
+import { useNavigate } from "react-router-dom";
 
 const CleanData = ({ handleButtonClick }) => {
+  const navigate = useNavigate();
   const {
     deletedColumns,
     setDeletedColumns,
@@ -29,9 +32,9 @@ const CleanData = ({ handleButtonClick }) => {
     setCleanedData,
     deletedRows,
     setLoadingProcessedData,
-    loadingData,
+    loading,
     reportTitle,
-  } = useContext(ReportContext);
+  } = useReport();
 
   const [missingDataOption, setMissingDataOption] = useState("delete");
   const [removeDuplicateData, setRemoveDuplicateData] = useState(true);
@@ -71,6 +74,8 @@ const CleanData = ({ handleButtonClick }) => {
       console.log("res from /cleaningSettings:", res);
       setCleanedData(JSON.parse(res["cleanDf"]));
       setLoadingProcessedData(false);
+      console.log("redirecting to:", res["redirectUrl"]);
+      navigate(res["redirectUrl"]);
     } catch (error) {
       console.log("error in /cleaningSettings:", error);
     }
@@ -242,7 +247,7 @@ const CleanData = ({ handleButtonClick }) => {
             variant="contained"
             onClick={handleProcessingButtonClick}
             disabled={
-              loadingData ||
+              loading ||
               (missingDataOption === "fill" &&
                 (numericFillValue === null ||
                   numericFillValue === undefined ||

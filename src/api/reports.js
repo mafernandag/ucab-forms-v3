@@ -82,38 +82,39 @@ export const getDataframe = async (reportId) => {
 
 export const deleteReport = async (reportId, formId) => {
   const reportRef = doc(db, "reports", formId, "cleanData", reportId);
-  const reportDoc = await getDoc(reportRef);
+  deleteDoc(reportRef);
+  /* const reportDoc = await getDoc(reportRef);
 
   if (reportDoc.exists()) {
     await deleteDoc(reportRef);
-  }
+  } */
 };
 
-export const getUserReports = async (userId) => {
+export const getUserReports = (userId, callback) => {
   const reportsQuery = query(
     collection(db, "reports"),
     where("author.id", "==", userId)
   );
-  const reportsSnapshot = await getDocs(reportsQuery);
 
-  const reportsPromises = reportsSnapshot.docs.map(async (doc) => {
-    const reportId = doc.id;
-    const cleanDataQuery = query(
-      collection(db, "reports", reportId, "cleanData")
-    );
-    const cleanDataSnapshot = await getDocs(cleanDataQuery);
+  return onSnapshot(reportsQuery, async (snapshot) => {
+    const reportsPromises = snapshot.docs.map(async (doc) => {
+      const reportId = doc.id;
+      const cleanDataQuery = query(
+        collection(db, "reports", reportId, "cleanData")
+      );
+      const cleanDataSnapshot = await getDocs(cleanDataQuery);
 
-    return cleanDataSnapshot.docs.map((doc) => {
-      const report = doc.data();
-      report.id = doc.id;
-      report.createdAt = report.createdAt.toDate();
-      return report;
+      return cleanDataSnapshot.docs.map((doc) => {
+        const report = doc.data();
+        report.id = doc.id;
+        report.createdAt = report.createdAt.toDate();
+        return report;
+      });
     });
-  });
 
-  const reports = await Promise.all(reportsPromises);
-  console.log(reports.flat());
-  return reports.flat();
+    const reports = await Promise.all(reportsPromises);
+    callback(reports.flat());
+  });
 };
 
 export const getReport = (formId, reportId, callback) => {
@@ -126,8 +127,49 @@ export const getReport = (formId, reportId, callback) => {
 
     const report = doc.data();
     report.id = doc.id;
+    console.log(doc.id, reportId);
     report.createdAt = report.createdAt.toDate();
 
     callback(report);
   });
+};
+
+export const getCleanDf = async (formId, reportId) => {
+  const reportRef = doc(db, "reports", formId, "cleanData", reportId);
+  const reportDoc = await getDoc(reportRef);
+
+  if (!reportDoc.exists()) {
+    return null;
+  }
+
+  const newDfRef = collection(reportRef, "newDf");
+
+  // Fetch documents from the 'newDf' collection
+  const newDfSnapshot = await getDocs(newDfRef);
+
+  const orderRef = doc(db, "reports", formId);
+  const orderDoc = await getDoc(orderRef);
+  const order = orderDoc.data().questionOrder;
+  //console.log(order);
+
+  // Map the documents to an array of dictionaries
+  const newDf = newDfSnapshot.docs.map((doc) => {
+    const data = doc.data();
+    const orderedData = {};
+    order.forEach((orderKey) => {
+      // Find all keys in data that contain the orderKey
+      const dataKeys = Object.keys(data).filter((key) =>
+        key.includes(orderKey)
+      );
+      dataKeys.forEach((dataKey) => {
+        orderedData[dataKey] = data[dataKey];
+      });
+    });
+    orderedData.id = doc.id;
+    return orderedData;
+  });
+
+  //console.log(newDf);
+
+  return newDf;
 };

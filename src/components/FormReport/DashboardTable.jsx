@@ -44,13 +44,14 @@ const DashboardTable = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
-    const fetchUserReports = async () => {
-      const reports = await getUserReports(user.id);
+    const unsubscribeUserReports = getUserReports(user.id, (reports) => {
       setUserReports(reports);
       setLoadingUserReports(false);
-    };
+    });
 
-    fetchUserReports();
+    return () => {
+      unsubscribeUserReports();
+    };
   }, [user]);
 
   const reports = useMemo(() => {
@@ -61,11 +62,12 @@ const DashboardTable = () => {
 
   const handleDelete = (event, rowData) => {
     openAlert({
-      title: "Eliminar encuesta",
-      message: "¿Estás seguro de eliminar esta encuesta?",
+      title: "Eliminar reporte",
+      message: "¿Estás seguro de eliminar este reporte?",
       action: () => {
+        console.log(rowData.id, rowData["formId"]);
         deleteReport(rowData.id, rowData["formId"]);
-        enqueueSnackbar("Encuesta eliminada", {
+        enqueueSnackbar("Reporte eliminado", {
           variant: "success",
         });
       },

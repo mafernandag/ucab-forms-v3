@@ -7,9 +7,10 @@ import ModelSection from "./ModelSection";
 import React, { useState, useContext } from "react";
 import { ReportContext } from "../../../pages/PrepareData";
 import TooltipTitle from "./TooltipTitle";
+import { useReport } from "../../../hooks/useReport";
 
 const ModelResults = ({ testAccuracy }) => {
-  const { labeledQuestions, deletedColumns } = useContext(ReportContext);
+  const { labeledQuestions, deletedColumns } = useReport();
 
   const handleButtonClick = () => {};
 

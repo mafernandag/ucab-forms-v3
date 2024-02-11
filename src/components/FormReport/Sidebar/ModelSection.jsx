@@ -4,7 +4,13 @@ import { useEffect, useState, useCallback, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ModelContext } from "./SelectModel";
 
-const ModelSection = ({ category, tooltip, models, setSelectedModel }) => {
+const ModelSection = ({
+  category,
+  tooltip,
+  models,
+  setSelectedModel,
+  setModelCategory,
+}) => {
   const navigate = useNavigate();
   const { id: formId } = useParams();
 
@@ -28,6 +34,11 @@ const ModelSection = ({ category, tooltip, models, setSelectedModel }) => {
     [setSelectedModel]
   ); */
 
+  const handleButtonClick = (id) => {
+    setSelectedModel(id);
+    setModelCategory(category);
+  };
+
   return (
     <Box sx={{ paddingTop: "12px", width: "100%" }}>
       <Stack spacing={2} sx={{ width: "75%" }}>
@@ -41,8 +52,8 @@ const ModelSection = ({ category, tooltip, models, setSelectedModel }) => {
         {models.map((model) => (
           <Button
             key={model.id} // Add a unique "key" prop
-            onClick={() => setSelectedModel(model.id)} // Pass a function reference to onClick
-            sx={{ height: "60px" }}
+            onClick={() => handleButtonClick(model.id)} // Pass a function reference to onClick
+            sx={{ height: "50px" }}
             variant="outlined"
           >
             {model.label}

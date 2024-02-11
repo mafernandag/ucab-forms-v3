@@ -13,40 +13,40 @@ import {
   TextField,
   InputAdornment,
   Divider,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from "@mui/material";
 import {
   HelpOutline as HelpIcon,
   ArrowBack as ArrowIcon,
+  ExpandMore,
 } from "@mui/icons-material";
 import ModelSection from "./ModelSection";
 import React, { useState, useContext } from "react";
 import { ReportContext } from "../../../pages/PrepareData";
 import TooltipTitle from "./TooltipTitle";
+import { useReport } from "../../../hooks/useReport";
+import { useParams } from "react-router-dom";
 
-const SelectModel = ({ setTestAccuracy }) => {
+const SelectModel = () => {
+  const { reportId } = useParams();
   const [selectedModel, setSelectedModel] = useState(null);
+  const [modelCategory, setModelCategory] = useState(null);
   const [targetVariable, setTargetVariable] = useState(null);
   const [testSize, setTestSize] = useState(20);
-  const [validationSize, setValidationSize] = useState(10);
-  const { labeledQuestions, deletedColumns, setModelProcessed } =
-    useContext(ReportContext);
+  const { labeledQuestions, deletedColumns, setModelProcessed } = useReport();
 
   const sections = [
     {
-      category: "Clasificacion",
+      category: "Clasificación",
       tooltip:
         "Se utilizan para predecir la pertenencia de una observación a una categoría o clase específica.",
       models: [
         { id: "1", label: "Árboles de decisión" },
-        { id: "2", label: "Redes neuronales artificiales" },
-      ],
-    },
-    {
-      category: "Agrupamiento",
-      tooltip: "",
-      models: [
-        { id: "3", label: "K-means" },
-        { id: "4", label: "DBSCAN" },
+        { id: "2", label: "Bosque Aleatorio" },
+        { id: "3", label: "Potenciación del Gradiente" },
+        { id: "4", label: "K Vecinos Más Próximos" },
       ],
     },
     {
@@ -55,12 +55,21 @@ const SelectModel = ({ setTestAccuracy }) => {
       models: [
         { id: "5", label: "Regresión Lineal" },
         { id: "6", label: "Árboles de decisión" },
+        { id: "7", label: "K Vecinos Más Próximos" },
       ],
     },
+    /* {
+      category: "Agrupamiento",
+      tooltip: "",
+      models: [
+        { id: "3", label: "K-means" },
+        { id: "4", label: "DBSCAN" },
+      ],
+    }, */
   ];
 
   const handleButtonClick = async () => {
-    console.log(testSize, validationSize, targetVariable, selectedModel);
+    console.log(testSize, targetVariable, selectedModel);
     try {
       const response = await fetch("/modelSettings", {
         method: "POST",
@@ -68,8 +77,8 @@ const SelectModel = ({ setTestAccuracy }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          reportId,
           targetVariable,
-          validationSize,
           selectedModel,
           testSize,
         }),
@@ -87,6 +96,21 @@ const SelectModel = ({ setTestAccuracy }) => {
     setSelectedModel(null);
   };
 
+  let selectedModelLabel = "";
+
+  for (const section of sections) {
+    for (const model of section.models) {
+      if (model.id === selectedModel) {
+        selectedModelLabel = model.label;
+        break;
+      }
+    }
+
+    if (selectedModelLabel) {
+      break;
+    }
+  }
+
   return (
     <Stack spacing={1}>
       {selectedModel == null ? (
@@ -97,16 +121,34 @@ const SelectModel = ({ setTestAccuracy }) => {
         </Box>
       ) : (
         <Box>
-          <ArrowIcon
-            sx={{ marginTop: "8px", marginBottom: "8px" }}
-            onClick={handleBackArrow}
-          />
-          <Stack spacing={2} sx={{ paddingX: "12px", paddingY: "20px" }}>
+          <Stack direction="row" spacing={2} alignItems="center">
+            <ArrowIcon
+              sx={{ marginTop: "8px", marginBottom: "8px" }}
+              onClick={handleBackArrow}
+            />
+            <Typography variant="h6">Modelo: {selectedModelLabel}</Typography>
+          </Stack>
+
+          <Stack
+            spacing={2}
+            sx={{ paddingX: "12px", paddingBottom: "20px", paddingTop: "16px" }}
+          >
             <TooltipTitle
               title="Seleccione la variable a predecir (variable objetivo)"
               tooltip="Esta opción le permite seleccionar la variable que desea predecir con su modelo. Esta variable se conoce como la 'variable objetivo' o 'variable dependiente'. Debe ser una de las columnas en su conjunto de datos. Por ejemplo, si está construyendo un modelo para predecir precios de vivienda, su variable objetivo podría ser la columna 'Precio'. El modelo se entrenará para usar las otras columnas (variables independientes) para predecir esta variable objetivo."
               size="body1"
             />
+            {modelCategory === "Clasificación" ? (
+              <Typography variant="body2" color="text.secondary">
+                Asegúrese de que la variable objetivo seleccionada es categórica
+                para modelos de clasificación.
+              </Typography>
+            ) : (
+              <Typography variant="body2" color="text.secondary">
+                Asegúrese de que la variable objetivo seleccionada es numérica
+                para modelos de regresión.
+              </Typography>
+            )}
             <RadioGroup
               value={targetVariable}
               onChange={(event) => setTargetVariable(event.target.value)}
@@ -124,66 +166,62 @@ const SelectModel = ({ setTestAccuracy }) => {
                   />
                 ))}
             </RadioGroup>
-            <Divider variant="middle" />
-            <Typography
-              variant="body1"
-              color="text.secondary"
-              sx={{ paddingBottom: "10px" }}
-            >
-              Configuración avanzada
-            </Typography>
-            <TooltipTitle
-              title="Proporción del dataset para el conjunto de prueba"
-              tooltip="Proporción del dataset que se utilizará para el conjunto de prueba al dividir los datos en conjuntos de entrenamiento, validación y prueba. Debe ser un número entre 0 y 100. Por ejemplo, si introduce 20, el 20% de los datos se utilizarán para el conjunto de validación, el 20% para el conjunto de prueba y el 60% restante para el conjunto de entrenamiento. Esta división ayuda a evaluar el rendimiento del modelo en datos no vistos durante el entrenamiento y ajustar los hiperparámetros del modelo."
-              size="body1"
-            />
-            <TextField
-              type="number"
-              defaultValue={20}
-              variant="outlined"
-              onChange={(e) => setTestSize(e.target.value)}
-              error={testSize <= 0 || testSize > 100 || testSize === ""}
-              helperText={
-                testSize <= 0 || testSize > 100 || testSize === ""
-                  ? "Debe ser un número entre 0 y 100"
-                  : "Se recomienda un valor entre 20 y 30"
-              }
-              InputProps={{
-                endAdornment: <InputAdornment position="end">%</InputAdornment>,
-              }}
-            />
-            <TooltipTitle
-              title="Proporción del dataset para el conjunto de validación"
-              tooltip="Proporción del dataset que se utilizará para el conjunto de validación al dividir los datos en conjuntos de entrenamiento, validación y prueba. Debe ser un número entre 0 y 100. Por ejemplo, si introduce 20, el 20% de los datos se utilizarán para el conjunto de validación, el 20% para el conjunto de prueba y el 60% restante para el conjunto de entrenamiento. Esta división ayuda a evaluar el rendimiento del modelo en datos no vistos durante el entrenamiento y ajustar los hiperparámetros del modelo."
-              size="body1"
-            />
-            <TextField
-              type="number"
-              defaultValue={10}
-              variant="outlined"
-              onChange={(e) => setValidationSize(e.target.value)}
-              error={
-                validationSize <= 0 ||
-                validationSize > 100 ||
-                validationSize === ""
-              }
-              helperText={
-                validationSize <= 0 ||
-                validationSize > 100 ||
-                validationSize === ""
-                  ? "Debe ser un número entre 0 y 100"
-                  : "Se recomienda un valor entre 10 y 20"
-              }
-              InputProps={{
-                endAdornment: <InputAdornment position="end">%</InputAdornment>,
-              }}
-            />
+            <div sx={{ width: "100%" }}>
+              <Accordion
+                sx={{
+                  boxShadow: "none",
+                  border: "none",
+                  width: "100%",
+                }}
+              >
+                <AccordionSummary
+                  expandIcon={<ExpandMore />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  <Typography
+                    variant="body1"
+                    color="text.secondary"
+                    sx={{ paddingY: "5px" }}
+                  >
+                    Configuración avanzada
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Stack spacing={2}>
+                    <TooltipTitle
+                      title="Proporción del dataset para el conjunto de prueba"
+                      tooltip="Proporción del dataset que se utilizará para el conjunto de prueba al dividir los datos en conjuntos de entrenamiento y prueba. Debe ser un número entre 0 y 100. Por ejemplo, si introduce 20, el 20% de los datos se utilizarán para el conjunto de prueba y el 80% restante para el conjunto de entrenamiento. Esta división ayuda a evaluar el rendimiento del modelo en datos no vistos durante el entrenamiento"
+                      size="body1"
+                    />
+                    <TextField
+                      type="number"
+                      defaultValue={20}
+                      variant="outlined"
+                      onChange={(e) => setTestSize(e.target.value)}
+                      error={testSize <= 0 || testSize > 100 || testSize === ""}
+                      helperText={
+                        testSize <= 0 || testSize > 100 || testSize === ""
+                          ? "Debe ser un número entre 0 y 100"
+                          : "Se recomienda un valor entre 20 y 30"
+                      }
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">%</InputAdornment>
+                        ),
+                      }}
+                      sx={{ marginBottom: "10px" }}
+                    />
+                  </Stack>
+                </AccordionDetails>
+              </Accordion>
+            </div>
             <Button
               onClick={handleButtonClick}
               disabled={
-                validationSize <= 0 ||
-                validationSize > 100 ||
-                validationSize === "" ||
+                testSize <= 0 ||
+                testSize > 100 ||
+                testSize === "" ||
                 targetVariable === null
               }
             >
@@ -205,6 +243,7 @@ const SelectModel = ({ setTestAccuracy }) => {
               tooltip={section.tooltip}
               models={section.models}
               setSelectedModel={setSelectedModel}
+              setModelCategory={setModelCategory}
             />
           ))}
       </Stack>
