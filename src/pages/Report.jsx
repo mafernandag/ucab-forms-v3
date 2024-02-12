@@ -42,6 +42,7 @@ const Report = () => {
   } = useReport();
   const [loadingCleanDf, setLoadingCleanDf] = useState(true);
   const [openDrawer, setOpenDrawer] = useState(false);
+  const [closeCrossValidation, setCloseCrossValidation] = useState(false);
 
   useEffect(() => {
     const fetchCleanDf = async () => {
@@ -98,10 +99,13 @@ const Report = () => {
           <Card sx={{ padding: "20px" }}>
             <SelectModel />
           </Card>
-
-          <Card sx={{ padding: "20px" }}>
-            <CrossValidation />
-          </Card>
+          {!closeCrossValidation && (
+            <Card sx={{ padding: "20px" }}>
+              <CrossValidation
+                setCloseCrossValidation={setCloseCrossValidation}
+              />
+            </Card>
+          )}
 
           <CleanedDataTable data={cleanedData} />
         </Stack>

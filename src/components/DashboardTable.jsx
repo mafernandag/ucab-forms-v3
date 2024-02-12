@@ -88,8 +88,8 @@ const DashboardTable = () => {
   };
 
   const createNewReport = async (rowData) => {
-    const reportId = await createReport(user, rowData.id);
-    navigate("/report/create/" + reportId);
+    const formId = await createReport(user, rowData.id);
+    navigate("/report/create/" + formId);
   };
 
   const handleDuplicate = async (event, rowData) => {

@@ -42,6 +42,16 @@ const CleanData = ({ handleButtonClick }) => {
     useState(true);
   const [numericFillValue, setNumericFillValue] = useState(0);
   const [textFillValue, setTextFillValue] = useState("Vacio");
+  const [selectAll, setSelectAll] = useState(true);
+
+  const handleSelectAllChange = (event) => {
+    setSelectAll(event.target.checked);
+    const newDeletedColumns = {};
+    labeledQuestions.forEach((question) => {
+      newDeletedColumns[question.id] = event.target.checked;
+    });
+    setDeletedColumns(newDeletedColumns);
+  };
 
   const handleRadioChange = (event) => {
     setMissingDataOption(event.target.value);
@@ -100,8 +110,18 @@ const CleanData = ({ handleButtonClick }) => {
             Se recomienda escoger preguntas con respuestas categoricas
           </Typography> */}
           <FormGroup>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={selectAll}
+                  onChange={handleSelectAllChange}
+                />
+              }
+              label="Seleccionar Todo"
+            />
             {labeledQuestions.map((question, i) => (
               <FormControlLabel
+                sx={{ paddingY: "6px" }}
                 key={i}
                 control={
                   <Checkbox

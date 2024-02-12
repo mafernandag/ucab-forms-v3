@@ -3,12 +3,14 @@ import {
   Stack,
   Typography,
   Button,
+  IconButton,
   Tooltip,
   RadioGroup,
   Radio,
   FormControlLabel,
   CircularProgress,
 } from "@mui/material";
+import { Close as CloseIcon } from "@mui/icons-material";
 import React, { useState, useContext, useEffect } from "react";
 import TooltipTitle from "./Sidebar/TooltipTitle";
 import { ReportContext } from "../../pages/PrepareData";
@@ -16,7 +18,7 @@ import MaterialTable from "@material-table/core";
 import { useReport } from "../../hooks/useReport";
 import { useParams } from "react-router-dom";
 
-const CrossValidation = () => {
+const CrossValidation = ({ setCloseCrossValidation }) => {
   const { labeledQuestions, deletedColumns } = useReport();
   const { reportId } = useParams();
   const [targetVariable, setTargetVariable] = useState(null);
@@ -98,6 +100,10 @@ const CrossValidation = () => {
     setSelectTarget(true);
   };
 
+  const handleClose = () => {
+    setCloseCrossValidation(true);
+  };
+
   return (
     <Box>
       {!selectTarget ? (
@@ -113,9 +119,14 @@ const CrossValidation = () => {
         </Stack>
       ) : (
         <Stack spacing={2}>
-          <Typography variant="h6">
-            Determinar el mejor modelo de mineria de datos para su encuesta
-          </Typography>
+          <Stack direction="row" justifyContent="space-between">
+            <Typography variant="h6">
+              Determinar el mejor modelo de mineria de datos para su encuesta
+            </Typography>
+            <IconButton onClick={handleClose}>
+              <CloseIcon />
+            </IconButton>
+          </Stack>
           <TooltipTitle
             title="Seleccione la variable a predecir (variable objetivo)"
             tooltip="Esta opción le permite seleccionar la variable que desea predecir con su modelo. Esta variable se conoce como la 'variable objetivo' o 'variable dependiente'. Debe ser una de las columnas en su conjunto de datos. Por ejemplo, si está construyendo un modelo para predecir precios de vivienda, su variable objetivo podría ser la columna 'Precio'. El modelo se entrenará para usar las otras columnas (variables independientes) para predecir esta variable objetivo."
