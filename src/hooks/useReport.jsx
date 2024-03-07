@@ -102,12 +102,6 @@ const ReportProvider = ({ children }) => {
     setDeletedColumns(initialCheckedState);
   }, [labeledQuestions]);
 
-  useEffect(() => {
-    if (form) {
-      setReportTitle(form.title);
-    }
-  }, [form]);
-
   const loading = useMemo(() => {
     return loadingData || loadingProcessedData || loadingReport;
   }, [loadingData, loadingProcessedData, loadingReport]);

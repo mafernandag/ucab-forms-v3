@@ -41,7 +41,7 @@ const CleanData = ({ handleButtonClick }) => {
   const [expandMultipleChoiceAnswers, setExpandMultipleChoiceAnswers] =
     useState(true);
   const [numericFillValue, setNumericFillValue] = useState(0);
-  const [textFillValue, setTextFillValue] = useState("Vacio");
+  const [textFillValue, setTextFillValue] = useState("No aplica");
   const [selectAll, setSelectAll] = useState(true);
 
   const handleSelectAllChange = (event) => {
@@ -194,6 +194,15 @@ const CleanData = ({ handleButtonClick }) => {
             />
             <FormControlLabel
               control={<Radio />}
+              value="mean"
+              label={
+                <Typography variant="body1">
+                  Rellenar con el promedio de la columna
+                </Typography>
+              }
+            />
+            <FormControlLabel
+              control={<Radio />}
               value="fill"
               label={
                 <Typography variant="body1">
@@ -221,7 +230,7 @@ const CleanData = ({ handleButtonClick }) => {
                 <TextField
                   label="Valor para columnas de texto"
                   type="text"
-                  defaultValue="Vacio"
+                  defaultValue="No aplica"
                   variant="standard"
                   onChange={(e) => setTextFillValue(e.target.value)}
                   error={

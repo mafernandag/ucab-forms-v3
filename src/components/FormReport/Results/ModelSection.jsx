@@ -11,29 +11,6 @@ const ModelSection = ({
   setSelectedModel,
   setModelCategory,
 }) => {
-  const navigate = useNavigate();
-  const { id: formId } = useParams();
-
-  /* const handleModel = useCallback(
-    async ({ id }) => {
-      setSelectedModel(id);
-      try {
-        const response = await fetch("/model", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ modelId: id }),
-        });
-        const data = await response.json();
-        console.log(data);
-      } catch (error) {
-        console.log("error:", error);
-      }
-    },
-    [setSelectedModel]
-  ); */
-
   const handleButtonClick = (id) => {
     setSelectedModel(id);
     setModelCategory(category);

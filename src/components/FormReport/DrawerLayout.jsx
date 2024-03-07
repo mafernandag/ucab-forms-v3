@@ -1,14 +1,14 @@
 import { Box, Container, Drawer, Toolbar, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useForm } from "../../hooks/useForm";
-import SelectModel from "./Sidebar/SelectModel";
+import SelectModel from "./Results/SelectModel";
 import CleanDataDescription from "./Sidebar/CleanDataDescription";
 import { useContext, useState, useEffect } from "react";
 import { ReportContext } from "../../pages/PrepareData";
-import ModelResults from "./Sidebar/ModelResults";
+import ModelResults from "./Results/ModelResults";
 import { useReport } from "../../hooks/useReport";
 
-const drawerWidth = 550;
+const drawerWidth = 490;
 
 const DrawerLayout = ({ open, setOpen, children }) => {
   const { cleanedData, modelProcessed } = useReport();
@@ -50,7 +50,10 @@ const DrawerLayout = ({ open, setOpen, children }) => {
           </Box>
         </Drawer>
       )}
-      <Container sx={{ p: 3, overflowX: "hidden" }} maxWidth="md">
+      <Container
+        sx={{ py: 3, width: "100%", overflowX: "hidden" }}
+        maxWidth="xl"
+      >
         {children}
       </Container>
     </Box>

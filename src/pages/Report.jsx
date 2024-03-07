@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Table,
@@ -13,21 +13,13 @@ import { useForm } from "../hooks/useForm";
 import { useReport } from "../hooks/useReport";
 import Header from "../components/FormReport/Header";
 import { useParams } from "react-router-dom";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../api/firebaseConfig";
-import { getDataframe } from "../api/reports";
-import { get, flatMap, sortBy } from "lodash";
-import DrawerLayout from "../components/FormReport/DrawerLayout";
-import ResponsesTable from "../components/EditForm/Responses/ResponsesTable";
 import CustomThemeProvider from "../components/CustomThemeProvider";
-import DataTable from "../components/FormReport/DataTable";
-import { getSectionLabels } from "../questions/utils";
-import { DEFAULT_LABEL } from "../questions/constants";
-import CleanedDataTable from "../components/FormReport/CleanedDataTable";
-import ModelResults from "../components/FormReport/Sidebar/ModelResults";
-import SelectModel from "../components/FormReport/Sidebar/SelectModel";
+import CleanedDataTable from "../components/FormReport/Tables/CleanedDataTable";
+import SelectModel from "../components/FormReport/Results/SelectModel";
 import CrossValidation from "../components/FormReport/CrossValidation";
-import { getCleanDf } from "../api/reports";
+import { getCleanDf, changeTitle } from "../api/reports";
+import AnswerPageText from "../components/AnswerPageText";
+import { debounce } from "lodash";
 
 const Report = () => {
   const { form, loading: loadingForm } = useForm();
@@ -37,17 +29,25 @@ const Report = () => {
     setCleanedData,
     loading: loadingReport,
     reportTitle,
+    setReportTitle,
     setDeletedColumns,
     deletedColumns,
   } = useReport();
   const [loadingCleanDf, setLoadingCleanDf] = useState(true);
   const [openDrawer, setOpenDrawer] = useState(false);
   const [closeCrossValidation, setCloseCrossValidation] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [isTitleEmpty, setIsTitleEmpty] = useState(false);
 
   useEffect(() => {
     const fetchCleanDf = async () => {
       if (cleanedData === null) {
         const data = await getCleanDf(formId, reportId);
+        if (data === null) {
+          setErrorMessage("No se encontró el reporte");
+          setLoadingCleanDf(false);
+          return;
+        }
         setCleanedData(data);
 
         const dataColumns = Object.keys(data[0]).filter((key) => key !== "id");
@@ -83,22 +83,46 @@ const Report = () => {
     );
   }
 
+  if (errorMessage) {
+    return <AnswerPageText>{errorMessage}</AnswerPageText>;
+  }
+
+  const handleTitleChange = (title) => {
+    if (title === "") {
+      setIsTitleEmpty(true);
+    } else {
+      setIsTitleEmpty(false);
+      changeReportTitle(title);
+    }
+  };
+
+  const changeReportTitle = debounce((title) => {
+    setReportTitle(title);
+    changeTitle(formId, reportId, title);
+  }, 3000);
+
   return (
     <CustomThemeProvider form={form}>
       <Box sx={{ paddingX: "14%", paddingY: "2%" }}>
         <Header setOpenDrawer={setOpenDrawer} />
         {loadingReport && <LinearProgress sx={{ zIndex: 9999 }} />}
         <Stack spacing={3}>
-          <Card sx={{ paddingX: "20px", paddingY: "10px" }}>
-            <Typography variant="caption" color="text.secondary">
-              Título del reporte
-            </Typography>
-            <Typography variant="h6">{reportTitle}</Typography>
+          <Card sx={{ p: 3 }}>
+            <TextField
+              label="Título del reporte"
+              defaultValue={reportTitle}
+              onChange={(e) => handleTitleChange(e.target.value)}
+              variant="standard"
+              fullWidth
+              error={isTitleEmpty}
+              helperText={isTitleEmpty ? "El título no puede estar vacío" : ""}
+            />
           </Card>
 
-          <Card sx={{ padding: "20px" }}>
+          <Card>
             <SelectModel />
           </Card>
+
           {!closeCrossValidation && (
             <Card sx={{ padding: "20px" }}>
               <CrossValidation

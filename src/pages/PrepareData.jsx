@@ -12,15 +12,13 @@ import { useForm } from "../hooks/useForm";
 import Header from "../components/FormReport/Header";
 import DrawerLayout from "../components/FormReport/DrawerLayout";
 import CustomThemeProvider from "../components/CustomThemeProvider";
-import DataTable from "../components/FormReport/DataTable";
+import DataTable from "../components/FormReport/Tables/DataTable";
 import { useReport } from "../hooks/useReport";
 
 const Report = () => {
   const { form, loading: loadingForm } = useForm();
   const [openDrawer, setOpenDrawer] = useState(false);
   const { loading: loadingReport, setReportTitle, reportTitle } = useReport();
-
-  //TODO: get the newDf from firebase if it already exist aka when cleanedData is true, and change the nav to /report/edit/:id
 
   if (loadingForm || loadingReport) {
     return (

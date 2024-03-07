@@ -173,3 +173,28 @@ export const getCleanDf = async (formId, reportId) => {
 
   return newDf;
 };
+
+export const getGraphs = async (formId, reportId) => {
+  const reportRef = doc(db, "reports", formId, "cleanData", reportId);
+  const reportDoc = await getDoc(reportRef);
+
+  if (!reportDoc.exists()) {
+    return null;
+  }
+
+  console.log("Getting graphs");
+  const data = reportDoc.data();
+  const confusionMatrix = data.confusionMatrix;
+  const tree = data.tree;
+  const featureImportance = data.featureImportance;
+  const pairplot = data.pairplot;
+
+  return { confusionMatrix, tree, featureImportance, pairplot };
+};
+
+export const changeTitle = async (formId, reportId, newTitle) => {
+  const reportRef = doc(db, "reports", formId, "cleanData", reportId);
+  await updateDoc(reportRef, {
+    title: newTitle,
+  });
+};
