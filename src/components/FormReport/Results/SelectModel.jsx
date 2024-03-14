@@ -13,6 +13,9 @@ import {
   AccordionDetails,
   CircularProgress,
   Divider,
+  FormGroup,
+  Checkbox,
+  Alert,
 } from "@mui/material";
 import {
   HelpOutline as HelpIcon,
@@ -27,6 +30,7 @@ import { useReport } from "../../../hooks/useReport";
 import { useParams } from "react-router-dom";
 import Chart from "../../../questions/components/Chart";
 import ModelResults from "./ModelResults";
+import { set } from "lodash";
 
 const SelectModel = () => {
   const {
@@ -34,16 +38,43 @@ const SelectModel = () => {
     deletedColumns,
     setModelProcessed,
     modelProcessed,
+    setPredictionData,
   } = useReport();
   const { reportId } = useParams();
+
   const [selectedModel, setSelectedModel] = useState(null);
   const [modelCategory, setModelCategory] = useState(null);
   const [targetVariable, setTargetVariable] = useState(null);
   const [testSize, setTestSize] = useState(30);
   const [testAccuracy, setTestAccuracy] = useState(null);
   const [graphInfo, setGraphInfo] = useState(null);
+  const [bestK, setBestK] = useState(null);
+  const [clusteringScore, setClusteringScore] = useState(null);
+  const [clusterData, setClusterData] = useState([]);
+  const [centroidData, setCentroidData] = useState([]);
 
   const [loadingModelResults, setLoadingModelResults] = useState(false);
+
+  const [selectAll, setSelectAll] = useState(true);
+  const [chosenColumns, setChosenColumns] = useState(
+    Object.entries(deletedColumns).reduce((acc, [key, value]) => {
+      if (value) {
+        acc[key] = value;
+      }
+      return acc;
+    }, {})
+  );
+
+  const handleSelectAllChange = (event) => {
+    setSelectAll(event.target.checked);
+    const newChosenColumns = {};
+    labeledQuestions
+      .filter((question) => deletedColumns[question.id])
+      .forEach((question) => {
+        newChosenColumns[question.id] = event.target.checked;
+      });
+    setChosenColumns(newChosenColumns);
+  };
 
   const sections = [
     {
@@ -93,13 +124,21 @@ const SelectModel = () => {
           targetVariable,
           selectedModel,
           testSize,
+          chosenColumns,
         }),
       });
       const data = await response.json();
       console.log(data);
-      setTestAccuracy(data["testAccuracy"].toFixed(2));
       setGraphInfo(data["graphData"]);
-      //console.log(graphData, graphLabels);
+      if (selectedModel < 9) {
+        setTestAccuracy(data["testAccuracy"].toFixed(2));
+        setPredictionData(data["toPredict"]);
+      } else {
+        setBestK(data["bestK"]);
+        setClusteringScore(data["score"]);
+        setClusterData(JSON.parse(data["clusters"]));
+        setCentroidData(JSON.parse(data["centroids"]));
+      }
     } catch (error) {
       console.log("error in SelectModel:", error);
     }
@@ -134,7 +173,7 @@ const SelectModel = () => {
             <Typography variant="h6" sx={{ pb: 1 }}>
               2. Análisis y Modelado
             </Typography>
-            <Typography variant="body1" align="justify">
+            <Typography align="justify">
               En esta etapa se realiza el análisis de los datos limpios y se
               selecciona el modelo de minería de datos que será utilizado.
             </Typography>
@@ -146,7 +185,7 @@ const SelectModel = () => {
             <Typography variant="h6" sx={{ pb: 1 }}>
               3. Evaluación e implementación
             </Typography>
-            <Typography variant="body1" align="justify">
+            <Typography align="justify">
               En esta etapa se evalúa el rendimiento del modelo seleccionado y
               se muestran los resultados del mismo.
             </Typography>
@@ -160,9 +199,27 @@ const SelectModel = () => {
           <Box sx={{ p: 3 }}>
             {selectedModel == null ? (
               <Box>
-                <Typography variant="body1" color="text.secondary">
+                <Typography color="text.secondary">
                   Seleccione un modelo de minería de datos
                 </Typography>
+                <Stack
+                  direction={"row"}
+                  width={"100%"}
+                  sx={{ textAlign: "-webkit-center" }}
+                >
+                  {!selectedModel &&
+                    sections.map((section, k) => (
+                      <ModelSection
+                        key={k} // Add key prop with a unique value
+                        category={section.category}
+                        tooltip={section.tooltip}
+                        models={section.models}
+                        setSelectedModel={setSelectedModel}
+                        selectedModel={selectedModel}
+                        setModelCategory={setModelCategory}
+                      />
+                    ))}
+                </Stack>
               </Box>
             ) : (
               <Box>
@@ -179,51 +236,116 @@ const SelectModel = () => {
                 <Stack
                   spacing={2}
                   sx={{
-                    paddingX: "12px",
-                    paddingBottom: "20px",
-                    paddingTop: "16px",
+                    px: 1,
+                    pb: 2.3,
+                    pt: 1.7,
                   }}
                 >
+                  <Box>
+                    <Typography sx={{ py: 1 }}>
+                      1. Seleccione las columnas a incluir en el entrenamiento
+                      del modelo
+                    </Typography>
+                    {/* SELECCION COLUMNAS */}
+                    <FormGroup>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={selectAll}
+                            onChange={handleSelectAllChange}
+                          />
+                        }
+                        label="Seleccionar Todo"
+                      />
+                      {labeledQuestions
+                        .filter((question) => deletedColumns[question.id])
+                        .map((question, i) => (
+                          <FormControlLabel
+                            sx={{ py: 0.7 }}
+                            key={i}
+                            control={
+                              <Checkbox
+                                checked={chosenColumns[question.id]}
+                                onChange={(e) => {
+                                  setChosenColumns({
+                                    ...chosenColumns,
+                                    [question.id]: e.target.checked,
+                                  });
+                                  if (!e.target.checked) {
+                                    setSelectAll(false);
+                                  } else {
+                                    const allChecked = Object.values({
+                                      ...chosenColumns,
+                                      [question.id]: e.target.checked,
+                                    }).every(Boolean);
+                                    setSelectAll(allChecked);
+                                  }
+                                }}
+                              />
+                            }
+                            label={<Typography>{question.title}</Typography>}
+                          />
+                        ))}
+                      {Object.values(chosenColumns).filter(Boolean).length <
+                        2 && (
+                        <Alert severity="warning">
+                          Debe haber al menos dos columnas seleccionadas.
+                        </Alert>
+                      )}
+                    </FormGroup>
+                  </Box>
                   {parseInt(selectedModel) < 9 ? (
                     <>
-                      <TooltipTitle
-                        title="Seleccione la variable a predecir (variable objetivo)"
-                        tooltip="Esta opción le permite seleccionar la variable que desea predecir con su modelo. Esta variable se conoce como la 'variable objetivo' o 'variable dependiente'. Debe ser una de las columnas en su conjunto de datos. Por ejemplo, si está construyendo un modelo para predecir precios de vivienda, su variable objetivo podría ser la columna 'Precio'. El modelo se entrenará para usar las otras columnas (variables independientes) para predecir esta variable objetivo."
-                        size="body1"
-                      />
-                      {modelCategory === "Clasificación" ? (
-                        <Typography variant="body2" color="text.secondary">
-                          Asegúrese de que la variable objetivo seleccionada es
-                          categórica para modelos de clasificación.
-                        </Typography>
-                      ) : (
-                        <Typography variant="body2" color="text.secondary">
-                          Asegúrese de que la variable objetivo seleccionada es
-                          numérica para modelos de regresión.
-                        </Typography>
-                      )}
-                      <RadioGroup
-                        value={targetVariable}
-                        onChange={(event) =>
-                          setTargetVariable(event.target.value)
-                        }
-                      >
-                        {labeledQuestions
-                          .filter((question) => deletedColumns[question.id])
-                          .map((question, i) => (
-                            <FormControlLabel
-                              key={i}
-                              control={<Radio />}
-                              value={question.title}
-                              label={
-                                <Typography variant="body1">
-                                  {question.title}
-                                </Typography>
-                              }
-                            />
-                          ))}
-                      </RadioGroup>
-
+                      <Box>
+                        <Box sx={{ py: 1 }}>
+                          <TooltipTitle
+                            title="2. Seleccione la variable a predecir (variable objetivo)"
+                            tooltip="Esta opción le permite seleccionar la variable que desea predecir con su modelo. Esta variable se conoce como la 'variable objetivo' o 'variable dependiente'. Debe ser una de las columnas en su conjunto de datos. Por ejemplo, si está construyendo un modelo para predecir precios de vivienda, su variable objetivo podría ser la columna 'Precio'. El modelo se entrenará para usar las otras columnas (variables independientes) para predecir esta variable objetivo."
+                            size="body1"
+                          />
+                          <Box sx={{ py: 0.5 }}>
+                            {modelCategory === "Clasificación" ? (
+                              <Typography
+                                variant="body2"
+                                color="text.secondary"
+                              >
+                                Asegúrese de que la variable objetivo
+                                seleccionada es categórica para modelos de
+                                clasificación.
+                              </Typography>
+                            ) : (
+                              <Typography
+                                variant="body2"
+                                color="text.secondary"
+                              >
+                                Asegúrese de que la variable objetivo
+                                seleccionada es numérica para modelos de
+                                regresión.
+                              </Typography>
+                            )}
+                          </Box>
+                        </Box>
+                        {/* VARIABLE OBJETIVO */}
+                        <RadioGroup
+                          value={targetVariable}
+                          onChange={(event) =>
+                            setTargetVariable(event.target.value)
+                          }
+                        >
+                          {labeledQuestions
+                            .filter((question) => chosenColumns[question.id])
+                            .map((question, i) => (
+                              <FormControlLabel
+                                key={i}
+                                control={<Radio />}
+                                value={question.title}
+                                label={
+                                  <Typography>{question.title}</Typography>
+                                }
+                              />
+                            ))}
+                        </RadioGroup>
+                      </Box>
                       <div sx={{ width: "100%" }}>
                         <Accordion
                           sx={{
@@ -238,7 +360,6 @@ const SelectModel = () => {
                             id="panel1a-header"
                           >
                             <Typography
-                              variant="body1"
                               color="text.secondary"
                               sx={{ paddingY: "5px" }}
                             >
@@ -306,11 +427,16 @@ const SelectModel = () => {
                             tanto variables numéricas como categóricas. Si tus
                             datos contienen exclusivamente variables{" "}
                             <b>categóricas</b>, debes optar por el algoritmo{" "}
-                            <b>K-Modes</b>. En cambio, si tus datos contienen
-                            únicamente variables <b>numéricas</b>, el algoritmo
-                            más adecuado es <b>K-Means</b>.
+                            <b>K-Modes</b>.
                           </Typography>
                         </>
+                      )}
+                      {selectedModel === "10" && (
+                        <Typography>
+                          A diferencia de otros modelos de agrupamiento, K-Modes
+                          es adecuado para datos que contienen exclusivamente
+                          variables categóricas.
+                        </Typography>
                       )}
                     </Stack>
                   )}
@@ -323,7 +449,9 @@ const SelectModel = () => {
                         : testSize <= 0 ||
                           testSize > 100 ||
                           testSize === "" ||
-                          targetVariable === null
+                          targetVariable === null ||
+                          Object.values(chosenColumns).filter(Boolean).length <
+                            2
                     }
                   >
                     Entrenar Modelo
@@ -331,24 +459,6 @@ const SelectModel = () => {
                 </Stack>
               </Box>
             )}
-            <Stack
-              direction={"row"}
-              width={"100%"}
-              sx={{ textAlign: "-webkit-center" }}
-            >
-              {!selectedModel &&
-                sections.map((section, k) => (
-                  <ModelSection
-                    key={k} // Add key prop with a unique value
-                    category={section.category}
-                    tooltip={section.tooltip}
-                    models={section.models}
-                    setSelectedModel={setSelectedModel}
-                    selectedModel={selectedModel}
-                    setModelCategory={setModelCategory}
-                  />
-                ))}
-            </Stack>
           </Box>
         )}
       </Stack>
@@ -359,10 +469,15 @@ const SelectModel = () => {
           graphInfo={graphInfo}
           targetVariable={targetVariable}
           modelCategory={modelCategory}
+          selectedModel={selectedModel}
+          bestK={bestK}
+          clusteringScore={clusteringScore}
+          clusterData={clusterData}
+          centroidData={centroidData}
         />
       )}
       <Stack justifyContent="center" alignItems="center" sx={{ pb: 2 }}>
-        {loadingModelResults && <CircularProgress />}
+        {loadingModelResults && <CircularProgress xs={{ pb: 2 }} />}
       </Stack>
     </>
   );

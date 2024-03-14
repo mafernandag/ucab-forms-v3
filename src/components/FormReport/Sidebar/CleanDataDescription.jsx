@@ -20,7 +20,7 @@ const PrepareData = ({ setOpenDrawer }) => {
         >
           <Stack spacing={3} sx={{ paddingX: "12px", paddingTop: "10px" }}>
             <Typography variant="h6">1. Preparación de los datos</Typography>
-            <Typography variant="body1" align="justify">
+            <Typography align="justify">
               Esta fase implica la recopilación, limpieza, integración y
               formateo de los datos para que sean adecuados para el modelado.
               <br />

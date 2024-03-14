@@ -11,10 +11,9 @@ import { useReport } from "../../hooks/useReport";
 const drawerWidth = 490;
 
 const DrawerLayout = ({ open, setOpen, children }) => {
-  const { cleanedData, modelProcessed } = useReport();
+  const { cleanedData } = useReport();
   const theme = useTheme();
   const upMd = useMediaQuery(theme.breakpoints.up("md"));
-  //const [testAccuracy, setTestAccuracy] = useState(null);
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -38,15 +37,6 @@ const DrawerLayout = ({ open, setOpen, children }) => {
           <Toolbar />
           <Box sx={{ overflow: "auto", p: 2 }}>
             {cleanedData == null && <CleanDataDescription />}
-            {/*  {cleanedData != null && (
-            <SelectModel setTestAccuracy={setTestAccuracy} />
-          )} */}
-            {/* {modelProcessed && (
-            <ModelResults
-              testAccuracy={testAccuracy}
-              setTestAccuracy={setTestAccuracy}
-            />
-          )} */}
           </Box>
         </Drawer>
       )}

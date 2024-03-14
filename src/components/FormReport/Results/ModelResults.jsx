@@ -19,6 +19,8 @@ import { getGraphs } from "../../../api/reports";
 import { useParams } from "react-router-dom";
 import { useReport } from "../../../hooks/useReport";
 import ResultGraph from "./ResultGraph";
+import Predictions from "../Predictions/Predictions";
+import ClusterData from "../Tables/ClusterData";
 
 const ModelResults = ({
   testAccuracy,
@@ -26,6 +28,11 @@ const ModelResults = ({
   graphInfo,
   targetVariable,
   modelCategory,
+  selectedModel,
+  bestK,
+  clusteringScore,
+  clusterData,
+  centroidData,
 }) => {
   const { id: formId, reportId } = useParams();
   const { setModelProcessed } = useReport();
@@ -34,13 +41,21 @@ const ModelResults = ({
   const [featureImportance, setFeatureImportance] = useState(null);
   const [treeGraph, setTreeGraph] = useState(null);
   const [pairplot, setPairplot] = useState(null);
+  const [elbowPlot, setElbowPlot] = useState(null);
+  const [clusterPlot, setClusterPlot] = useState(null);
   const [loadingGraphs, setLoadingGraphs] = useState(true);
   const [currentTab, setCurrentTab] = useState("1");
 
   useEffect(() => {
     const fetchGraphs = async () => {
-      const { confusionMatrix, tree, featureImportance, pairplot } =
-        await getGraphs(formId, reportId);
+      const {
+        confusionMatrix,
+        tree,
+        featureImportance,
+        pairplot,
+        elbowPlot,
+        clusterPlot,
+      } = await getGraphs(formId, reportId);
       if (graphInfo.confusionMatrix) {
         setConfusionMatrix(confusionMatrix);
       }
@@ -52,6 +67,12 @@ const ModelResults = ({
       }
       if (graphInfo.pairplot) {
         setPairplot(pairplot);
+      }
+      if (graphInfo.elbowPlot) {
+        setElbowPlot(elbowPlot);
+      }
+      if (graphInfo.clusterPlot) {
+        setClusterPlot(clusterPlot);
       }
       setLoadingGraphs(false);
     };
@@ -85,21 +106,23 @@ const ModelResults = ({
                 Resultados del Modelo: {selectedModelLabel}
               </Typography>
             </Stack>
-            <Stack direction="row" spacing={1} alignItems="center">
+            {/* <Stack direction="row" spacing={1} alignItems="center">
               <Typography variant="body2" color="text.secondary">
                 Guardar Modelo
               </Typography>
               <SaveIcon />
-            </Stack>
+            </Stack> */}
           </Stack>
-          <Box sx={{ pb: 3 }}>
-            <TooltipTitle
-              title="Variable a predecir (variable objetivo)"
-              tooltip="El modelo se entrenará para usar las otras columnas (variables independientes) para predecir esta variable objetivo."
-              size="body1"
-            />
-            <Typography variant="h5">{targetVariable}</Typography>
-          </Box>
+          {!modelCategory === "Agrupamiento" && (
+            <Box sx={{ pb: 3 }}>
+              <TooltipTitle
+                title="Variable a predecir (variable objetivo)"
+                tooltip="El modelo se entrenará para usar las otras columnas (variables independientes) para predecir esta variable objetivo."
+                size="body1"
+              />
+              <Typography variant="h5">{targetVariable}</Typography>
+            </Box>
+          )}
           {modelCategory === "Regresión" && (
             <>
               <TooltipTitle
@@ -125,6 +148,33 @@ const ModelResults = ({
               <Typography variant="h5">{testAccuracy}%</Typography>
             </>
           )}
+          {modelCategory === "Agrupamiento" && (
+            <>
+              <TooltipTitle
+                title="Puntuación del modelo"
+                size="body1"
+                tooltip="Varia según la cantidad de datos en la encuesta. Entre más cercano es el puntaje a 100, mejor es el rendimiento del modelo."
+              />
+              <Typography variant="h5" sx={{ pb: 1, pt: 0.5 }}>
+                {clusteringScore * 100} / 100
+              </Typography>
+              {clusteringScore < 0 && (
+                <Typography sx={{ py: 1, pb: 1 }} color="text.secondary">
+                  *Un puntaje negativo significa que{" "}
+                  <b>los datos no son adecuados para el agrupamiento</b>. No
+                  todos los conjuntos de datos pueden ser agrupados
+                  efectivamente, y tratar de forzar una estructura de
+                  agrupamiento en dichos datos puede llevar a resultados pobres.
+                </Typography>
+              )}
+              <TooltipTitle
+                title="Mejor K"
+                size="body1"
+                tooltip="K se refiere al numero de clusters o grupos que se desean formar. Este valor es seleccionado por el modelo para optimizar el rendimiento del agrupamiento."
+              />
+              <Typography variant="h5">{bestK}</Typography>
+            </>
+          )}
         </Box>
       </Stack>
       <TabContext value={currentTab}>
@@ -140,7 +190,7 @@ const ModelResults = ({
             modelCategory === "Regresión" ? (
               <Tab label="Realizar Predicciones" value="2" />
             ) : (
-              <Tab label="Clustering" value="2" />
+              <Tab label="Tabla de Datos Agrupados" value="2" />
             )}
           </TabList>
         </Box>
@@ -164,7 +214,7 @@ const ModelResults = ({
                 loadingGraphs={loadingGraphs}
                 title={"Importancia de las características"}
                 description={
-                  "Este gráfico es útil para entender qué características están contribuyendo más a las predicciones del modelo."
+                  "Este gráfico es útil para entender qué características están contribuyendo más a las predicciones del modelo. Si este no contiene valores, se sugiere escoger otro modelo."
                 }
               />
             )}
@@ -185,16 +235,46 @@ const ModelResults = ({
                 loadingGraphs={loadingGraphs}
                 title={"Matriz de Confusión"}
                 description={
-                  "Permite la visualización del rendimiento del modelo. Cada fila de la matriz representa las instancias en una clase predicha, mientras que cada columna representa las instancias en una clase real."
+                  "Permite la visualización del rendimiento del modelo. Los valores en la diagonal principal representan el número de predicciones correctas."
+                }
+              />
+            )}
+            {clusterPlot && (
+              <ResultGraph
+                imgUrl={clusterPlot}
+                loadingGraphs={loadingGraphs}
+                title={"Gráfico de Agrupamiento"}
+                description={
+                  "Permite visualizar la distribución de los datos agrupados."
+                }
+              />
+            )}
+            {elbowPlot && (
+              <ResultGraph
+                imgUrl={elbowPlot}
+                loadingGraphs={loadingGraphs}
+                title={"Elbow Plot (Gráfico del Codo)"}
+                description={
+                  "Permite visualizar el valor óptimo de K para el modelo de agrupamiento."
                 }
               />
             )}
           </Stack>
         </TabPanel>
         {modelCategory === "Clasificación" || modelCategory === "Regresión" ? (
-          <TabPanel value="2">Predicciones</TabPanel>
+          <TabPanel value="2">
+            <Predictions
+              model={selectedModel}
+              targetVariable={targetVariable}
+            />
+          </TabPanel>
         ) : (
-          <TabPanel value="2">Clustering</TabPanel>
+          <TabPanel value="2">
+            <ClusterData
+              clusterData={clusterData}
+              centroidData={centroidData}
+            />
+          </TabPanel>
         )}
       </TabContext>
     </>

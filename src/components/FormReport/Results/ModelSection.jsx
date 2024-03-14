@@ -20,7 +20,7 @@ const ModelSection = ({
     <Box sx={{ paddingTop: "12px", width: "100%" }}>
       <Stack spacing={2} sx={{ width: "75%" }}>
         <Stack spacing={1} direction={"row"} alignItems="center">
-          <Typography variant="body1">{category}</Typography>
+          <Typography>{category}</Typography>
           <Tooltip title={tooltip}>
             <HelpIcon fontSize="small" />
           </Tooltip>

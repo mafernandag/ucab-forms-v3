@@ -188,8 +188,17 @@ export const getGraphs = async (formId, reportId) => {
   const tree = data.tree;
   const featureImportance = data.featureImportance;
   const pairplot = data.pairplot;
+  const elbowPlot = data.elbowPlot;
+  const clusterPlot = data.clusterPlot;
 
-  return { confusionMatrix, tree, featureImportance, pairplot };
+  return {
+    confusionMatrix,
+    tree,
+    featureImportance,
+    pairplot,
+    elbowPlot,
+    clusterPlot,
+  };
 };
 
 export const changeTitle = async (formId, reportId, newTitle) => {

@@ -24,6 +24,7 @@ const ReportProvider = ({ children }) => {
   const [loadingData, setLoadingData] = useState(true);
   const [loadingReport, setLoadingReport] = useState(false);
   const [modelProcessed, setModelProcessed] = useState(false);
+  const [predictionData, setPredictionData] = useState(null);
 
   useEffect(() => {
     if (form) {
@@ -121,6 +122,8 @@ const ReportProvider = ({ children }) => {
     modelProcessed,
     reportTitle,
     setReportTitle,
+    predictionData,
+    setPredictionData,
   };
 
   return (

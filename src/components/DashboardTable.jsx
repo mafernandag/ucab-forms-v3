@@ -88,8 +88,22 @@ const DashboardTable = () => {
   };
 
   const createNewReport = async (rowData) => {
-    const formId = await createReport(user, rowData.id);
-    navigate("/report/create/" + formId);
+    if (rowData["responses"] === 0) {
+      return enqueueSnackbar("La encuesta no contiene respuestas", {
+        variant: "error",
+      });
+    }
+    if (rowData["responses"] < 10) {
+      return enqueueSnackbar(
+        "La encuesta contiene muy pocas respuestas para realizar mineria de datos",
+        {
+          variant: "error",
+        }
+      );
+    } else {
+      const formId = await createReport(user, rowData.id);
+      navigate("/report/create/" + formId);
+    }
   };
 
   const handleDuplicate = async (event, rowData) => {

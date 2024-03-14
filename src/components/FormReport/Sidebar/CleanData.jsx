@@ -12,6 +12,7 @@ import {
   Divider,
   TextField,
   LinearProgress,
+  Alert,
 } from "@mui/material";
 import {
   ArrowBack as ArrowIcon,
@@ -37,6 +38,7 @@ const CleanData = ({ handleButtonClick }) => {
   } = useReport();
 
   const [missingDataOption, setMissingDataOption] = useState("delete");
+  const [outlierValuesOption, setOutlierValuesOption] = useState("delete");
   const [removeDuplicateData, setRemoveDuplicateData] = useState(true);
   const [expandMultipleChoiceAnswers, setExpandMultipleChoiceAnswers] =
     useState(true);
@@ -53,14 +55,19 @@ const CleanData = ({ handleButtonClick }) => {
     setDeletedColumns(newDeletedColumns);
   };
 
-  const handleRadioChange = (event) => {
+  const handleRadioMissingDataChange = (event) => {
     setMissingDataOption(event.target.value);
+  };
+
+  const handleRadioOutlierChange = (event) => {
+    setOutlierValuesOption(event.target.value);
   };
 
   const handleProcessingButtonClick = async () => {
     setLoadingProcessedData(true);
     const settings = {
       missingDataOption,
+      outlierValuesOption,
       removeDuplicateData,
       expandMultipleChoiceAnswers,
       numericFillValue,
@@ -103,10 +110,10 @@ const CleanData = ({ handleButtonClick }) => {
           sx={{ paddingX: "12px", paddingTop: "10px", paddingBottom: "20px" }}
         >
           <Typography variant="h6">Preparación de los datos</Typography>
-          <Typography variant="body1" color="text.secondary">
+          <Typography color="text.secondary">
             Seleccione las preguntas a incluir en el modelo
           </Typography>
-          {/* <Typography variant="body1">
+          {/* <Typography >
             Se recomienda escoger preguntas con respuestas categoricas
           </Typography> */}
           <FormGroup>
@@ -134,11 +141,14 @@ const CleanData = ({ handleButtonClick }) => {
                     }
                   />
                 }
-                label={
-                  <Typography variant="body1">{question.title}</Typography>
-                }
+                label={<Typography>{question.title}</Typography>}
               />
             ))}
+            {Object.values(deletedColumns).filter(Boolean).length < 2 && (
+              <Alert severity="warning">
+                Debe haber al menos dos preguntas seleccionadas.
+              </Alert>
+            )}
           </FormGroup>
           <Typography variant="body2" color="text.secondary">
             Para eliminar respuestas, seleccione las filas desde la tabla de
@@ -147,7 +157,7 @@ const CleanData = ({ handleButtonClick }) => {
         </Stack>
         <Divider variant="middle" />
         <Stack spacing={2} sx={{ paddingX: "12px", paddingY: "20px" }}>
-          <Typography variant="body1" color="text.secondary">
+          <Typography color="text.secondary">
             Ajustes de limpieza de datos
           </Typography>
 
@@ -159,11 +169,7 @@ const CleanData = ({ handleButtonClick }) => {
                   onChange={(e) => setRemoveDuplicateData(e.target.checked)}
                 />
               }
-              label={
-                <Typography variant="body1">
-                  Eliminar datos duplicados
-                </Typography>
-              }
+              label={<Typography>Eliminar datos duplicados</Typography>}
             />
             <FormControlLabel
               control={
@@ -183,32 +189,30 @@ const CleanData = ({ handleButtonClick }) => {
               }
             />
           </FormGroup>
-          <RadioGroup value={missingDataOption} onChange={handleRadioChange}>
-            <Typography variant="body1" color="text.secondary" pb={"8px"}>
+          {/* MANEJO DE VALORES FALTANTES */}
+          <RadioGroup
+            value={missingDataOption}
+            onChange={handleRadioMissingDataChange}
+          >
+            <Typography color="text.secondary" pb={"8px"}>
               Manejo de valores faltantes
             </Typography>
             <FormControlLabel
               control={<Radio />}
               value="delete"
-              label={<Typography variant="body1">Eliminar fila</Typography>}
+              label={<Typography>Eliminar fila</Typography>}
             />
             <FormControlLabel
               control={<Radio />}
               value="mean"
               label={
-                <Typography variant="body1">
-                  Rellenar con el promedio de la columna
-                </Typography>
+                <Typography>Rellenar con el promedio de la columna</Typography>
               }
             />
             <FormControlLabel
               control={<Radio />}
               value="fill"
-              label={
-                <Typography variant="body1">
-                  Rellenar con valores sustitutos
-                </Typography>
-              }
+              label={<Typography>Rellenar con valores sustitutos</Typography>}
             />
             {missingDataOption === "fill" && (
               <Stack spacing={2} sx={{ margin: "10px 0 15px 30px" }}>
@@ -248,7 +252,7 @@ const CleanData = ({ handleButtonClick }) => {
               control={<Radio />}
               value="previousRow"
               label={
-                <Typography variant="body1">
+                <Typography>
                   Rellenar con el valor de la fila anterior
                 </Typography>
               }
@@ -257,10 +261,43 @@ const CleanData = ({ handleButtonClick }) => {
               control={<Radio />}
               value="nextRow"
               label={
-                <Typography variant="body1">
+                <Typography>
                   Rellenar con el valor de la fila siguiente
                 </Typography>
               }
+            />
+          </RadioGroup>
+          {/* MANEJO DE VALORES ATIPICOS */}
+          <RadioGroup
+            value={outlierValuesOption}
+            onChange={handleRadioOutlierChange}
+          >
+            <Box sx={{ pb: 1 }}>
+              <TooltipTitle
+                title="Manejo de valores atípicos (outliers)"
+                tooltip="Un valor atípico o outlier es un valor en un conjunto de datos que es muy diferente del resto de los valores"
+                size="body1"
+                color="text.secondary"
+              />
+            </Box>
+            <FormControlLabel
+              control={<Radio />}
+              value="delete"
+              label={<Typography>Eliminar fila</Typography>}
+            />
+            <FormControlLabel
+              control={<Radio />}
+              value="mean"
+              label={
+                <Typography>
+                  Reemplazar con el promedio de la columna
+                </Typography>
+              }
+            />
+            <FormControlLabel
+              control={<Radio />}
+              value="ignore"
+              label={<Typography>Ignorar</Typography>}
             />
           </RadioGroup>
         </Stack>
@@ -281,7 +318,8 @@ const CleanData = ({ handleButtonClick }) => {
                 (numericFillValue === null ||
                   numericFillValue === undefined ||
                   numericFillValue === "" ||
-                  !textFillValue.trim()))
+                  !textFillValue.trim())) ||
+              Object.values(deletedColumns).filter(Boolean).length < 2
             }
           >
             Procesar Datos

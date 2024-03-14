@@ -35,7 +35,6 @@ const Report = () => {
   } = useReport();
   const [loadingCleanDf, setLoadingCleanDf] = useState(true);
   const [openDrawer, setOpenDrawer] = useState(false);
-  const [closeCrossValidation, setCloseCrossValidation] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [isTitleEmpty, setIsTitleEmpty] = useState(false);
 
@@ -123,13 +122,9 @@ const Report = () => {
             <SelectModel />
           </Card>
 
-          {!closeCrossValidation && (
-            <Card sx={{ padding: "20px" }}>
-              <CrossValidation
-                setCloseCrossValidation={setCloseCrossValidation}
-              />
-            </Card>
-          )}
+          <Card sx={{ padding: "20px" }}>
+            <CrossValidation />
+          </Card>
 
           <CleanedDataTable data={cleanedData} />
         </Stack>

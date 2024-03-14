@@ -10,7 +10,7 @@ const ResultGraph = ({
 }) => {
   return (
     <Box>
-      <Typography variant="body1">{title}</Typography>
+      <Typography>{title}</Typography>
       <Typography variant="body2" color="text.secondary" sx={{ pt: 1, pb: 3 }}>
         {description}
       </Typography>
