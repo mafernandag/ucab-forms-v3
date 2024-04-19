@@ -20,15 +20,15 @@ const DrawerLayout = ({ open, setOpen, children }) => {
       {cleanedData == null && (
         <Drawer
           sx={{
-            width: drawerWidth,
+            width: open ? drawerWidth : 0,
             flexShrink: 0,
             "& .MuiDrawer-paper": {
               width: drawerWidth,
               boxSizing: "border-box",
             },
           }}
-          variant={upMd ? "permanent" : "temporary"}
-          open={upMd ? true : open}
+          variant={upMd ? "persistent" : "temporary"}
+          open={open}
           onClose={() => setOpen(false)}
           ModalProps={{
             keepMounted: true,
@@ -41,8 +41,15 @@ const DrawerLayout = ({ open, setOpen, children }) => {
         </Drawer>
       )}
       <Container
-        sx={{ py: 3, width: "100%", overflowX: "hidden" }}
+        sx={{
+          py: 3,
+          width: "100%",
+          overflowX: "hidden",
+          flex: 1,
+          transition: "flex 0.3s ease-in-out",
+        }}
         maxWidth="xl"
+        open={open}
       >
         {children}
       </Container>

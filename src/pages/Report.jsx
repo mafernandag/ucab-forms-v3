@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { useForm } from "../hooks/useForm";
 import { useReport } from "../hooks/useReport";
+import { useUser } from "../hooks/useUser";
 import Header from "../components/FormReport/Header";
 import { useParams } from "react-router-dom";
 import CustomThemeProvider from "../components/CustomThemeProvider";
@@ -22,9 +23,11 @@ import AnswerPageText from "../components/AnswerPageText";
 import { debounce } from "lodash";
 
 const Report = () => {
+  const user = useUser();
   const { form, loading: loadingForm } = useForm();
   const { id: formId, reportId } = useParams();
   const {
+    report,
     cleanedData,
     setCleanedData,
     loading: loadingReport,
@@ -82,6 +85,14 @@ const Report = () => {
     );
   }
 
+  if (report.author.id !== user.id) {
+    return (
+      <AnswerPageText>
+        No tienes permisos para acceder a este reporte
+      </AnswerPageText>
+    );
+  }
+
   if (errorMessage) {
     return <AnswerPageText>{errorMessage}</AnswerPageText>;
   }
@@ -101,35 +112,33 @@ const Report = () => {
   }, 3000);
 
   return (
-    <CustomThemeProvider form={form}>
-      <Box sx={{ paddingX: "14%", paddingY: "2%" }}>
-        <Header setOpenDrawer={setOpenDrawer} />
-        {loadingReport && <LinearProgress sx={{ zIndex: 9999 }} />}
-        <Stack spacing={3}>
-          <Card sx={{ p: 3 }}>
-            <TextField
-              label="Título del reporte"
-              defaultValue={reportTitle}
-              onChange={(e) => handleTitleChange(e.target.value)}
-              variant="standard"
-              fullWidth
-              error={isTitleEmpty}
-              helperText={isTitleEmpty ? "El título no puede estar vacío" : ""}
-            />
-          </Card>
+    <Box sx={{ paddingX: "14%", paddingY: "2%" }}>
+      <Header setOpenDrawer={setOpenDrawer} />
+      {/* {loadingReport && <LinearProgress sx={{ zIndex: 9999 }} />} */}
+      <Stack spacing={3}>
+        <Card sx={{ p: 3 }}>
+          <TextField
+            label="Título del reporte"
+            defaultValue={reportTitle}
+            onChange={(e) => handleTitleChange(e.target.value)}
+            variant="standard"
+            fullWidth
+            error={isTitleEmpty}
+            helperText={isTitleEmpty ? "El título no puede estar vacío" : ""}
+          />
+        </Card>
 
-          <Card>
-            <SelectModel />
-          </Card>
+        <Card>
+          <SelectModel />
+        </Card>
 
-          <Card sx={{ padding: "20px" }}>
-            <CrossValidation />
-          </Card>
+        <Card sx={{ padding: "20px" }}>
+          <CrossValidation />
+        </Card>
 
-          <CleanedDataTable data={cleanedData} />
-        </Stack>
-      </Box>
-    </CustomThemeProvider>
+        <CleanedDataTable data={cleanedData} />
+      </Stack>
+    </Box>
   );
 };
 

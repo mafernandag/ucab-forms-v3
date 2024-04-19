@@ -87,6 +87,26 @@ const App = () => {
               </FormProvider>
             }
           />
+          <Route
+            path="/report/create/:id/:isCsv"
+            element={
+              <FormProvider>
+                <ReportProvider>
+                  <PrepareData />
+                </ReportProvider>
+              </FormProvider>
+            }
+          />
+          <Route
+            path="/report/edit/:id/:reportId/:isCsv"
+            element={
+              <FormProvider>
+                <ReportProvider>
+                  <Report />
+                </ReportProvider>
+              </FormProvider>
+            }
+          />
         </Routes>
       </AlertProvider>
     </UserProvider>

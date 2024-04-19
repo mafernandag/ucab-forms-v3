@@ -6,6 +6,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  addDoc,
   onSnapshot,
   query,
   setDoc,
@@ -13,8 +14,14 @@ import {
   where,
   collectionGroup,
 } from "firebase/firestore";
-import { db } from "./firebaseConfig";
-import { getQuestionsOnce } from "./questions";
+import { db, storage } from "./firebaseConfig";
+import { getQuestionsOnce, insertQuestion } from "./questions";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { defaultQuestion } from "../questions/constants";
+import { defaultSection } from "../constants/sections";
+import { createSection } from "./sections";
+import Papa from "papaparse";
+import { create } from "lodash";
 
 export const createReport = async (user, formId) => {
   const formRef = doc(db, "forms", formId);
@@ -30,10 +37,8 @@ export const createReport = async (user, formId) => {
       },
     };
   }, {});
-
   const report = await getDoc(reportRef);
   if (report.exists()) {
-    console.log("ya existe wey");
     await setDoc(
       reportRef,
       {
@@ -45,7 +50,6 @@ export const createReport = async (user, formId) => {
       { merge: true }
     );
   } else {
-    console.log("creando reporte");
     await setDoc(reportRef, {
       author: {
         id: user.id,
@@ -60,6 +64,123 @@ export const createReport = async (user, formId) => {
     });
   }
   return reportRef.id;
+};
+
+export const createReportFromFile = async (user, file) => {
+  const csvData = await new Promise((resolve) => {
+    Papa.parse(file, {
+      header: true,
+      complete: function (results) {
+        resolve(results);
+      },
+    });
+  });
+  const columns = csvData.meta.fields.map((field) => ({
+    title: field,
+    field,
+  }));
+  const data = csvData.data;
+  const { formId, questions } = await createCsvForm(user, file, columns, data);
+  console.log(formId);
+  const reportRef = doc(db, "reports", formId);
+  const fileRef = ref(storage, `${Date.now() + "_" + file.name}`);
+  const snapshot = await uploadBytes(fileRef, file);
+
+  await setDoc(reportRef, {
+    author: {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+    },
+    title: file.name,
+    description: "",
+    createdAt: new Date(),
+    questions: questions,
+    questionOrder: Object.keys(questions),
+    fileUrl: snapshot.metadata.fullPath,
+  });
+  console.log(reportRef.id);
+  return reportRef.id;
+};
+
+export const createCsvForm = async (user, file, columns, data) => {
+  const formsRef = collection(db, "forms");
+  const formRef = doc(formsRef);
+
+  setDoc(formRef, {
+    author: {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+    },
+    title: file.name,
+    description: "",
+    createdAt: new Date(),
+    responses: 0,
+    collaborators: [],
+    csvImport: true,
+    settings: {
+      allowResponses: true,
+      maxResponses: "",
+      onlyOneResponse: false,
+      startDate: null,
+      endDate: null,
+      randomOrder: false,
+      saveUserData: false,
+    },
+    fontIndex: 0,
+    headerColorIndex: 0,
+    mainColorIndex: 0,
+    backgroundColorIndex: 0,
+  });
+
+  const questionsRef = collection(db, "forms", formRef.id, "questions");
+  const responsesRef = collection(db, "forms", formRef.id, "responses");
+
+  let questions = {};
+  for (const column of columns) {
+    const docRef = await addDoc(questionsRef, column);
+    questions[docRef.id] = { id: docRef.id, title: column.title };
+  }
+
+  for (const row of data) {
+    let newRow = {};
+    for (const [key, value] of Object.entries(row)) {
+      const columnId = Object.keys(questions).find(
+        (id) => questions[id].title === key
+      );
+      if (columnId) {
+        newRow[columnId] = value;
+      }
+    }
+    await addDoc(responsesRef, newRow);
+  }
+  return { formId: formRef.id, questions };
+};
+
+export const getCSVFile = async (reportId) => {
+  const questionsRef = collection(db, "forms", reportId, "questions");
+  const questionsSnapshot = await getDocs(questionsRef);
+  const responsesRef = collection(db, "forms", reportId, "responses");
+  const responsesSnapshot = await getDocs(responsesRef);
+  const columns = questionsSnapshot.docs.map((doc) => {
+    return { id: doc.id, ...doc.data() };
+  });
+  const data = responsesSnapshot.docs.map((doc) => {
+    return { id: doc.id, ...doc.data() };
+  });
+  console.log("col", columns);
+  console.log("data", data);
+  return { columns, data };
+};
+
+export const getQuestionsFromCSV = async (reportId) => {
+  const questionsRef = collection(db, "forms", reportId, "questions");
+  const questionsSnapshot = await getDocs(questionsRef);
+  const columns = questionsSnapshot.docs.map((doc) => {
+    return { id: doc.id, ...doc.data() };
+  });
+  return columns;
 };
 
 export const getDataframe = async (reportId) => {
@@ -119,18 +240,29 @@ export const getUserReports = (userId, callback) => {
 
 export const getReport = (formId, reportId, callback) => {
   const reportRef = doc(db, "reports", formId, "cleanData", reportId);
+  const authorRef = doc(db, "reports", formId);
 
-  return onSnapshot(reportRef, (doc) => {
-    if (!doc.exists()) {
-      return callback(null);
+  getDoc(authorRef).then((authorDoc) => {
+    if (!authorDoc.exists()) {
+      console.log("No such author document!");
+      return;
     }
 
-    const report = doc.data();
-    report.id = doc.id;
-    console.log(doc.id, reportId);
-    report.createdAt = report.createdAt.toDate();
+    const author = authorDoc.data().author;
 
-    callback(report);
+    return onSnapshot(reportRef, (doc) => {
+      if (!doc.exists()) {
+        console.log("No such report document!");
+        return callback(null);
+      }
+
+      const report = doc.data();
+      report.id = doc.id;
+      report.author = author;
+      report.createdAt = report.createdAt.toDate();
+
+      callback(report);
+    });
   });
 };
 
@@ -169,8 +301,6 @@ export const getCleanDf = async (formId, reportId) => {
     return orderedData;
   });
 
-  //console.log(newDf);
-
   return newDf;
 };
 
@@ -184,6 +314,7 @@ export const getGraphs = async (formId, reportId) => {
 
   console.log("Getting graphs");
   const data = reportDoc.data();
+  console.log(data);
   const confusionMatrix = data.confusionMatrix;
   const tree = data.tree;
   const featureImportance = data.featureImportance;

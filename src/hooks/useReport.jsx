@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useForm } from "./useForm";
-import { getReport } from "../api/reports";
+import { getReport, getQuestionsFromCSV } from "../api/reports";
 import { flatMap, sortBy } from "lodash";
 import { DEFAULT_LABEL } from "../questions/constants";
 import { getSectionLabels } from "../questions/utils";
@@ -14,7 +14,7 @@ const useReport = () => {
 
 const ReportProvider = ({ children }) => {
   const { form, questions, sections } = useForm();
-  const { id: formId, reportId } = useParams();
+  const { id: formId, reportId, isCsv } = useParams();
   const [report, setReport] = useState(null);
   const [deletedRows, setDeletedRows] = useState([]);
   const [deletedColumns, setDeletedColumns] = useState({});
@@ -51,12 +51,12 @@ const ReportProvider = ({ children }) => {
     };
 
     fetchData();
-  }, [formId]);
+  }, [formId, isCsv]);
 
   useEffect(() => {
     if (formId && reportId) {
       setLoadingReport(true);
-      const unsubscribeReport = getReport(reportId, formId, (report) => {
+      const unsubscribeReport = getReport(formId, reportId, (report) => {
         setReport(report);
         setLoadingReport(false);
       });
@@ -66,40 +66,51 @@ const ReportProvider = ({ children }) => {
     }
   }, [formId, reportId]);
 
-  const labeledQuestions = useMemo(() => {
-    const sortedQuestions = sortBy(questions, (question) => {
-      const section = sections.find(
-        (section) => section.id === question.sectionId
-      );
+  const [labeledQuestions, setLabeledQuestions] = useState([]);
 
-      return section.index;
-    });
+  useEffect(() => {
+    if (isCsv) {
+      const fetchData = async () => {
+        const questions = await getQuestionsFromCSV(formId);
+        setLabeledQuestions(questions);
+      };
+      fetchData();
+    } else {
+      const sortedQuestions = sortBy(questions, (question) => {
+        const section = sections.find(
+          (section) => section.id === question.sectionId
+        );
 
-    const labeledQuestions = flatMap(sortedQuestions, (question) => {
-      const section = sections.find(
-        (section) => section.id === question.sectionId
-      );
+        return section.index;
+      });
 
-      const sectionLabels = getSectionLabels(section, questions);
+      const labeledQuestions = flatMap(sortedQuestions, (question) => {
+        const section = sections.find(
+          (section) => section.id === question.sectionId
+        );
 
-      return sectionLabels.map((label) => ({
-        ...question,
-        title:
-          label !== DEFAULT_LABEL
-            ? `${question.title} (${label})`
-            : question.title,
-        id: `${question.id}-${label}`,
-      }));
-    });
+        const sectionLabels = getSectionLabels(section, questions);
 
-    return labeledQuestions;
-  }, [questions, sections]);
+        return sectionLabels.map((label) => ({
+          ...question,
+          title:
+            label !== DEFAULT_LABEL
+              ? `${question.title} (${label})`
+              : question.title,
+          id: `${question.id}-${label}`,
+        }));
+      });
+
+      setLabeledQuestions(labeledQuestions);
+    }
+  }, [questions, sections, isCsv, formId]);
 
   useEffect(() => {
     const initialCheckedState = {};
     labeledQuestions.forEach((question) => {
       initialCheckedState[question.id] = true;
     });
+
     setDeletedColumns(initialCheckedState);
   }, [labeledQuestions]);
 

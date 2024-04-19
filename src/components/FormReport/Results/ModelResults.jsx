@@ -11,16 +11,18 @@ import { TabContext, TabList, TabPanel } from "@mui/lab";
 import {
   HelpOutline as HelpIcon,
   ArrowBack as ArrowIcon,
-  Save as SaveIcon,
+  Download as DownloadIcon,
 } from "@mui/icons-material";
 import React, { useState, useEffect } from "react";
-import TooltipTitle from "../Sidebar/TooltipTitle";
+import TooltipTitle from "../TooltipTitle";
 import { getGraphs } from "../../../api/reports";
 import { useParams } from "react-router-dom";
 import { useReport } from "../../../hooks/useReport";
 import ResultGraph from "./ResultGraph";
 import Predictions from "../Predictions/Predictions";
 import ClusterData from "../Tables/ClusterData";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import ReportPDF from "../ReportPDF";
 
 const ModelResults = ({
   testAccuracy,
@@ -106,12 +108,14 @@ const ModelResults = ({
                 Resultados del Modelo: {selectedModelLabel}
               </Typography>
             </Stack>
-            {/* <Stack direction="row" spacing={1} alignItems="center">
-              <Typography variant="body2" color="text.secondary">
-                Guardar Modelo
-              </Typography>
-              <SaveIcon />
-            </Stack> */}
+            <PDFDownloadLink document={<ReportPDF />} fileName="Reporte">
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Typography variant="body2" color="text.secondary">
+                  Exportar Reporte
+                </Typography>
+                <DownloadIcon />
+              </Stack>
+            </PDFDownloadLink>
           </Stack>
           {!modelCategory === "Agrupamiento" && (
             <Box sx={{ pb: 3 }}>
@@ -151,12 +155,12 @@ const ModelResults = ({
           {modelCategory === "Agrupamiento" && (
             <>
               <TooltipTitle
-                title="Puntuación del modelo"
+                title="Puntuación de silueta"
                 size="body1"
-                tooltip="Varia según la cantidad de datos en la encuesta. Entre más cercano es el puntaje a 100, mejor es el rendimiento del modelo."
+                tooltip="La puntuación de silueta mide qué tan similar es un objeto a su propio clúster (cohesión) comparado con otros clústeres (separación). Un valor cercano a 1 indica que el objeto está bien emparejado con su propio clúster y mal emparejado con los vecinos."
               />
               <Typography variant="h5" sx={{ pb: 1, pt: 0.5 }}>
-                {clusteringScore * 100} / 100
+                {clusteringScore.toFixed(2)}
               </Typography>
               {clusteringScore < 0 && (
                 <Typography sx={{ py: 1, pb: 1 }} color="text.secondary">

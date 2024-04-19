@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import { ArrowBack as ArrowIcon } from "@mui/icons-material";
 import React, { useState, useContext, useEffect } from "react";
-import TooltipTitle from "./Sidebar/TooltipTitle";
+import TooltipTitle from "./TooltipTitle";
 import { ReportContext } from "../../pages/PrepareData";
 import MaterialTable from "@material-table/core";
 import { useReport } from "../../hooks/useReport";

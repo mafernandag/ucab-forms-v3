@@ -2,18 +2,21 @@ import { useEffect, useMemo, useState } from "react";
 import { useSnackbar } from "notistack";
 import {
   Add as AddIcon,
-  ContentCopy,
   Edit as EditIcon,
   Delete as DeleteIcon,
   Addchart as ReportIcon,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { createReport, deleteReport, getUserReports } from "../../api/reports";
+import {
+  createReportFromFile,
+  deleteReport,
+  getUserReports,
+} from "../../api/reports";
 import { useUser } from "../../hooks/useUser";
 import { useAlert } from "../../hooks/useAlert";
 import Table from "../Table";
 import { formatDateTime } from "../../utils/dates";
-import { Typography } from "@mui/material";
+import ReportDialog from "./ReportDialog";
 
 const columns = [
   {
@@ -40,7 +43,6 @@ const DashboardTable = () => {
   const navigate = useNavigate();
   const [userReports, setUserReports] = useState([]);
   const [loadingUserReports, setLoadingUserReports] = useState(true);
-  useState(true);
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
@@ -70,6 +72,9 @@ const DashboardTable = () => {
         enqueueSnackbar("Reporte eliminado", {
           variant: "success",
         });
+        setUserReports(
+          userReports.filter((report) => report.id !== rowData.id)
+        );
       },
     });
   };
@@ -82,32 +87,46 @@ const DashboardTable = () => {
     return "inherit";
   };
 
+  const [open, setOpen] = useState(false);
+  const openDialog = () => {
+    setOpen(true);
+  };
+
   return (
-    <Table
-      columns={columns}
-      data={reports}
-      title="Mis reportes"
-      isLoading={loadingUserReports}
-      actions={[
-        {
-          icon: () => <EditIcon sx={{ color: getIconColor }} />,
-          tooltip: "Editar",
-          onClick: (event, rowData) => {
-            navigate(`/report/edit/${rowData["formId"]}/${rowData.id}`);
+    <>
+      <Table
+        columns={columns}
+        data={reports}
+        title="Mis reportes"
+        isLoading={loadingUserReports}
+        actions={[
+          {
+            icon: () => <AddIcon sx={{ color: getIconColor }} />,
+            tooltip: "Crear",
+            isFreeAction: true,
+            onClick: openDialog,
           },
-        },
-        {
-          icon: () => <DeleteIcon sx={{ color: getIconColor }} />,
-          tooltip: "Eliminar",
-          onClick: handleDelete,
-        },
-      ]}
-      localization={{
-        body: {
-          emptyDataSourceMessage: "No hay encuestas que mostrar",
-        },
-      }}
-    />
+          {
+            icon: () => <EditIcon sx={{ color: getIconColor }} />,
+            tooltip: "Editar",
+            onClick: (event, rowData) => {
+              navigate(`/report/edit/${rowData["formId"]}/${rowData.id}`);
+            },
+          },
+          {
+            icon: () => <DeleteIcon sx={{ color: getIconColor }} />,
+            tooltip: "Eliminar",
+            onClick: handleDelete,
+          },
+        ]}
+        localization={{
+          body: {
+            emptyDataSourceMessage: "No hay reportes que mostrar",
+          },
+        }}
+      />
+      <ReportDialog open={open} setOpen={setOpen} />
+    </>
   );
 };
 

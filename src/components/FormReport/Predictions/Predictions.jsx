@@ -12,7 +12,7 @@ import {
   Save as SaveIcon,
 } from "@mui/icons-material";
 import React, { useState, useEffect } from "react";
-import TooltipTitle from "../Sidebar/TooltipTitle";
+import TooltipTitle from "../TooltipTitle";
 import { useParams } from "react-router-dom";
 import { useReport } from "../../../hooks/useReport";
 import DataInput from "./DataInput";

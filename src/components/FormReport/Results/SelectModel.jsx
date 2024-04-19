@@ -25,7 +25,7 @@ import {
 import ModelSection from "./ModelSection";
 import React, { useState, useContext } from "react";
 import { ReportContext } from "../../../pages/PrepareData";
-import TooltipTitle from "../Sidebar/TooltipTitle";
+import TooltipTitle from "../TooltipTitle";
 import { useReport } from "../../../hooks/useReport";
 import { useParams } from "react-router-dom";
 import Chart from "../../../questions/components/Chart";
@@ -104,8 +104,9 @@ const SelectModel = () => {
       tooltip:
         "Se utilizan para agrupar datos similares en conjuntos o clusters. Estos modelos son útiles cuando se desea identificar patrones o estructuras ocultas en los datos, sin la necesidad de tener etiquetas o categorías predefinidas.",
       models: [
-        { id: "9", label: "K-prototypes" },
+        { id: "9", label: "K-Means" },
         { id: "10", label: "K-modes" },
+        { id: "11", label: "K-prototypes" },
       ],
     },
   ];
@@ -164,6 +165,34 @@ const SelectModel = () => {
       break;
     }
   }
+
+  const modelDescriptions = {
+    11: (
+      <>
+        <Typography>
+          A diferencia de otros modelos de agrupamiento, K-Prototypes puede
+          manejar tanto variables numéricas como categóricas.
+        </Typography>
+        <Typography>
+          <b>NOTA IMPORTANTE:</b> El algoritmo K-Prototypes debe utilizarse
+          únicamente cuando los datos incluyen tanto variables numéricas como
+          categóricas.
+        </Typography>
+      </>
+    ),
+    10: (
+      <Typography>
+        A diferencia de otros modelos de agrupamiento, K-Modes es adecuado para
+        datos que contienen exclusivamente variables categóricas.
+      </Typography>
+    ),
+    9: (
+      <Typography>
+        El algoritmo K-Means es adecuado para datos que contienen exclusivamente
+        variables numéricas.
+      </Typography>
+    ),
+  };
 
   return (
     <>
@@ -414,30 +443,7 @@ const SelectModel = () => {
                         La salida son los clusters o grupos identificados.
                       </Typography>
 
-                      {selectedModel === "9" && (
-                        <>
-                          <Typography>
-                            A diferencia de otros modelos de agrupamiento,
-                            K-Prototypes puede manejar tanto variables numéricas
-                            como categóricas.
-                          </Typography>
-                          <Typography>
-                            <b>NOTA IMPORTANTE:</b> El algoritmo K-Prototypes
-                            debe utilizarse únicamente cuando los datos incluyen
-                            tanto variables numéricas como categóricas. Si tus
-                            datos contienen exclusivamente variables{" "}
-                            <b>categóricas</b>, debes optar por el algoritmo{" "}
-                            <b>K-Modes</b>.
-                          </Typography>
-                        </>
-                      )}
-                      {selectedModel === "10" && (
-                        <Typography>
-                          A diferencia de otros modelos de agrupamiento, K-Modes
-                          es adecuado para datos que contienen exclusivamente
-                          variables categóricas.
-                        </Typography>
-                      )}
+                      {modelDescriptions[selectedModel]}
                     </Stack>
                   )}
 

@@ -4,8 +4,19 @@ import colors from "../theme/colors";
 import fonts from "../theme/fonts";
 import { GlobalStyles } from "@mui/material";
 
-const CustomThemeProvider = ({ form, children }) => {
+const CustomThemeProvider = ({ form: rawForm, children }) => {
   const theme = useTheme();
+
+  const form = useMemo(
+    () => ({
+      fontIndex: 0,
+      headerColorIndex: 0,
+      mainColorIndex: 0,
+      backgroundColorIndex: 0,
+      ...rawForm,
+    }),
+    [rawForm]
+  );
 
   const getTheme = useCallback(
     (theme) => {

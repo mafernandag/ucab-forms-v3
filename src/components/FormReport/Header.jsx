@@ -23,9 +23,13 @@ import {
 } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import Header from "../Header";
+import { useParams } from "react-router-dom";
+import { useReport } from "../../hooks/useReport";
 
 const FormReportHeader = ({ setOpenDrawer }) => {
   const theme = useTheme();
+  const { reportId } = useParams();
+  const { loading } = useReport();
   const toggleDrawer = () => {
     setOpenDrawer((openDrawer) => !openDrawer);
   };
@@ -34,18 +38,18 @@ const FormReportHeader = ({ setOpenDrawer }) => {
     <>
       <Header
         leftIcons={
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={toggleDrawer}
-            edge="start"
-            sx={{ display: { md: "none" } }}
-          >
-            <MenuIcon />
-          </IconButton>
+          reportId ? null : (
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={toggleDrawer}
+              edge="start"
+            >
+              <MenuIcon />
+            </IconButton>
+          )
         }
       />
-      {/* {loadingData && <LinearProgress sx={{ zIndex: 9999 }} />} */}
     </>
   );
 };

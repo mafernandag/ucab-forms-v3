@@ -1,24 +1,95 @@
-import { useMemo, useContext, useState, useEffect } from "react";
-import { Divider, Link, Typography, Checkbox } from "@mui/material";
-import { ExportCsv, ExportPdf } from "@material-table/exporters";
-import { flatMap, sortBy } from "lodash";
+import { useMemo, useState, useEffect } from "react";
+import { Divider, Link, Typography } from "@mui/material";
 import Table from "../../Table";
 import { useForm } from "../../../hooks/useForm";
 import { stringifyAnswers } from "../../../utils/stats";
-import { DEFAULT_LABEL, FILE } from "../../../questions/constants";
-import { formatDateTime } from "../../../utils/dates";
-import { getSectionLabels } from "../../../questions/utils";
-import { stringifyRows } from "../../EditForm/Responses/ResponsesTable/utils";
-import { ReportContext } from "../../../pages/PrepareData";
+import { FILE } from "../../../questions/constants";
 import { Delete as DeleteIcon } from "@mui/icons-material";
 import { useReport } from "../../../hooks/useReport";
+import { useParams } from "react-router-dom";
+import { getCSVFile } from "../../../api/reports";
 const DataTable = () => {
+  const { isCsv, id: formId } = useParams();
   const { responses, questions } = useForm();
   const { deletedColumns, labeledQuestions, setDeletedRows } = useReport();
+  const [csvColumns, setCsvColumns] = useState([]);
+  const [csvData, setCsvData] = useState([]);
+
+  useEffect(() => {
+    if (isCsv) {
+      const fetchData = async () => {
+        const result = await getCSVFile(formId);
+        setCsvColumns(result.columns);
+        setCsvData(result.data);
+      };
+
+      fetchData();
+    }
+  }, [isCsv, formId]);
 
   const columns = useMemo(() => {
-    return [
-      ...labeledQuestions
+    if (!isCsv) {
+      return [
+        ...labeledQuestions
+          .filter((question) => deletedColumns[question.id])
+          .map((question) => ({
+            title: question.title,
+            field: question.id,
+            emptyValue: "-",
+            align: "left",
+            render: (rowData) => {
+              return (
+                <>
+                  {rowData[question.id].map((answer, i) => (
+                    <Typography
+                      key={i}
+                      style={{
+                        color: isOutlier(answer, question.id)
+                          ? "#FF0000"
+                          : "inherit",
+                      }}
+                    >
+                      {answer}
+                    </Typography>
+                  ))}
+                </>
+              );
+            },
+            ...(question.type === FILE && {
+              render: (rowData) => (
+                <>
+                  {rowData[question.id].map((answer, i) => (
+                    <>
+                      {answer.split(", ").map((url) => (
+                        <Link
+                          key={url}
+                          href={url}
+                          noWrap
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          sx={{ display: "block", maxWidth: "15ch" }}
+                        >
+                          {url}
+                        </Link>
+                      ))}
+                      {i !== rowData[question.id].length - 1 && (
+                        <Divider
+                          key={`divider-${i}`}
+                          sx={{
+                            my: 1,
+                            width: "15ch",
+                          }}
+                        />
+                      )}
+                    </>
+                  ))}
+                </>
+              ),
+            }),
+          })),
+      ];
+    } else {
+      return csvColumns
         .filter((question) => deletedColumns[question.id])
         .map((question) => ({
           title: question.title,
@@ -27,52 +98,32 @@ const DataTable = () => {
           align: "left",
           render: (rowData) => (
             <>
-              {rowData[question.id].map((answer, i) => (
-                <Typography key={i}>{answer}</Typography>
-              ))}
+              <Typography
+                key={rowData.id}
+                style={{
+                  color: isOutlier(rowData[question.id], question.id)
+                    ? "#FF0000"
+                    : "inherit",
+                }}
+              >
+                {rowData[question.id]}
+              </Typography>
             </>
           ),
-          ...(question.type === FILE && {
-            render: (rowData) => (
-              <>
-                {rowData[question.id].map((answer, i) => (
-                  <>
-                    {answer.split(", ").map((url) => (
-                      <Link
-                        key={url}
-                        href={url}
-                        noWrap
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        sx={{ display: "block", maxWidth: "15ch" }}
-                      >
-                        {url}
-                      </Link>
-                    ))}
-                    {i !== rowData[question.id].length - 1 && (
-                      <Divider
-                        key={`divider-${i}`}
-                        sx={{
-                          my: 1,
-                          width: "15ch",
-                        }}
-                      />
-                    )}
-                  </>
-                ))}
-              </>
-            ),
-          }),
-        })),
-    ];
-  }, [deletedColumns, labeledQuestions]);
+        }));
+    }
+  }, [deletedColumns, labeledQuestions, isCsv, csvColumns]);
 
   const auxData = useMemo(() => {
-    return responses.map((response) => ({
-      id: response.id,
-      ...stringifyAnswers(response.answers, questions),
-    }));
-  }, [questions, responses]);
+    if (!isCsv) {
+      return responses.map((response) => ({
+        id: response.id,
+        ...stringifyAnswers(response.answers, questions),
+      }));
+    } else {
+      return csvData;
+    }
+  }, [questions, responses, isCsv, csvData]);
 
   const [data, setData] = useState(auxData);
   useEffect(() => {
@@ -94,6 +145,25 @@ const DataTable = () => {
 
     return "inherit";
   };
+
+  function isOutlier(value, columnId) {
+    if (value === null) {
+      return false;
+    }
+    const values = data
+      .map((row) => row[columnId])
+      .filter((value) => value !== null)
+      .map((value) => Number(value));
+
+    const mean = values.reduce((a, b) => a + b, 0) / values.length;
+    const standardDeviation = Math.sqrt(
+      values.map((x) => Math.pow(x - mean, 2)).reduce((a, b) => a + b, 0) /
+        values.length
+    );
+
+    const zScore = (value - mean) / standardDeviation;
+    return Math.abs(zScore) > 2;
+  }
 
   return (
     <Table
@@ -124,20 +194,6 @@ const DataTable = () => {
           },
         },
       ]}
-      /* options={{
-        exportMenu: [
-          {
-            label: "Exportar PDF",
-            exportFunc: (cols, datas) =>
-              ExportPdf(cols, stringifyRows(datas), "Respuestas"),
-          },
-          {
-            label: "Exportar CSV",
-            exportFunc: (cols, datas) =>
-              ExportCsv(cols, stringifyRows(datas), "Respuestas"),
-          },
-        ],
-      }} */
     />
   );
 };

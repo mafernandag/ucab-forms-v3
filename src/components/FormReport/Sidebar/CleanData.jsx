@@ -8,19 +8,16 @@ import {
   Checkbox,
   Radio,
   RadioGroup,
-  Tooltip,
   Divider,
   TextField,
-  LinearProgress,
   Alert,
 } from "@mui/material";
 import {
   ArrowBack as ArrowIcon,
   HelpOutline as HelpIcon,
 } from "@mui/icons-material";
-import React, { useState, useContext } from "react";
-import { ReportContext } from "../../../pages/PrepareData";
-import TooltipTitle from "./TooltipTitle";
+import { useState } from "react";
+import TooltipTitle from "../TooltipTitle";
 import { useReport } from "../../../hooks/useReport";
 import { useNavigate } from "react-router-dom";
 
@@ -73,7 +70,6 @@ const CleanData = ({ handleButtonClick }) => {
       numericFillValue,
       textFillValue,
     };
-    console.log("sending deletedRows", deletedRows);
     try {
       const response = await fetch("/cleaningSettings", {
         method: "POST",
@@ -156,150 +152,161 @@ const CleanData = ({ handleButtonClick }) => {
           </Typography>
         </Stack>
         <Divider variant="middle" />
-        <Stack spacing={2} sx={{ paddingX: "12px", paddingY: "20px" }}>
-          <Typography color="text.secondary">
-            Ajustes de limpieza de datos
-          </Typography>
-
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={removeDuplicateData}
-                  onChange={(e) => setRemoveDuplicateData(e.target.checked)}
-                />
-              }
-              label={<Typography>Eliminar datos duplicados</Typography>}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={expandMultipleChoiceAnswers}
-                  onChange={(e) =>
-                    setExpandMultipleChoiceAnswers(e.target.checked)
-                  }
-                />
-              }
-              label={
+        <Stack spacing={4} sx={{ paddingX: "12px", paddingY: "20px" }}>
+          <Box>
+            <Typography pb={"8px"}>Ajustes de limpieza de datos</Typography>
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={removeDuplicateData}
+                    onChange={(e) => setRemoveDuplicateData(e.target.checked)}
+                  />
+                }
+                label={<Typography>Eliminar datos duplicados</Typography>}
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={expandMultipleChoiceAnswers}
+                    onChange={(e) =>
+                      setExpandMultipleChoiceAnswers(e.target.checked)
+                    }
+                  />
+                }
+                label={
+                  <TooltipTitle
+                    title="Expandir respuestas de opción múltiple"
+                    tooltip="Se crearán nuevas columnas para así desglosar las respuestas de opción múltiple en datos individuales, lo cual facilita el análisis detallado de cada opción"
+                    size="body1"
+                  />
+                }
+              />
+            </FormGroup>
+          </Box>
+          {/* MANEJO DE VALORES FALTANTES */}
+          <Box>
+            <RadioGroup
+              value={missingDataOption}
+              onChange={handleRadioMissingDataChange}
+            >
+              <Typography pb={"8px"}>Manejo de valores faltantes</Typography>
+              <FormControlLabel
+                control={<Radio />}
+                value="delete"
+                label={<Typography>Eliminar fila</Typography>}
+              />
+              <FormControlLabel
+                control={<Radio />}
+                value="mean"
+                label={
+                  <Typography>
+                    Rellenar con el promedio de la columna
+                  </Typography>
+                }
+              />
+              <FormControlLabel
+                control={<Radio />}
+                value="fill"
+                label={<Typography>Rellenar con valores sustitutos</Typography>}
+              />
+              {missingDataOption === "fill" && (
+                <Stack spacing={2} sx={{ margin: "10px 0 15px 30px" }}>
+                  <TextField
+                    label="Valor para columnas númericas"
+                    type="number"
+                    defaultValue={0}
+                    variant="standard"
+                    onChange={(e) => setNumericFillValue(e.target.value)}
+                    error={
+                      missingDataOption === "fill" && numericFillValue === ""
+                    }
+                    helperText={
+                      missingDataOption === "fill" &&
+                      numericFillValue === "" &&
+                      "Este campo es requerido"
+                    }
+                  />
+                  <TextField
+                    label="Valor para columnas de texto"
+                    type="text"
+                    defaultValue="No aplica"
+                    variant="standard"
+                    onChange={(e) => setTextFillValue(e.target.value)}
+                    error={
+                      missingDataOption === "fill" &&
+                      textFillValue.trim() === ""
+                    }
+                    helperText={
+                      missingDataOption === "fill" &&
+                      textFillValue.trim() === "" &&
+                      "Este campo es requerido"
+                    }
+                  />
+                </Stack>
+              )}
+              <FormControlLabel
+                control={<Radio />}
+                value="previousRow"
+                label={
+                  <Typography>
+                    Rellenar con el valor de la fila anterior
+                  </Typography>
+                }
+              />
+              <FormControlLabel
+                control={<Radio />}
+                value="nextRow"
+                label={
+                  <Typography>
+                    Rellenar con el valor de la fila siguiente
+                  </Typography>
+                }
+              />
+            </RadioGroup>
+          </Box>
+          {/* MANEJO DE VALORES ATIPICOS */}
+          <Box>
+            <RadioGroup
+              value={outlierValuesOption}
+              onChange={handleRadioOutlierChange}
+            >
+              <Box sx={{ pb: 1 }}>
                 <TooltipTitle
-                  title="Expandir respuestas de opción múltiple"
-                  tooltip="Se crearán nuevas columnas para así desglosar las respuestas de opción múltiple en datos individuales, lo cual facilita el análisis detallado de cada opción"
+                  title="Manejo de valores atípicos (outliers)"
+                  tooltip="Un valor atípico o outlier es un valor en un conjunto de datos que es muy diferente del resto de los valores"
                   size="body1"
                 />
-              }
-            />
-          </FormGroup>
-          {/* MANEJO DE VALORES FALTANTES */}
-          <RadioGroup
-            value={missingDataOption}
-            onChange={handleRadioMissingDataChange}
-          >
-            <Typography color="text.secondary" pb={"8px"}>
-              Manejo de valores faltantes
-            </Typography>
-            <FormControlLabel
-              control={<Radio />}
-              value="delete"
-              label={<Typography>Eliminar fila</Typography>}
-            />
-            <FormControlLabel
-              control={<Radio />}
-              value="mean"
-              label={
-                <Typography>Rellenar con el promedio de la columna</Typography>
-              }
-            />
-            <FormControlLabel
-              control={<Radio />}
-              value="fill"
-              label={<Typography>Rellenar con valores sustitutos</Typography>}
-            />
-            {missingDataOption === "fill" && (
-              <Stack spacing={2} sx={{ margin: "10px 0 15px 30px" }}>
-                <TextField
-                  label="Valor para columnas númericas"
-                  type="number"
-                  defaultValue={0}
-                  variant="standard"
-                  onChange={(e) => setNumericFillValue(e.target.value)}
-                  error={
-                    missingDataOption === "fill" && numericFillValue === ""
-                  }
-                  helperText={
-                    missingDataOption === "fill" &&
-                    numericFillValue === "" &&
-                    "Este campo es requerido"
-                  }
-                />
-                <TextField
-                  label="Valor para columnas de texto"
-                  type="text"
-                  defaultValue="No aplica"
-                  variant="standard"
-                  onChange={(e) => setTextFillValue(e.target.value)}
-                  error={
-                    missingDataOption === "fill" && textFillValue.trim() === ""
-                  }
-                  helperText={
-                    missingDataOption === "fill" &&
-                    textFillValue.trim() === "" &&
-                    "Este campo es requerido"
-                  }
-                />
-              </Stack>
-            )}
-            <FormControlLabel
-              control={<Radio />}
-              value="previousRow"
-              label={
-                <Typography>
-                  Rellenar con el valor de la fila anterior
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ pt: 1 }}
+                >
+                  Si encuentras datos resaltados de rojo en la tabla de datos,
+                  esto indica que podría ser un valor atípico o inusual.
                 </Typography>
-              }
-            />
-            <FormControlLabel
-              control={<Radio />}
-              value="nextRow"
-              label={
-                <Typography>
-                  Rellenar con el valor de la fila siguiente
-                </Typography>
-              }
-            />
-          </RadioGroup>
-          {/* MANEJO DE VALORES ATIPICOS */}
-          <RadioGroup
-            value={outlierValuesOption}
-            onChange={handleRadioOutlierChange}
-          >
-            <Box sx={{ pb: 1 }}>
-              <TooltipTitle
-                title="Manejo de valores atípicos (outliers)"
-                tooltip="Un valor atípico o outlier es un valor en un conjunto de datos que es muy diferente del resto de los valores"
-                size="body1"
-                color="text.secondary"
+              </Box>
+              <FormControlLabel
+                control={<Radio />}
+                value="delete"
+                label={<Typography>Eliminar fila</Typography>}
               />
-            </Box>
-            <FormControlLabel
-              control={<Radio />}
-              value="delete"
-              label={<Typography>Eliminar fila</Typography>}
-            />
-            <FormControlLabel
-              control={<Radio />}
-              value="mean"
-              label={
-                <Typography>
-                  Reemplazar con el promedio de la columna
-                </Typography>
-              }
-            />
-            <FormControlLabel
-              control={<Radio />}
-              value="ignore"
-              label={<Typography>Ignorar</Typography>}
-            />
-          </RadioGroup>
+              <FormControlLabel
+                control={<Radio />}
+                value="mean"
+                label={
+                  <Typography>
+                    Reemplazar con el promedio de la columna
+                  </Typography>
+                }
+              />
+              <FormControlLabel
+                control={<Radio />}
+                value="ignore"
+                label={<Typography>Ignorar</Typography>}
+              />
+            </RadioGroup>
+          </Box>
         </Stack>
         <Box
           sx={{

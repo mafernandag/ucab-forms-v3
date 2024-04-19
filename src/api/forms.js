@@ -35,6 +35,7 @@ export const createForm = (user) => {
     createdAt: new Date(),
     responses: 0,
     collaborators: [],
+    csvImport: false,
     settings: {
       allowResponses: true,
       maxResponses: "",
@@ -130,18 +131,23 @@ export const getUserForms = (userId, callback) => {
   const q = query(formsRef, where("author.id", "==", userId));
 
   return onSnapshot(q, (snapshot) => {
-    const forms = snapshot.docs.map((doc) => {
-      const form = doc.data();
-      form.id = doc.id;
-      form.createdAt = form.createdAt.toDate();
-      if (form.settings.startDate) {
-        form.settings.startDate = form.settings.startDate.toDate();
-      }
-      if (form.settings.endDate) {
-        form.settings.endDate = form.settings.endDate.toDate();
-      }
-      return form;
-    });
+    const forms = snapshot.docs
+      .map((doc) => {
+        const form = doc.data();
+        if (form.csvImport) {
+          return null;
+        }
+        form.id = doc.id;
+        form.createdAt = form.createdAt.toDate();
+        if (form.settings.startDate) {
+          form.settings.startDate = form.settings.startDate.toDate();
+        }
+        if (form.settings.endDate) {
+          form.settings.endDate = form.settings.endDate.toDate();
+        }
+        return form;
+      })
+      .filter(Boolean);
 
     callback(forms);
   });

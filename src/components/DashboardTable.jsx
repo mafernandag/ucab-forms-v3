@@ -170,7 +170,7 @@ const DashboardTable = () => {
         },
         {
           icon: () => <ReportIcon sx={{ color: getIconColor }} />,
-          tooltip: "Ir a Reporte",
+          tooltip: "Crear un Reporte",
           onClick: (event, rowData) => {
             createNewReport(rowData);
           },
