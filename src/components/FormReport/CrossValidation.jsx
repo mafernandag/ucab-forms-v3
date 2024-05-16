@@ -37,7 +37,6 @@ const CrossValidation = () => {
   const [isSelectingOperation, setIsSelectingOperation] = useState(true);
   const [operationType, setOperationType] = useState(null);
   const [clusteringModel, setClusteringModel] = useState("");
-
   const [selectAll, setSelectAll] = useState(true);
   const [chosenColumns, setChosenColumns] = useState(
     Object.entries(deletedColumns).reduce((acc, [key, value]) => {
@@ -390,8 +389,8 @@ const CrossValidation = () => {
                         Advertencia: Las puntuaciones utilizadas para los
                         modelos de regresión no tienen un límite superior y no
                         están restringidas a un rango de 0 a 100. Una puntuación
-                        más alta indica un mejor rendimiento del modelo, pero el
-                        valor exacto depende de la escala de la variable
+                        más cercana a 0 indica un mejor rendimiento del modelo,
+                        pero el valor exacto depende de la escala de la variable
                         objetivo y de la cantidad de error en las predicciones
                         del modelo. Por lo tanto, no se debe interpretar la
                         puntuación de un modelo de regresión como un porcentaje.

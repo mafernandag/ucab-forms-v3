@@ -14,8 +14,10 @@ const CleanedDataTable = ({ data }) => {
       ? Object.keys(data[0])
           .filter((key) => key !== "id")
           .map((key) => {
-            const question = labeledQuestions.find((q) => q.id === key);
-            const title = question ? question.title : key;
+            const question = labeledQuestions.find((q) => key.includes(q.id));
+            const title = question
+              ? key.replace(question.id, question.title)
+              : key;
             return {
               title: title,
               field: key,
@@ -43,9 +45,6 @@ const CleanedDataTable = ({ data }) => {
     }
     return cleanedItem;
   });
-
-  /* console.log(columns);
-  console.log("data from cleaneddt", cleanedData); */
 
   return (
     <Table

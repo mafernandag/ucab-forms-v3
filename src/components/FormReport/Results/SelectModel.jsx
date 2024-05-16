@@ -30,7 +30,7 @@ import { useReport } from "../../../hooks/useReport";
 import { useParams } from "react-router-dom";
 import Chart from "../../../questions/components/Chart";
 import ModelResults from "./ModelResults";
-import { set } from "lodash";
+import { useSnackbar } from "notistack";
 
 const SelectModel = () => {
   const {
@@ -41,11 +41,15 @@ const SelectModel = () => {
     setPredictionData,
   } = useReport();
   const { reportId } = useParams();
+  const { enqueueSnackbar } = useSnackbar();
 
   const [selectedModel, setSelectedModel] = useState(null);
   const [modelCategory, setModelCategory] = useState(null);
   const [targetVariable, setTargetVariable] = useState(null);
+  const maxRange = 20;
   const [testSize, setTestSize] = useState(30);
+  const [minK, setMinK] = useState(1);
+  const [maxK, setMaxK] = useState(10);
   const [testAccuracy, setTestAccuracy] = useState(null);
   const [graphInfo, setGraphInfo] = useState(null);
   const [bestK, setBestK] = useState(null);
@@ -74,6 +78,18 @@ const SelectModel = () => {
         newChosenColumns[question.id] = event.target.checked;
       });
     setChosenColumns(newChosenColumns);
+  };
+
+  const resetValues = () => {
+    setTestAccuracy(null);
+    setTargetVariable(null);
+    setGraphInfo(null);
+    setBestK(null);
+    setClusteringScore(null);
+    setClusterData([]);
+    setCentroidData([]);
+    setMinK(2);
+    setMaxK(10);
   };
 
   const sections = [
@@ -126,10 +142,19 @@ const SelectModel = () => {
           selectedModel,
           testSize,
           chosenColumns,
+          minK,
+          maxK,
         }),
       });
       const data = await response.json();
       console.log(data);
+      if (data.error) {
+        enqueueSnackbar(data.error, {
+          variant: "error",
+        });
+        setLoadingModelResults(false);
+        return;
+      }
       setGraphInfo(data["graphData"]);
       if (selectedModel < 9) {
         setTestAccuracy(data["testAccuracy"].toFixed(2));
@@ -426,7 +451,7 @@ const SelectModel = () => {
                                     </InputAdornment>
                                   ),
                                 }}
-                                sx={{ marginBottom: "10px" }}
+                                sx={{ marginBottom: "10px", width: "40%" }}
                               />
                             </Stack>
                           </AccordionDetails>
@@ -444,24 +469,107 @@ const SelectModel = () => {
                       </Typography>
 
                       {modelDescriptions[selectedModel]}
+                      <div sx={{ width: "100%" }}>
+                        <Accordion
+                          sx={{
+                            boxShadow: "none",
+                            border: "none",
+                            width: "100%",
+                          }}
+                        >
+                          <AccordionSummary
+                            expandIcon={<ExpandMore />}
+                            aria-controls="panel1a-content"
+                            id="panel1a-header"
+                          >
+                            <Typography
+                              color="text.secondary"
+                              sx={{ paddingY: "5px" }}
+                            >
+                              Configuración avanzada
+                            </Typography>
+                          </AccordionSummary>
+                          <AccordionDetails>
+                            <Stack spacing={2}>
+                              <TooltipTitle
+                                title="Posible rango de K (número de clusters)"
+                                tooltip="Rango de valores de K que se probarán para encontrar el mejor número de clusters. Por ejemplo, si introduce 2 y 10, el algoritmo probará K=2, K=3, ..., K=10 para encontrar el mejor número de clusters."
+                                size="body1"
+                              />
+                              <Stack direction="row" spacing={5} sx={{ pt: 1 }}>
+                                <TextField
+                                  label="Mínimo"
+                                  type="number"
+                                  defaultValue={1}
+                                  variant="outlined"
+                                  onChange={(e) => setMinK(e.target.value)}
+                                  error={
+                                    minK < 1 ||
+                                    minK > maxK ||
+                                    minK === "" ||
+                                    minK > maxRange
+                                  }
+                                  helperText={
+                                    minK === ""
+                                      ? "Campo requerido"
+                                      : minK < 1 || minK > maxRange
+                                      ? `Debe ser un número entre 1 y ${maxRange}`
+                                      : minK > maxK
+                                      ? "El mínimo no puede ser mayor que el máximo"
+                                      : ""
+                                  }
+                                  sx={{
+                                    marginBottom: "10px",
+                                    width: "30%",
+                                  }}
+                                />
+                                <TextField
+                                  label="Máximo"
+                                  type="number"
+                                  defaultValue={10}
+                                  variant="outlined"
+                                  onChange={(e) => setMaxK(e.target.value)}
+                                  error={
+                                    maxK < minK ||
+                                    maxK === "" ||
+                                    maxK > maxRange
+                                  }
+                                  helperText={
+                                    maxK === ""
+                                      ? "Campo requerido"
+                                      : maxK < minK
+                                      ? "Debe ser un número mayor que el mínimo"
+                                      : maxK > maxRange
+                                      ? `Debe ser un numero menor a ${maxRange}`
+                                      : ""
+                                  }
+                                  sx={{ marginBottom: "10px", width: "30%" }}
+                                />
+                              </Stack>
+                            </Stack>
+                          </AccordionDetails>
+                        </Accordion>
+                      </div>
                     </Stack>
                   )}
-
-                  <Button
-                    onClick={handleButtonClick}
-                    disabled={
-                      selectedModel > 8
-                        ? false
-                        : testSize <= 0 ||
-                          testSize > 100 ||
-                          testSize === "" ||
-                          targetVariable === null ||
-                          Object.values(chosenColumns).filter(Boolean).length <
-                            2
-                    }
-                  >
-                    Entrenar Modelo
-                  </Button>
+                  <Box sx={{ alignSelf: "center" }}>
+                    <Button
+                      onClick={handleButtonClick}
+                      disabled={
+                        selectedModel > 8
+                          ? false
+                          : testSize <= 0 ||
+                            testSize > 100 ||
+                            testSize === "" ||
+                            targetVariable === null ||
+                            Object.values(chosenColumns).filter(Boolean)
+                              .length < 2
+                      }
+                      variant="contained"
+                    >
+                      Entrenar Modelo
+                    </Button>
+                  </Box>
                 </Stack>
               </Box>
             )}
@@ -480,6 +588,7 @@ const SelectModel = () => {
           clusteringScore={clusteringScore}
           clusterData={clusterData}
           centroidData={centroidData}
+          resetValues={resetValues}
         />
       )}
       <Stack justifyContent="center" alignItems="center" sx={{ pb: 2 }}>

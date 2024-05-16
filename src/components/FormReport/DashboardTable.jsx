@@ -110,7 +110,11 @@ const DashboardTable = () => {
             icon: () => <EditIcon sx={{ color: getIconColor }} />,
             tooltip: "Editar",
             onClick: (event, rowData) => {
-              navigate(`/report/edit/${rowData["formId"]}/${rowData.id}`);
+              if (rowData.csvImport) {
+                navigate(`/report/edit/${rowData["formId"]}/${rowData.id}/1`);
+              } else {
+                navigate(`/report/edit/${rowData["formId"]}/${rowData.id}`);
+              }
             },
           },
           {

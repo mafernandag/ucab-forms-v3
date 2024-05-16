@@ -147,7 +147,7 @@ const DataTable = () => {
   };
 
   function isOutlier(value, columnId) {
-    if (value === null) {
+    if (value === null || isNaN(Number(value))) {
       return false;
     }
     const values = data
@@ -184,7 +184,6 @@ const DataTable = () => {
                 ...prevState,
                 [row.id]: false,
               }));
-              console.log(row.id);
               return row.id;
             });
             const newDataAfterDelete = data.filter(

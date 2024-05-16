@@ -55,14 +55,20 @@ const DataInput = ({ title, type, setAnswers }) => {
                 value={response}
                 onChange={(event) => setResponse(event.target.value)}
               >
-                {type.map((option, i) => (
-                  <FormControlLabel
-                    key={i}
-                    control={<Radio />}
-                    value={option}
-                    label={<Typography>{option}</Typography>}
-                  />
-                ))}
+                {type.map((option, i) => {
+                  let label = option;
+                  if (option === "1") label = "Si";
+                  else if (option === "0") label = "No";
+
+                  return (
+                    <FormControlLabel
+                      key={i}
+                      control={<Radio />}
+                      value={option}
+                      label={<Typography>{label}</Typography>}
+                    />
+                  );
+                })}
               </RadioGroup>
             </Box>
           )}

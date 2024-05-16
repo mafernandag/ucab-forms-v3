@@ -6,6 +6,7 @@ import {
   Divider,
   CircularProgress,
   Tab,
+  IconButton,
 } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import {
@@ -35,9 +36,10 @@ const ModelResults = ({
   clusteringScore,
   clusterData,
   centroidData,
+  resetValues,
 }) => {
   const { id: formId, reportId } = useParams();
-  const { setModelProcessed } = useReport();
+  const { setModelProcessed, reportTitle } = useReport();
 
   const [confusionMatrix, setConfusionMatrix] = useState(null);
   const [featureImportance, setFeatureImportance] = useState(null);
@@ -47,6 +49,7 @@ const ModelResults = ({
   const [clusterPlot, setClusterPlot] = useState(null);
   const [loadingGraphs, setLoadingGraphs] = useState(true);
   const [currentTab, setCurrentTab] = useState("1");
+  /* const [graphs, setGraphs] = useState([]); */
 
   useEffect(() => {
     const fetchGraphs = async () => {
@@ -77,12 +80,33 @@ const ModelResults = ({
         setClusterPlot(clusterPlot);
       }
       setLoadingGraphs(false);
+      /* const graphData = [
+        graphInfo.confusionMatrix
+          ? { title: "Matriz de confusión", img: confusionMatrix }
+          : null,
+        graphInfo.featureImportance
+          ? {
+              title: "Importancia de las características",
+              img: featureImportance,
+            }
+          : null,
+        graphInfo.tree ? { title: "Árbol de Decisión", img: treeGraph } : null,
+        graphInfo.pairplot ? { title: "Pairplot", img: pairplot } : null,
+        graphInfo.elbowPlot
+          ? { title: "Elbow Plot (Gráfico del Codo)", img: elbowPlot }
+          : null,
+        graphInfo.clusterPlot
+          ? { title: "Gráfico de Agrupamiento", img: clusterPlot }
+          : null,
+      ].filter((graph) => graph !== null);
+      setGraphs(graphData); */
     };
     fetchGraphs();
   }, []);
 
   const handleBackArrow = () => {
     setModelProcessed(false);
+    resetValues();
   };
 
   const handleTabChange = (e, value) => {
@@ -105,19 +129,29 @@ const ModelResults = ({
                 onClick={handleBackArrow}
               />
               <Typography variant="h6">
-                Resultados del Modelo: {selectedModelLabel}
+                Resultados del Modelo: {selectedModelLabel} ({modelCategory})
               </Typography>
             </Stack>
-            <PDFDownloadLink document={<ReportPDF />} fileName="Reporte">
-              <Stack direction="row" spacing={1} alignItems="center">
-                <Typography variant="body2" color="text.secondary">
-                  Exportar Reporte
-                </Typography>
-                <DownloadIcon />
-              </Stack>
-            </PDFDownloadLink>
+            {/* <PDFDownloadLink
+              document={
+                <ReportPDF
+                  title={reportTitle}
+                  model={selectedModelLabel}
+                  modeltype={modelCategory}
+                  score={testAccuracy}
+                  targetVariable={targetVariable}
+                  bestK={bestK}
+                  graphs={graphs}
+                />
+              }
+              fileName="Reporte"
+            >
+              <Button endIcon={<DownloadIcon />} variant="contained">
+                Exportar
+              </Button>
+            </PDFDownloadLink> */}
           </Stack>
-          {!modelCategory === "Agrupamiento" && (
+          {modelCategory !== "Agrupamiento" && (
             <Box sx={{ pb: 3 }}>
               <TooltipTitle
                 title="Variable a predecir (variable objetivo)"
@@ -209,7 +243,6 @@ const ModelResults = ({
                 description={
                   "Permite visualizar la relación entre las diferentes variables en la encuesta."
                 }
-                imgStyle={{ maxWidth: "100%", height: "auto" }}
               />
             )}
             {featureImportance && (

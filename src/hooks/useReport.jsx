@@ -124,6 +124,7 @@ const ReportProvider = ({ children }) => {
     deletedColumns,
     setDeletedColumns,
     labeledQuestions,
+    setLabeledQuestions,
     cleanedData,
     setCleanedData,
     deletedRows,

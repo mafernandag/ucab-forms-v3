@@ -20,9 +20,12 @@ const ReportDialog = ({ open, setOpen }) => {
   const user = useUser();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const abortController = new AbortController();
 
   const handleClose = () => {
     setOpen(false);
+    setLoading(false);
+    abortController.abort();
   };
 
   const handleCSVFile = async (file) => {
@@ -30,7 +33,10 @@ const ReportDialog = ({ open, setOpen }) => {
     const filesArray = Array.from(file);
     console.log(filesArray[0]);
     try {
-      const reportId = await createReportFromFile(user, filesArray[0]);
+      const reportId = await createReportFromFile(user, filesArray[0], {
+        signal: abortController.signal,
+      });
+      if (abortController.signal.aborted) return;
       console.log(reportId);
       setLoading(false);
       setOpen(false);
@@ -39,8 +45,12 @@ const ReportDialog = ({ open, setOpen }) => {
       });
       navigate("/report/create/" + reportId + "/1");
     } catch (error) {
-      console.error(error);
-      enqueueSnackbar("Error al crear el reporte", { variant: "error" });
+      if (error.name === "AbortError") {
+        console.log("Fetch aborted");
+      } else {
+        console.error(error);
+        enqueueSnackbar("Error al crear el reporte", { variant: "error" });
+      }
     }
   };
 
@@ -52,11 +62,21 @@ const ReportDialog = ({ open, setOpen }) => {
           Importa un archivo CSV para crear un reporte con los datos de la
           encuesta.
         </Typography>
-        <Stack alignItems="center">
+        <Stack alignItems="center" spacing={3}>
           {!loading && (
             <UploadCSVButton inputId="report" onChange={handleCSVFile} />
           )}
           {loading && <CircularProgress />}
+          {loading && (
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              textAlign="center"
+            >
+              Dependiendo de la cantidad de datos, esto podrá tardar unos
+              minutos...
+            </Typography>
+          )}
         </Stack>
       </DialogContent>
       <DialogActions>

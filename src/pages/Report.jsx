@@ -20,7 +20,7 @@ import SelectModel from "../components/FormReport/Results/SelectModel";
 import CrossValidation from "../components/FormReport/CrossValidation";
 import { getCleanDf, changeTitle } from "../api/reports";
 import AnswerPageText from "../components/AnswerPageText";
-import { debounce } from "lodash";
+import { debounce, map, set } from "lodash";
 
 const Report = () => {
   const user = useUser();
@@ -35,6 +35,8 @@ const Report = () => {
     setReportTitle,
     setDeletedColumns,
     deletedColumns,
+    labeledQuestions,
+    setLabeledQuestions,
   } = useReport();
   const [loadingCleanDf, setLoadingCleanDf] = useState(true);
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -51,9 +53,9 @@ const Report = () => {
           return;
         }
         setCleanedData(data);
-
         const dataColumns = Object.keys(data[0]).filter((key) => key !== "id");
         const newDeletedColumns = { ...deletedColumns };
+        let newLabeledQuestions = [...labeledQuestions];
 
         for (const key in newDeletedColumns) {
           // If the key is not present in the data columns, set the value to false
@@ -61,20 +63,30 @@ const Report = () => {
             newDeletedColumns[key] = false;
           }
         }
+        // If a key in dataColumns is not present in newDeletedColumns, add it and set the value to true
+        for (const key of dataColumns) {
+          if (!(key in newDeletedColumns)) {
+            const question = labeledQuestions.find((q) => key.includes(q.id));
+            const title = question
+              ? key.replace(question.id, question.title)
+              : key;
+            newLabeledQuestions.push({
+              id: key,
+              title: title,
+              options: ["0", "1"],
+            });
+          }
+        }
         setDeletedColumns(newDeletedColumns);
+        newLabeledQuestions = newLabeledQuestions.filter((q) =>
+          dataColumns.includes(q.id)
+        );
+        setLabeledQuestions(newLabeledQuestions);
       }
       setLoadingCleanDf(false);
     };
-
     fetchCleanDf();
-  }, [
-    cleanedData,
-    deletedColumns,
-    formId,
-    reportId,
-    setCleanedData,
-    setDeletedColumns,
-  ]);
+  }, [deletedColumns, reportId]);
 
   if (loadingForm || loadingReport || loadingCleanDf) {
     return (
