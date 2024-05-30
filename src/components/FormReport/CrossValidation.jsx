@@ -20,11 +20,12 @@ import { ReportContext } from "../../pages/PrepareData";
 import MaterialTable from "@material-table/core";
 import { useReport } from "../../hooks/useReport";
 import { useParams } from "react-router-dom";
-import { set } from "lodash";
+import { useSnackbar } from "notistack";
 
 const CrossValidation = () => {
   const { labeledQuestions, deletedColumns } = useReport();
   const { reportId } = useParams();
+  const { enqueueSnackbar } = useSnackbar();
   const [targetVariable, setTargetVariable] = useState(null);
   const [showDescription, setShowDescription] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -50,7 +51,7 @@ const CrossValidation = () => {
   const handlePredictionModelButtonClick = async () => {
     setLoading(true);
     try {
-      const response = await fetch("/cv", {
+      const response = await fetch(process.env.REACT_APP_API_URL + "/cv", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -58,6 +59,13 @@ const CrossValidation = () => {
         body: JSON.stringify({ targetVariable, reportId, chosenColumns }),
       });
       const data = await response.json();
+      if (data.error) {
+        enqueueSnackbar(data.error, {
+          variant: "error",
+        });
+        setLoading(false);
+        return;
+      }
 
       if (data.model_type === "classification") {
         setModelType("Clasificación");
@@ -80,13 +88,16 @@ const CrossValidation = () => {
     if (operationType === "agrupar") {
       setLoading(true);
       try {
-        const response = await fetch("/cv_clustering", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ reportId, chosenColumns }),
-        });
+        const response = await fetch(
+          process.env.REACT_APP_API_URL + "/cv_clustering",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ reportId, chosenColumns }),
+          }
+        );
         const data = await response.json();
         setClusteringModel(data["model"]);
         setLoading(false);

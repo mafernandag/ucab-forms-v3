@@ -131,21 +131,24 @@ const SelectModel = () => {
     console.log(testSize, targetVariable, selectedModel);
     setLoadingModelResults(true);
     try {
-      const response = await fetch("/modelSettings", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          reportId,
-          targetVariable,
-          selectedModel,
-          testSize,
-          chosenColumns,
-          minK,
-          maxK,
-        }),
-      });
+      const response = await fetch(
+        process.env.REACT_APP_API_URL + "/modelSettings",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            reportId,
+            targetVariable,
+            selectedModel,
+            testSize,
+            chosenColumns,
+            minK,
+            maxK,
+          }),
+        }
+      );
       const data = await response.json();
       console.log(data);
       if (data.error) {

@@ -35,13 +35,16 @@ const ReportProvider = ({ children }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const formIdResponse = await fetch("/formId", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ formId: formId }),
-        });
+        const formIdResponse = await fetch(
+          process.env.REACT_APP_API_URL + "/formId",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ formId: formId }),
+          }
+        );
         const formIdData = await formIdResponse.json();
         setLoadingData(false);
         console.log(formIdData);

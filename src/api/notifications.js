@@ -13,7 +13,7 @@ export const sendNotification = async ({ userId, title, message, goto }) => {
   try {
     const notificationsRef = collection(db, "users", userId, "notifications");
 
-    fetch(process.env.REACT_APP_API_URL + "/notifications", {
+    fetch("https://ucab-forms-server.herokuapp.com/api/notifications", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

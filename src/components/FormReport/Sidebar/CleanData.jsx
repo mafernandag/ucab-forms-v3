@@ -71,18 +71,21 @@ const CleanData = ({ handleButtonClick }) => {
       textFillValue,
     };
     try {
-      const response = await fetch("/cleaningSettings", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          reportTitle,
-          settings,
-          deletedColumns,
-          deletedRows,
-        }),
-      });
+      const response = await fetch(
+        process.env.REACT_APP_API_URL + "/cleaningSettings",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            reportTitle,
+            settings,
+            deletedColumns,
+            deletedRows,
+          }),
+        }
+      );
       const res = await response.json();
       console.log("res from /cleaningSettings:", res);
       setCleanedData(JSON.parse(res["cleanDf"]));

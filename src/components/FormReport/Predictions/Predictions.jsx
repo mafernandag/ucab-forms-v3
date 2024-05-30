@@ -34,7 +34,7 @@ const Predictions = ({ model, targetVariable }) => {
     setLoadingPrediction(true);
     try {
       console.log(answers, model);
-      const response = await fetch("/predict", {
+      const response = await fetch(process.env.REACT_APP_API_URL + "/predict", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
