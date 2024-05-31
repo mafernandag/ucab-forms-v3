@@ -19,6 +19,7 @@ import DataInput from "./DataInput";
 
 const Predictions = ({ model, targetVariable }) => {
   const { predictionData } = useReport();
+  const { id: formId, reportId } = useParams();
   const [loading, setLoading] = useState(true);
   const [loadingPrediction, setLoadingPrediction] = useState(false);
   const [answers, setAnswers] = useState({});
@@ -40,6 +41,8 @@ const Predictions = ({ model, targetVariable }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          formId,
+          reportId,
           answers,
           model,
           predictionData,

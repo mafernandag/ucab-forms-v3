@@ -24,7 +24,7 @@ import { useSnackbar } from "notistack";
 
 const CrossValidation = () => {
   const { labeledQuestions, deletedColumns } = useReport();
-  const { reportId } = useParams();
+  const { id: formId, reportId } = useParams();
   const { enqueueSnackbar } = useSnackbar();
   const [targetVariable, setTargetVariable] = useState(null);
   const [showDescription, setShowDescription] = useState(false);
@@ -56,7 +56,12 @@ const CrossValidation = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ targetVariable, reportId, chosenColumns }),
+        body: JSON.stringify({
+          formId,
+          targetVariable,
+          reportId,
+          chosenColumns,
+        }),
       });
       const data = await response.json();
       if (data.error) {
@@ -95,7 +100,7 @@ const CrossValidation = () => {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ reportId, chosenColumns }),
+            body: JSON.stringify({ formId, reportId, chosenColumns }),
           }
         );
         const data = await response.json();

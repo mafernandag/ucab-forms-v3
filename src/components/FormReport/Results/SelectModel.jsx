@@ -40,7 +40,7 @@ const SelectModel = () => {
     modelProcessed,
     setPredictionData,
   } = useReport();
-  const { reportId } = useParams();
+  const { id: formId, reportId } = useParams();
   const { enqueueSnackbar } = useSnackbar();
 
   const [selectedModel, setSelectedModel] = useState(null);
@@ -139,6 +139,7 @@ const SelectModel = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
+            formId,
             reportId,
             targetVariable,
             selectedModel,

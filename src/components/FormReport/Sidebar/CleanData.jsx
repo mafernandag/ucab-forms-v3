@@ -19,10 +19,11 @@ import {
 import { useState } from "react";
 import TooltipTitle from "../TooltipTitle";
 import { useReport } from "../../../hooks/useReport";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const CleanData = ({ handleButtonClick }) => {
   const navigate = useNavigate();
+  const { id: formId } = useParams();
   const {
     deletedColumns,
     setDeletedColumns,
@@ -79,6 +80,7 @@ const CleanData = ({ handleButtonClick }) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
+            formId,
             reportTitle,
             settings,
             deletedColumns,
