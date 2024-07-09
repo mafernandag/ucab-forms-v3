@@ -2,7 +2,7 @@
   "name": "ucab-forms",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://127.0.0.1:5000",
+  "proxy": "https://ucab-forms-python.onrender.com",
   "dependencies": {
     "@date-io/date-fns": "^2.11.0",
     "@emotion/react": "^11.7.1",
