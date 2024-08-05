@@ -21,7 +21,7 @@ export const getSectionLabels = (
   section: Section,
   questions: BaseQuestion[]
 ) => {
-  if (section.dynamicLabels) {
+  if (section && section.dynamicLabels) {
     const questionId = section.dynamicLabelsQuestion;
     const question = questions.find((question) => question.id === questionId);
 
