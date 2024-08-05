@@ -84,7 +84,15 @@ const ReportProvider = ({ children }) => {
           (section) => section.id === question.sectionId
         );
 
-        return section.index;
+        // Check if section is found
+        if (section) {
+          return section.index;
+        } else {
+          // Handle the case where section is not found
+          console.error(
+            `Section not found for question with sectionId: ${question.sectionId}`
+          );
+        }
       });
 
       const labeledQuestions = flatMap(sortedQuestions, (question) => {
