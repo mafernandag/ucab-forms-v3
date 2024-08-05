@@ -33,7 +33,7 @@ export const getSectionLabels = (
     return labels;
   }
 
-  return section.labels.length ? section.labels : [DEFAULT_LABEL];
+  return section?.labels?.length ? section.labels : [DEFAULT_LABEL];
 };
 
 export const isEmpty = (value: any) => {
